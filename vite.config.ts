@@ -10,4 +10,10 @@ export default defineConfig({
     setupFiles: ['./setup.vitest.ts'],
   },
   plugins: [react(), checker({ typescript: true })],
+  server: {
+    open: true,
+  },
+  json: {
+    stringify: true,
+  },
 });
