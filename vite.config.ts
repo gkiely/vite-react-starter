@@ -8,6 +8,10 @@ export default defineConfig({
     environment: 'happy-dom',
     globals: true,
     setupFiles: ['./setup.vitest.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
+    coverage: {
+      include: ['src/**/*.{ts,tsx}'],
+    },
   },
   plugins: [react(), checker({ typescript: true })],
   server: {

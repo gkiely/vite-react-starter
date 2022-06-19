@@ -24,7 +24,7 @@ exports[`App > should render 1`] = `
         </button>
       </p>
       <p>
-        Edit 
+        Update 
         <code>
           App.tsx
         </code>
