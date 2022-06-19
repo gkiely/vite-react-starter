@@ -11,7 +11,7 @@
     "test": "vitest",
     "test-all": "vitest run",
     "coverage": "vitest run --coverage && npm run view-coverage",
-    "view-coverage": "osascript ./scripts/open-tab.scpt 'Code coverage report' 'coverage/index.html'"
+    "view-coverage": "osascript ./scripts/openBrowser.scpt 'Code coverage report' 'coverage/index.html'"
   },
   "dependencies": {
     "@types/node": "^17.0.42",

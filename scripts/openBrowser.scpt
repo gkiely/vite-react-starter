@@ -13,6 +13,7 @@
 # osascript open-tab.scpt 'Start of tab title' 'folder/index.html'
 #
 # Credit: https://gist.github.com/wsoyka/8e0497379b9598dfe5116f04282247d1
+# JavaScript version: https://github.com/vitejs/vite/blob/main/packages/vite/src/node/server/openBrowser.ts
 #########################################################################################
 
 on run argv
