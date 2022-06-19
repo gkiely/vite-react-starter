@@ -1,4 +1,5 @@
-Sensible vite starter (typescript/react)
+### Sensible vite starter
 
+- Typescript and React
 - Strict typescript config
 - Vitest
