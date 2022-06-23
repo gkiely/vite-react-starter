@@ -12,7 +12,8 @@
     "test-all": "vitest run",
     "coverage": "vitest run --coverage && npm run view-coverage",
     "view-coverage": "osascript ./scripts/open-browser.scpt 'Code coverage report' 'coverage/index.html'",
-    "install-latest": "npm i $(node ./scripts/get-latest.ts)"
+    "install-latest": "npm i $(npm run -s get-latest)",
+    "get-latest": "vite-node ./scripts/get-latest.ts"
   },
   "dependencies": {
     "@types/node": "^18.0.0",
@@ -29,6 +30,7 @@
     "happy-dom": "^5.3.1",
     "typescript": "^4.8.0-beta",
     "vite": "^2.9.12",
+    "vite-node": "^0.15.2",
     "vite-plugin-checker": "^0.4.6",
     "vitest": "^0.15.2"
   }

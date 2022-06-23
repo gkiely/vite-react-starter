@@ -1,9 +1,9 @@
-const package = require('../package.json');
+import packageJSON from '../package.json';
 
 const deps =
   Object.keys({
-    ...package.dependencies,
-    ...package.devDependencies,
+    ...packageJSON.dependencies,
+    ...packageJSON.devDependencies,
   }).join('@latest ') + '@latest';
 
 // Output to shell
