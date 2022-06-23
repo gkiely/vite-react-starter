@@ -1,6 +1,6 @@
 {
-  "name": "vite-app",
-  "private": true,
+  "name": "vite-app-rtl",
+  "private": false,
   "version": "0.0.0",
   "scripts": {
     "start": "npm run fast-install && npm run dev",
@@ -12,7 +12,7 @@
     "test-all": "vitest run",
     "coverage": "vitest run --coverage && npm run view-coverage",
     "view-coverage": "osascript ./scripts/open-browser.scpt 'Code coverage report' 'coverage/index.html'",
-    "install-latest": "npm i $(node ./scripts/get-latest.js)"
+    "install-latest": "npm i $(node ./scripts/get-latest.ts)"
   },
   "dependencies": {
     "@types/node": "^18.0.0",
