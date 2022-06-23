@@ -1,4 +1,4 @@
-### Sensible vite starter
+### Sensible vite project starter
 
 - Typescript and React
 - Strict typescript config
