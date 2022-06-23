@@ -1,12 +1,12 @@
 {
-  "name": "vite-app-rtl",
+  "name": "vite-app-starter",
   "private": false,
   "version": "0.0.0",
   "author": "Grant Kiely <grant.kiely@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gkiely/vite-app-rtl.git"
+    "url": "git+https://github.com/gkiely/vite-app-starter.git"
   },
   "bugs": {
     "url": "https://github.com/gkiely/flux-machine/issues"
