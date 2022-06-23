@@ -29,8 +29,8 @@
     "view-coverage": "osascript ./scripts/open-browser.scpt 'Code coverage report' 'coverage/index.html'",
     "install-latest": "npm i $(npm run -s get-latest)",
     "get-latest": "vite-node ./scripts/get-latest.ts",
-    "pre-push": "tsc && prettier src --check && npm run test-all",
-    "pre-commit": "tsc & prettier src --write --loglevel error & wait"
+    "pre-push": "concurrently -r 'tsc' 'prettier src --check' && npm run test-all",
+    "pre-commit": "concurrently -r 'tsc' 'prettier src --write --loglevel error'"
   },
   "pre-commit": "pre-commit",
   "pre-push": "pre-push",
@@ -46,6 +46,7 @@
     "@types/react-dom": "^18.0.5",
     "@vitejs/plugin-react": "^1.3.2",
     "c8": "^7.11.3",
+    "concurrently": "^7.2.2",
     "happy-dom": "^5.3.1",
     "pre-commit": "^1.2.2",
     "pre-push": "^0.1.2",
