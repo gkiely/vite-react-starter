@@ -29,7 +29,7 @@
     "view-coverage": "osascript ./scripts/open-browser.scpt 'Code coverage report' 'coverage/index.html'",
     "install-latest": "npm i $(npm run -s get-latest)",
     "get-latest": "vite-node ./scripts/get-latest.ts",
-    "pre-push": "tsc && prettier src --check && npm test-all",
+    "pre-push": "tsc && prettier src --check && npm run test-all",
     "pre-commit": "tsc && prettier src --write --loglevel error"
   },
   "pre-commit": "pre-commit",
