@@ -30,7 +30,7 @@
     "install-latest": "npm i $(npm run -s get-latest)",
     "get-latest": "vite-node ./scripts/get-latest.ts",
     "pre-push": "tsc && prettier src --check && npm run test-all",
-    "pre-commit": "tsc && prettier src --write --loglevel error"
+    "pre-commit": "tsc & prettier src --write --loglevel error & wait"
   },
   "pre-commit": "pre-commit",
   "pre-push": "pre-push",
