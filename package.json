@@ -20,7 +20,7 @@
   "scripts": {
     "start": "npm run fast-install && npm run dev",
     "dev": "vite",
-    "fast-install": "npm i --prefer-offline --progress=false --no-audit",
+    "fast-install": "npm i --prefer-offline --progress=false --no-audit --no-fund",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
