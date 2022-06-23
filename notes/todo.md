@@ -1,3 +1,1 @@
-- pre-commit
-- pre-push
 - github action on PR
