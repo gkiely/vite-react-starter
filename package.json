@@ -25,7 +25,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test-all": "vitest run",
-    "coverage": "vitest run --coverage && npm run view-coverage",
+    "coverage": "vitest run; npm -s run view-coverage",
     "view-coverage": "osascript ./scripts/open-browser.scpt 'Code coverage report' 'coverage/index.html'",
     "install-latest": "npm i $(npm run -s get-latest)",
     "get-latest": "vite-node ./scripts/get-latest.ts",

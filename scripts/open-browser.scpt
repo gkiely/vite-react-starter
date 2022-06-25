@@ -33,11 +33,13 @@ on run argv
         # Check starts with: https://stackoverflow.com/a/5960510/1845423
         if title of currentTab starts with myTitle then
           # Set current tab active first, else it's ignored
-          set (active tab index of currentWindow) to tabIndex           
+          set (active tab index of currentWindow) to tabIndex
           # https://stackoverflow.com/a/34375804/1845423
           set index of currentWindow to 1
           delay 0.01
           do shell script "open -a Google\\ Chrome"
+          # https://stackoverflow.com/q/17119184/1845423
+          tell currentTab to reload
           set success to true
         end if
       end repeat
