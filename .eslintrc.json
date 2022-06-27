@@ -7,7 +7,6 @@
     "plugin:escompat/typescript"
   ],
   "rules": {
-    "escompat/no-bigint": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
     "@typescript-eslint/ban-ts-comment": [
       "warn",
