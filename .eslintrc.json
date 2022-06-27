@@ -1,0 +1,13 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "react-app",
+    "plugin:escompat/typescript"
+  ],
+  "rules": {
+    "escompat/no-bigint": 0,
+    "@typescript-eslint/no-non-null-assertion": 0
+  }
+}
