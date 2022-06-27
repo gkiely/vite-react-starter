@@ -26,6 +26,7 @@
     "noUncheckedIndexedAccess": true,
     "importsNotUsedAsValues": "error",
     "useDefineForClassFields": true,
+    "useUnknownInCatchVariables": true,
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
