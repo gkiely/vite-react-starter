@@ -3,8 +3,8 @@
 - Typescript and React
 - Strict typescript config
 - Vitest
+- ESLint and Prettify
 - pre-commit and pre-push hooks
-- codecov coverage
 
 ### Scripts
 
