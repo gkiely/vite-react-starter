@@ -29,7 +29,7 @@
     "test": "vitest",
     "test-all": "vitest run",
     "e2e": "cypress open --browser electron --component",
-    "test:e2e": "cypress run --component",
+    "test:e2e": "cypress run -q --component --config video=false",
     "tsc": "tsc",
     "coverage": "vitest run; npm -s run view-coverage",
     "view-coverage": "osascript ./scripts/open-browser.scpt 'Code coverage report' 'coverage/index.html'",
