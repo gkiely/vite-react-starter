@@ -2,8 +2,9 @@
 
 - Typescript and React
 - Strict typescript config
-- Vitest
 - ESLint and Prettify
+- Vitest
+- Cypress
 - pre-commit and pre-push hooks
 
 ### Scripts
@@ -17,3 +18,5 @@
 `test-all`: Run all tests
 
 `install-latest`: Updates all dependencies
+
+`test:e2e`: Runs all Cypress component tests 
