@@ -28,7 +28,7 @@
     "importsNotUsedAsValues": "error",
     "useDefineForClassFields": true,
     "useUnknownInCatchVariables": true,
-    "types": ["@testing-library/jest-dom"]
+    "types": ["@testing-library/jest-dom", "@testing-library/cypress"]
   },
   "include": ["src", "cypress/support/cypress.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
