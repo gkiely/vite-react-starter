@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
     "incremental": true,
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
@@ -15,7 +16,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    // Type checking rules
+    // Type checking
     "strict": true,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
@@ -27,7 +28,8 @@
     "importsNotUsedAsValues": "error",
     "useDefineForClassFields": true,
     "useUnknownInCatchVariables": true,
+    "types": ["@testing-library/jest-dom", "@testing-library/cypress"]
   },
-  "include": ["src"],
+  "include": ["src", "cypress/support/cypress.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
