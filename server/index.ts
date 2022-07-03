@@ -39,4 +39,12 @@ app.post('/api/post/:id', validate(postSchema), async c => {
   return c.json({});
 });
 
+// app.request('http://localhost:8080/api/post/1234', {
+//   method: 'POST',
+//   body: {
+//     id: '1234',
+//     title: 'Hello World',
+//   },
+// });
+
 export default app;
