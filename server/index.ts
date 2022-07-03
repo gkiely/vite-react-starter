@@ -4,7 +4,7 @@ import { bodyParse } from 'hono/body-parse';
 import { z } from 'zod';
 
 const postSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   title: z.string(),
 });
 type Post = z.infer<typeof postSchema>;
@@ -12,7 +12,7 @@ type Post = z.infer<typeof postSchema>;
 const app = new Hono();
 
 app.get('/api/posts', prettyJSON(), c => {
-  const posts = [
+  const posts: Post[] = [
     { id: 1, title: 'Good Morning' },
     { id: 2, title: 'Good Aternoon' },
     { id: 3, title: 'Good Evening' },
@@ -25,10 +25,9 @@ app.get('/api/post/:id', async c => {
   return c.json({});
 });
 
-app.post('/api/post/:id', bodyParse(), async c => {
+app.post('/api/post', bodyParse(), async c => {
   try {
     const { req } = c;
-    const id = req.param('id');
     const body = postSchema.parse(req.parsedBody);
     return c.json(body);
   } catch (err) {
