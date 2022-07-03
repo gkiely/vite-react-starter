@@ -1,8 +1,11 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
+    "baseUrl": "./server",
+    "skipLibCheck": true,
     "composite": true,
-    "module": "esnext",
-    "moduleResolution": "node"
+    "noEmit": false,
+    "types": ["@cloudflare/workers-types"]
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "server/index.ts"]
 }

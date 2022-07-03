@@ -16,8 +16,19 @@ export default defineConfig({
       '100': true, // 100% coverage
     },
   },
-  plugins: [react(), checker({ typescript: true })],
+  plugins: [
+    react(),
+    checker({ typescript: true }),
+    checker({
+      typescript: {
+        tsconfigPath: './tsconfig.node.json',
+      },
+    }),
+  ],
   server: {
+    proxy: {
+      '/api': 'http://localhost:8080/api',
+    },
     open: true,
   },
   json: {

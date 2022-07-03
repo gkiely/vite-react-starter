@@ -22,7 +22,8 @@
   ],
   "scripts": {
     "start": "npm run fast-install && npm run dev",
-    "dev": "vite",
+    "dev": "concurrently -r -g -k 'npm:server' 'vite'",
+    "server": "wrangler dev --port 8080 --local server/index.ts",
     "fast-install": "npm i --prefer-offline --progress=false --no-audit --no-fund",
     "build": "tsc && vite build",
     "preview": "vite preview",
@@ -31,6 +32,7 @@
     "e2e": "cypress open --browser electron --component",
     "test:e2e": "cypress run -q --component --config video=false",
     "tsc": "tsc",
+    "tsc-node": "tsc --project tsconfig.node.json",
     "coverage": "vitest run; npm -s run view-coverage",
     "view-coverage": "osascript ./scripts/open-browser.scpt 'Code coverage report' 'coverage/index.html'",
     "install-latest": "npm i $(npm run -s get-latest)",
@@ -44,8 +46,10 @@
   "pre-push": "pre-push",
   "dependencies": {
     "@types/node": "^18.0.0",
+    "hono": "^1.6.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zod": "^3.17.3"
   },
   "browserslist": {
     "development": [
@@ -53,6 +57,7 @@
     ]
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^3.14.0",
     "@testing-library/cypress": "^8.0.3",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -76,6 +81,7 @@
     "vite": "^2.9.13",
     "vite-node": "^0.16.0",
     "vite-plugin-checker": "^0.4.6",
-    "vitest": "^0.16.0"
+    "vitest": "^0.16.0",
+    "wrangler": "^2.0.15"
   }
 }
