@@ -4,6 +4,7 @@
     "skipLibCheck": true,
     "composite": true,
     "noEmit": false,
+    "resolveJsonModule": true,
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "scripts"]
 }

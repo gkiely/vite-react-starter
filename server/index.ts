@@ -13,7 +13,7 @@ const app = new Hono();
 
 app.get('/api/posts', prettyJSON(), c => {
   const posts: Post[] = [
-    { id: 1, title: 'Good Morning' },
+    { id: 0, title: 'Good Morning' },
     { id: 2, title: 'Good Aternoon' },
     { id: 3, title: 'Good Evening' },
     { id: 4, title: 'Good Night' },

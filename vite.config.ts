@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
+import wranglerPlugin from './scripts/wrangler-plugin';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,7 +17,7 @@ export default defineConfig({
       '100': true, // 100% coverage
     },
   },
-  plugins: [react(), checker({ typescript: true })],
+  plugins: [react(), wranglerPlugin(), checker({ typescript: true })],
   server: {
     proxy: {
       '/api': 'http://localhost:8080/',

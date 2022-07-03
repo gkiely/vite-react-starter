@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "start": "npm run fast-install && npm run dev",
-    "dev": "concurrently -r -g -k 'npm:server' 'vite'",
+    "dev": "vite",
     "server": "wrangler dev --port 8080 --local server/index.ts",
     "fast-install": "npm i --prefer-offline --progress=false --no-audit --no-fund",
     "build": "tsc && vite build",
