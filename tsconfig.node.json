@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "baseUrl": "./server",
     "skipLibCheck": true,
     "composite": true,
     "noEmit": false,
     "resolveJsonModule": true,
   },
-  "include": ["vite.config.ts", "scripts"]
+  "include": ["vite.config.ts", "scripts", "package.json"]
 }

@@ -1,4 +1,4 @@
-- Server
+- Server deploy
 - Setup route structure
 
   - Use SDUI for V1

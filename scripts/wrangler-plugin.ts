@@ -25,7 +25,8 @@ const wranglerPlugin = () => {
       // Clean up
       child.on('close', code => {
         if (code === 0 && child.killed) return;
-        if (code === 0) process.exit();
+        delete global.child;
+        process.exit();
       });
 
       // Set global
