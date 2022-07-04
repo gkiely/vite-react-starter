@@ -1,6 +1,13 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
+import wranglerPlugin from './scripts/wrangler-plugin';
+
+const viteNode = process.env.npm_lifecycle_script.startsWith('vite-node');
+
+const plugins = viteNode
+  ? [checker({ typescript: true })]
+  : [react(), wranglerPlugin(), checker({ typescript: true })];
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,8 +23,11 @@ export default defineConfig({
       '100': true, // 100% coverage
     },
   },
-  plugins: [react(), checker({ typescript: true })],
+  plugins,
   server: {
+    proxy: {
+      '/api': 'http://localhost:8080/',
+    },
     open: true,
   },
   json: {

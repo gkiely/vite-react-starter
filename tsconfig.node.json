@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
+    "baseUrl": "./server",
+    "skipLibCheck": true,
     "composite": true,
-    "module": "esnext",
-    "moduleResolution": "node"
+    "noEmit": false,
+    "resolveJsonModule": true,
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "scripts", "package.json"]
 }
