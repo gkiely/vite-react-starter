@@ -4,6 +4,7 @@
 - Strict typescript config
 - [ESLint](https://github.com/eslint/eslint) and [Prettier](https://github.com/prettier/prettier)
 - [Vitest](https://github.com/vitest-dev/vitest)
+- [React testing library](https://github.com/testing-library/react-testing-library)
 - [Cypress](https://github.com/cypress-io/cypress)
 - pre-commit and pre-push hooks
 - [Wrangler2](https://github.com/cloudflare/wrangler2) and [Hono](https://github.com/honojs/hono)
