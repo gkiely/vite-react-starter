@@ -5,7 +5,7 @@
 
 import { spawn } from 'node:child_process';
 
-const wranglerPlugin = () => {
+const wranglerPlugin = ({ path = 'server/index.ts', port = '8080', local = true } = {}) => {
   return {
     name: 'wrangler',
     async buildStart() {
@@ -13,7 +13,7 @@ const wranglerPlugin = () => {
       if (global.child) global.child.kill();
 
       // Spawn
-      const child = spawn('wrangler', ['dev', '--port', '8080', '--local', 'server/index.ts'], {
+      const child = spawn('wrangler', ['dev', '--port', port, local ? '--local' : '', path], {
         stdio: 'inherit',
       });
 
