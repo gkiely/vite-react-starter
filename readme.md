@@ -1,11 +1,12 @@
 ### Sensible vite project starter
 
-- Typescript and React
+- [Typescript](https://github.com/microsoft/TypeScript) and [React](https://github.com/facebook/react)
 - Strict typescript config
-- ESLint and Prettify
-- Vitest
-- Cypress
+- [ESLint](https://github.com/eslint/eslint) and [Prettier](https://github.com/prettier/prettier)
+- [Vitest](https://github.com/vitest-dev/vitest)
+- [Cypress](https://github.com/cypress-io/cypress)
 - pre-commit and pre-push hooks
+- [Wrangler2](https://github.com/cloudflare/wrangler2) and [Hono](https://github.com/honojs/hono)
 
 ### Scripts
 
@@ -17,6 +18,6 @@
 
 `test-all`: Run all tests
 
-`install-latest`: Updates all dependencies
+`test:e2e`: Runs all Cypress component tests
 
-`test:e2e`: Runs all Cypress component tests 
+`install-latest`: Updates all dependencies
