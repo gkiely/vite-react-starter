@@ -1,4 +1,4 @@
-import { Context, Hono } from 'hono';
+import { Hono } from 'hono';
 import { prettyJSON } from 'hono/pretty-json';
 import { bodyParse } from 'hono/body-parse';
 import { z } from 'zod';

@@ -5,7 +5,7 @@
 
 import { spawn } from 'node:child_process';
 
-const wranglerPlugin = ({ path = 'server/index.ts', port = '8080', local = true } = {}) => {
+const wranglerPlugin = ({ path = 'index.ts', port = '8080', local = true } = {}) => {
   return {
     name: 'wrangler',
     async buildStart() {
