@@ -4,6 +4,8 @@
   "rules": {
     "no-debugger": "warn",
     "no-console": "warn",
+    "no-else-return": "warn",
+    "no-implicit-coercion": "error",
     "@typescript-eslint/no-explicit-any": "warn",
     "testing-library/no-debugging-utils": "warn",
     "@typescript-eslint/ban-ts-comment": [
