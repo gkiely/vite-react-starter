@@ -1,5 +1,5 @@
 {
-  "name": "vite-app-starter",
+  "name": "vite-react-starter",
   "private": false,
   "version": "0.0.0",
   "author": "Grant Kiely <grant.kiely@gmail.com>",
@@ -9,10 +9,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gkiely/vite-app-starter.git"
+    "url": "git+https://github.com/gkiely/vite-react-starter.git"
   },
   "bugs": {
-    "url": "https://github.com/gkiely/vite-app-starter/issues"
+    "url": "https://github.com/gkiely/vite-react-starter/issues"
   },
   "keywords": [
     "vite",
@@ -37,8 +37,9 @@
     "coverage": "vitest run; npm -s run view-coverage",
     "view-coverage": "osascript ./scripts/open-browser.scpt 'Code coverage report' 'coverage/index.html'",
     "install-latest": "npm i $(npm run -s get-latest)",
-    "lint-check": "eslint --cache --ext ts,tsx src --max-warnings=0",
-    "lint-fix": "eslint --cache --fix --ext ts,tsx src",
+    "lint-check-dev": "eslint --cache --ext ts,tsx src --max-warnings=0",
+    "lint-check": "eslint -c .eslintrc.prod.json --cache --ext ts,tsx src --max-warnings=0",
+    "lint-fix": "eslint -c .eslintrc.prod.json --cache --fix --ext ts,tsx src",
     "get-latest": "vite-node ./scripts/get-latest.ts",
     "pre-push": "concurrently -r -g 'tsc' 'prettier src --check' 'npm:lint-check' 'npm:test-all'",
     "pre-commit": "concurrently -r 'tsc' 'prettier src --write --loglevel error' && npm run lint-fix"
@@ -72,6 +73,8 @@
     "eslint": "^8.19.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-escompat": "^3.2.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-testing-library": "^5.5.1",
     "happy-dom": "^6.0.0",
     "local-cypress": "^1.2.6",
     "nodemon": "^2.0.18",
