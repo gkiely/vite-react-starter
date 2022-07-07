@@ -4,7 +4,7 @@
     "es2022": true
   },
   "parser": "@typescript-eslint/parser",
-  "plugins": ["regexp"],
+  "plugins": ["@typescript-eslint", "regexp"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",

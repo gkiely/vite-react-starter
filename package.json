@@ -37,7 +37,6 @@
     "coverage": "vitest run; npm -s run view-coverage",
     "view-coverage": "osascript ./scripts/open-browser.scpt 'Code coverage report' 'coverage/index.html'",
     "install-latest": "npm i $(npm run -s get-latest)",
-    "lint-check-dev": "eslint --cache --ext ts,tsx src --max-warnings=0",
     "lint-check": "eslint -c .eslintrc.prod.json --cache --ext ts,tsx src --max-warnings=0",
     "lint-fix": "eslint -c .eslintrc.prod.json --cache --fix --ext ts,tsx src",
     "get-latest": "vite-node ./scripts/get-latest.ts",
