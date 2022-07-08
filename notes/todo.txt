@@ -4,6 +4,7 @@
 - Setup routes
   - Use SDUI for V1
 
+- eslint hook rules are not working, start a new project and figure out why
 - Front end deploy to pages
 - Server deploy to workers
 
