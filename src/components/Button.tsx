@@ -1,12 +1,16 @@
-import type React from 'react';
+import * as styles from './Button.css';
 
 interface ButtonProps
   extends React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>,
     React.AriaAttributes {}
 
 const Button: React.FC<ButtonProps> = props => {
-  const { className, children, ...rest } = props;
-  return <button {...rest}>{children}</button>;
+  const { children, ...rest } = props;
+  return (
+    <button className={styles.button} {...rest}>
+      {children}
+    </button>
+  );
 };
 
 export default Button;
