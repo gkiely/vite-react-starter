@@ -3,14 +3,14 @@
 exports[`App > should render 1`] = `
 <DocumentFragment>
   <div
-    class="App"
+    class="App__4h283f1"
   >
     <header
-      class="App-header"
+      class="App__4h283f3"
     >
       <img
         alt="logo"
-        class="App-logo"
+        class="App__4h283f2"
         src="/src/logo.svg"
       />
       <p>
@@ -18,6 +18,7 @@ exports[`App > should render 1`] = `
       </p>
       <p>
         <button
+          class="Button__1bfezsx0"
           type="button"
         >
           count is: 0
@@ -32,7 +33,7 @@ exports[`App > should render 1`] = `
       </p>
       <p>
         <a
-          class="App-link"
+          class="App__4h283f4"
           href="https://reactjs.org"
           rel="noopener noreferrer"
           target="_blank"
@@ -41,7 +42,7 @@ exports[`App > should render 1`] = `
         </a>
          | 
         <a
-          class="App-link"
+          class="App__4h283f4"
           href="https://vitejs.dev/guide/features.html"
           rel="noopener noreferrer"
           target="_blank"

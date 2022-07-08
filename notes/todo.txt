@@ -1,0 +1,5 @@
+- Setup routes
+  - Use SDUI for V1
+
+- Front end deploy to pages
+- Server deploy to workers
