@@ -1,10 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import * as styles from './App.css';
 import Button from './components/Button';
+import { Post, postsSchema } from '../server/worker';
+
+const fetchPosts = async (s: string): Promise<Post[]> => {
+  try {
+    const response = await fetch(s);
+    const data = await response.json();
+    return postsSchema.parse(data);
+  } catch (e) {
+    return [];
+  }
+};
 
 function App() {
   const [count, setCount] = useState(0);
+  const [posts, setPosts] = useState<Post[]>([]);
+  useEffect(() => {
+    fetchPosts('/api/posts').then(setPosts);
+  }, []);
 
   return (
     <div className={styles.app}>
@@ -39,6 +54,11 @@ function App() {
           </a>
         </p>
       </header>
+      {posts.map(post => (
+        <div key={post.id}>
+          <h1>{post.title}</h1>
+        </div>
+      ))}
     </div>
   );
 }

@@ -1,5 +1,22 @@
+- Setup basic example of msw not working and submit issue to vitest
+  - I expect relative paths to work
+- Find out why eslint hook rules are not working
 - Setup routes
   - Use SDUI for V1
 
 - Front end deploy to pages
 - Server deploy to workers
+
+msw
+// import { setupServer } from 'msw/node';
+// import { rest } from 'msw';
+
+// const server = setupServer(
+//   rest.get('http://localhost:3000/api/posts', (_req, res, ctx) => {
+//     console.log('rest request');
+//     return res(ctx.json(posts));
+//   })
+// );
+// beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+// afterEach(() => server.resetHandlers());
+// afterAll(() => server.close());

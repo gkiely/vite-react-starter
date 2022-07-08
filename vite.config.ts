@@ -24,7 +24,7 @@ export default defineConfig(({ command }) => ({
     coverage: {
       enabled: true,
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.css.ts'],
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/**/*.css.ts'],
       '100': true, // 100% coverage
     },
   },
