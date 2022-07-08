@@ -1,0 +1,27 @@
+Folder structure
+- src
+  - html (maybe replace these with public?)
+  - img
+  - app
+    - store: zustand store
+    - routes
+    - sections
+    - containers
+    - components
+    - modules: Grouping of elements that are re-used in multiple components
+    - elements
+  - utils
+
+Routing
+Option 1: SDUI
+- All routes are rendered by default
+- clicking on something is like clicking on a link
+  - Route automatically requests next route
+  - Could use service workers or not
+- Use server push to update UI
+
+Option 2: new-architecture
+- createRoute
+  - Every interaction goes through route
+  - Uses xstate to handle the states, requests
+  - Could use service workers or not
