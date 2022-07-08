@@ -2,8 +2,9 @@
 
 - [Typescript](https://github.com/microsoft/TypeScript) and [React](https://github.com/facebook/react)
 - Strict typescript config
+- [Vanilla extract](https://vanilla-extract.style)
 - [ESLint](https://github.com/eslint/eslint) and [Prettier](https://github.com/prettier/prettier)
-- [Vitest](https://github.com/vitest-dev/vitest)
+- [Vitest](https://vitest.dev)
 - [React testing library](https://github.com/testing-library/react-testing-library)
 - [Cypress](https://github.com/cypress-io/cypress)
 - pre-commit and pre-push hooks
