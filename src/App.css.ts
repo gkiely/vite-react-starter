@@ -1,4 +1,5 @@
 import { keyframes, style } from '@vanilla-extract/css';
+import { calc } from '@vanilla-extract/css-utils';
 
 export const rotate = keyframes({
   from: {
@@ -30,16 +31,10 @@ export const header = style({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: 'calc(10px + 2vmin)',
+  fontSize: calc.add('10px', '2vmin'),
   color: 'white',
 });
 
 export const link = style({
   color: '#61dafb',
 });
-
-// @media (prefers-reduced-motion: no-preference) {
-//   .App-logo {
-//     animation: App-logo-spin infinite 20s linear;
-//   }
-// }

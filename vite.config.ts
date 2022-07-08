@@ -15,10 +15,16 @@ export default defineConfig(({ command }) => ({
     globals: true,
     setupFiles: ['./setup.vitest.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
+    exclude: ['src/**/*.css.ts'],
+    css: false,
+    deps: {
+      fallbackCJS: true,
+    },
     // https://github.com/bcoe/c8#cli-options--configuration
     coverage: {
       enabled: true,
       include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.css.ts'],
       '100': true, // 100% coverage
     },
   },
