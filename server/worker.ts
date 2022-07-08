@@ -11,7 +11,7 @@ export const postsSchema = z.array(postSchema);
 export type Post = z.infer<typeof postSchema>;
 
 const app = new Hono();
-const posts: Post[] = [
+export const posts: Post[] = [
   { id: '1', title: 'Good Morning' },
   { id: '2', title: 'Good Aternoon' },
   { id: '3', title: 'Good Evening' },

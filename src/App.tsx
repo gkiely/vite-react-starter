@@ -5,15 +5,20 @@ import Button from './components/Button';
 import { Post, postsSchema } from '../server/worker';
 
 const fetchPosts = async (s: string): Promise<Post[]> => {
-  const response = await fetch(s);
-  return postsSchema.parse(await response.json());
+  try {
+    const response = await fetch(s);
+    const data = await response.json();
+    return postsSchema.parse(data);
+  } catch (e) {
+    return [];
+  }
 };
 
 function App() {
   const [count, setCount] = useState(0);
   const [posts, setPosts] = useState<Post[]>([]);
   useEffect(() => {
-    fetchPosts('/api/posts').then(posts => setPosts(posts));
+    fetchPosts('/api/posts').then(setPosts);
   }, []);
 
   return (
