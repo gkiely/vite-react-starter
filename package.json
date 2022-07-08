@@ -31,7 +31,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test-all": "vitest run",
-    "test-update": "vitest -u",
+    "test-update": "vitest run -u",
     "e2e": "cypress open --browser electron --component",
     "test:e2e": "cypress run -q --component --config video=false",
     "tsc": "tsc",
