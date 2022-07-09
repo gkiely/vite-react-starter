@@ -28,7 +28,7 @@
     "importsNotUsedAsValues": "error",
     "useDefineForClassFields": true,
     "useUnknownInCatchVariables": true,
-    "types": ["@types/node", "@cloudflare/workers-types", "@testing-library/jest-dom", "@testing-library/cypress"]
+    "types": ["@types/node", "@cloudflare/workers-types", "vitest/globals", "@testing-library/jest-dom", "@testing-library/cypress"]
   },
   "include": ["src", "server", "cypress/support/cypress.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

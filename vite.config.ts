@@ -15,7 +15,6 @@ export default defineConfig(({ command }) => ({
     globals: true,
     setupFiles: ['./setup.vitest.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
-    exclude: ['src/**/*.css.ts'],
     css: false,
     deps: {
       fallbackCJS: true,

@@ -1,16 +1,21 @@
 import http from 'node:http';
+import { posts } from './worker';
 
 http
-  .createServer((_req, res) => {
-    // 1. Tell the browser everything is OK (Status code 200), and the data is in plain text
-    res.writeHead(200, {
-      'Content-Type': 'text/plain',
-    });
-
-    // 2. Write the announced text to the body of the page
-    res.write('Hello, World!\n');
-
-    // 3. Tell the server that all of the response headers and body have been sent
+  .createServer((req, res) => {
+    if (req.url === '/api/posts') {
+      res.writeHead(200, {
+        'Content-Type': 'application/json',
+      });
+      // @ts-ignore
+      posts[0].title = 'sup';
+      res.write(JSON.stringify(posts));
+    } else {
+      res.writeHead(200, {
+        'Content-Type': 'text/plain',
+      });
+      res.write('Hello, World!\n');
+    }
     res.end();
   })
   .listen(process.env.port ?? 8080); // 4. Tells the server what port to be on
