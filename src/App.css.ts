@@ -26,7 +26,7 @@ export const logo = style({
 
 export const header = style({
   backgroundColor: '#282c34',
-  minHeight: '100vh',
+  minHeight: '90vh',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',

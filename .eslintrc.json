@@ -43,7 +43,6 @@
     "no-iterator": "error",
     "no-param-reassign": "error",
     "no-shadow-restricted-names": "error",
-    "no-promise-executor-return": "error",
     "no-constant-binary-expression": "error",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-empty-function": "off",
