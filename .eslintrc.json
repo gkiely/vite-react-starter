@@ -4,7 +4,7 @@
     "es2022": true
   },
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "regexp"],
+  "plugins": ["@typescript-eslint", "regexp", "validate-jsx-nesting", "functional"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -39,11 +39,12 @@
     "no-eq-null": "error",
     "no-extra-bind": "error",
     "no-invalid-this": "error",
-    "no-loop-func": "error",
+    "functional/no-loop-statement": "error",
     "no-iterator": "error",
     "no-param-reassign": "error",
     "no-shadow-restricted-names": "error",
     "no-constant-binary-expression": "error",
+    "validate-jsx-nesting/no-invalid-jsx-nesting": "error",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/ban-ts-comment": "off"

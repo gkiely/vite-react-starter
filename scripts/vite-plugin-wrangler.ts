@@ -42,11 +42,11 @@ const wranglerPlugin = ({ path = 'index.ts', port = 8080, local = true } = {}): 
   return {
     name: 'wrangler',
     configureServer: server => {
-      // It takes wrangler 200ms to restart
+      // It takes wrangler 300ms to restart
       // delay request until server is ready
       server.middlewares.use(async (req, _res, next) => {
         if (hotUpdatePath.endsWith(path) && req.url.includes(path)) {
-          await new Promise(resolve => setTimeout(resolve, 200));
+          await new Promise(resolve => setTimeout(resolve, 300));
           hotUpdatePath = '';
         }
         next();
