@@ -47,6 +47,7 @@ const wranglerPlugin = ({ path = 'index.ts', port = 8080, local = true } = {}): 
       server.middlewares.use(async (req, _res, next) => {
         if (hotUpdatePath.endsWith(path) && req.url.includes(path)) {
           await new Promise(resolve => setTimeout(resolve, 200));
+          hotUpdatePath = '';
         }
         next();
       });
@@ -54,8 +55,8 @@ const wranglerPlugin = ({ path = 'index.ts', port = 8080, local = true } = {}): 
     handleHotUpdate(ctx) {
       hotUpdatePath = ctx.file;
     },
-    config() {
-      hotUpdatePath = '';
+    buildStart() {
+      hotUpdatePath = global.child ? '' : path;
       if (!global.child) {
         startServer({ path, port, local });
       }
