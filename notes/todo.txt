@@ -1,12 +1,17 @@
-- Setup basic example of msw not working and submit issue to vitest
-  - I expect relative paths to work
-- Find out why eslint hook rules are not working
+- Try miniflare instead of wrangler? Or just wait until js api is supported
+https://github.com/cloudflare/miniflare
+https://github.com/cloudflare/wrangler2/issues/771
+
 - Setup routes
   - Use SDUI for V1
 
-- eslint hook rules are not working, start a new project and figure out why
+
 - Front end deploy to pages
 - Server deploy to workers
+
+- eslint hook rules are not working, start a new project and figure out why  
+- Setup basic example of msw not working and submit issue to vitest
+  - I expect relative paths to work
 
 msw
 // import { setupServer } from 'msw/node';
