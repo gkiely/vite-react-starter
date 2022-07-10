@@ -4,11 +4,11 @@ import App from './App';
 import { posts } from '../server/worker';
 
 const mockFetchOnce = (path: string, payload: unknown) => {
-  return vi.spyOn(global, 'fetch').mockImplementationOnce((req, res) => {
-    if (req.toString().startsWith(path)) {
-      return Promise.resolve(new Response(JSON.stringify(payload)));
+  return vi.spyOn(global, 'fetch').mockImplementationOnce((req, _res) => {
+    if (!path || !req.toString().startsWith(path)) {
+      return Promise.reject(new Response('404 Not Found'));
     }
-    return Promise.reject(new Response('404 Not Found'));
+    return Promise.resolve(new Response(JSON.stringify(payload)));
   });
 };
 
@@ -22,9 +22,15 @@ describe('App', () => {
     fireEvent.click(button);
     expect(screen.getByText('count is: 1')).toBeInTheDocument();
   });
-  it('fail gracefully if no posts are returned', () => {
-    mockFetchOnce('/api/posts', {});
+  it('should fail gracefully if no posts are returned', () => {
+    mockFetchOnce('/api/posts', null);
     render(<App />);
     expect(screen.getByText('Hello Vite + React!')).toBeInTheDocument();
+  });
+  it('should show an error if the network request fails', async () => {
+    mockFetchOnce('', null);
+    render(<App />);
+    await screen.findByText('Could not load posts');
+    expect(screen.getByText('Could not load posts')).toBeInTheDocument();
   });
 });
