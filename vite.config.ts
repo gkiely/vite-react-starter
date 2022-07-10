@@ -8,9 +8,18 @@ const serverIndex = process.argv.indexOf('--server');
 const wranglerEnabled = serverIndex > -1;
 const serverPath = wranglerEnabled ? process.argv[serverIndex + 1] : '';
 
+if (process.env.NODE_ENV === 'test') {
+  console.clear();
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
   test: {
+    env: {
+      // Suppress: "ExperimentalWarning: The Fetch API is an experimental feature."
+      // Remove when fetch is no longer experimental
+      NODE_NO_WARNINGS: '1',
+    },
     environment: 'happy-dom',
     globals: true,
     setupFiles: ['./setup.vitest.ts'],
@@ -23,8 +32,7 @@ export default defineConfig(({ command }) => ({
     coverage: {
       enabled: true,
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.{ts,tsx}', 'src/**/*.css.ts'],
-      // https://testing.googleblog.com/2020/08/code-coverage-best-practices.html
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/**/*.css.ts', 'src/utils/test-utils.ts'],
       '100': true, // 100% coverage
     },
   },
