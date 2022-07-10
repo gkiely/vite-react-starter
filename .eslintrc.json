@@ -4,19 +4,20 @@
     "es2022": true
   },
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "testing-library", "regexp", "validate-jsx-nesting", "fp", "unicorn"],
+  "plugins": ["@typescript-eslint", "testing-library", "regexp", "validate-jsx-nesting", "fp", "unicorn", "promise"],
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
     "react-app",
     "plugin:react-hooks/recommended",
     "plugin:escompat/typescript",
     "plugin:regexp/recommended",
-    "plugin:testing-library/react"
+    "plugin:testing-library/react",
+    "plugin:promise/recommended",    
+    "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
     "no-undef-init": "warn",
-    "no-await-in-loop": "warn",
+    "no-await-in-loop": "error",
     "array-callback-return": "warn",
     "no-constructor-return": "warn",
     "no-duplicate-imports": "error",
@@ -34,7 +35,7 @@
     "prefer-regex-literals": "warn",
     "prefer-object-spread": "warn",
     "prefer-arrow-callback": "warn",
-    "no-unneeded-ternary": "warn",
+    "no-unneeded-ternary": "error",
     "object-shorthand": "warn",
     "no-useless-call": "error",
     "no-eq-null": "error",
@@ -44,9 +45,14 @@
     "no-param-reassign": "error",
     "no-shadow-restricted-names": "error",
     "no-constant-binary-expression": "error",
-    "validate-jsx-nesting/no-invalid-jsx-nesting": "error",
+    "no-console": "warn",
     "fp/no-class": "error",
     "fp/no-loops": "error",
+    "testing-library/no-debugging-utils": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-explicit-any": "error",
     "unicorn/no-document-cookie": "error",
     "unicorn/prefer-add-event-listener": "error",
     "unicorn/prefer-array-find": "error",
@@ -64,9 +70,11 @@
     "unicorn/prefer-dom-node-dataset": "error",
     "unicorn/prefer-dom-node-text-content": "error",
     "unicorn/prefer-logical-operator-over-ternary": "error",
-    "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/ban-ts-comment": "off",
-    "testing-library/no-debugging-utils": "off"
+    "unicorn/throw-new-error": "error",
+    "unicorn/no-zero-fractions": "error",
+    "unicorn/no-unsafe-regex": "error",
+    "unicorn/no-unreadable-iife": "error",
+    "unicorn/no-nested-ternary": "error",
+    "validate-jsx-nesting/no-invalid-jsx-nesting": "error"
   }
 }

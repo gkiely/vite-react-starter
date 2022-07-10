@@ -1,15 +1,15 @@
 {
   "extends": [".eslintrc.json"],
-  "plugins": ["testing-library"],
+  "plugins": ["testing-library", "no-only-tests"],
   "rules": {
     "no-debugger": "warn",
-    "no-console": "warn",
     "no-else-return": "warn",
     "no-implicit-coercion": "error",
-    "@typescript-eslint/no-explicit-any": "warn",
-    "testing-library/no-debugging-utils": "warn",
+    "no-only-tests/no-only-tests": ["error", {"fix": true}],
+    "testing-library/no-debugging-utils": "error",
+    "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/ban-ts-comment": [
-      "warn",
+      "error",
       {
         "ts-expect-error": "allow-with-description",
         "ts-ignore": "allow-with-description",

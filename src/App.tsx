@@ -10,15 +10,18 @@ const fetchPosts = async (s: string): Promise<Post[]> => {
     const data = await response.json();
     return postsSchema.parse(data);
   } catch {
-    return [];
+    throw new Error('Failed to fetch posts');
   }
 };
 
 function App() {
   const [count, setCount] = useState(0);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [error, setError] = useState('');
   useEffect(() => {
-    fetchPosts('/api/posts').then(setPosts);
+    fetchPosts('/api/posts')
+      .then(setPosts)
+      .catch(() => setError('Could not load posts'));
   }, []);
 
   return (
@@ -54,6 +57,7 @@ function App() {
           </a>
         </p>
       </header>
+      {error && <p>{error}</p>}
       {posts.map(post => (
         <div key={post.id}>
           <h1>{post.title}</h1>
