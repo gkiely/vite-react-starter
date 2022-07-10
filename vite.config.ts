@@ -24,6 +24,7 @@ export default defineConfig(({ command }) => ({
       enabled: true,
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/**/*.test.{ts,tsx}', 'src/**/*.css.ts'],
+      // https://testing.googleblog.com/2020/08/code-coverage-best-practices.html
       '100': true, // 100% coverage
     },
   },

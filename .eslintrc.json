@@ -45,7 +45,6 @@
     "no-param-reassign": "error",
     "no-shadow-restricted-names": "error",
     "no-constant-binary-expression": "error",
-    "no-console": "warn",
     "fp/no-class": "error",
     "fp/no-loops": "error",
     "testing-library/no-debugging-utils": "off",
