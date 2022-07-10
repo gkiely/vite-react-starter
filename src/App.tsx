@@ -9,7 +9,7 @@ const fetchPosts = async (s: string): Promise<Post[]> => {
     const response = await fetch(s);
     const data = await response.json();
     return postsSchema.parse(data);
-  } catch (e) {
+  } catch {
     return [];
   }
 };

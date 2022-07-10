@@ -4,14 +4,15 @@
     "es2022": true
   },
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "regexp", "validate-jsx-nesting", "fp"],
+  "plugins": ["@typescript-eslint", "testing-library", "regexp", "validate-jsx-nesting", "fp", "unicorn"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "react-app",
     "plugin:react-hooks/recommended",
     "plugin:escompat/typescript",
-    "plugin:regexp/recommended"
+    "plugin:regexp/recommended",
+    "plugin:testing-library/react"
   ],
   "rules": {
     "no-undef-init": "warn",
@@ -46,8 +47,26 @@
     "validate-jsx-nesting/no-invalid-jsx-nesting": "error",
     "fp/no-class": "error",
     "fp/no-loops": "error",
+    "unicorn/no-document-cookie": "error",
+    "unicorn/prefer-add-event-listener": "error",
+    "unicorn/prefer-array-find": "error",
+    "unicorn/prefer-array-flat": "error",
+    "unicorn/prefer-array-flat-map": "error",
+    "unicorn/prefer-array-some": "error",
+    "unicorn/prefer-date-now": "error",
+    "unicorn/prefer-default-parameters": "error",
+    "unicorn/prefer-includes": "error",
+    "unicorn/prefer-optional-catch-binding": "error",
+    "unicorn/prefer-regexp-test": "error",
+    "unicorn/prefer-string-slice": "error",
+    "unicorn/no-useless-length-check": "error",
+    "unicorn/no-useless-spread": "error",
+    "unicorn/prefer-dom-node-dataset": "error",
+    "unicorn/prefer-dom-node-text-content": "error",
+    "unicorn/prefer-logical-operator-over-ternary": "error",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/ban-ts-comment": "off"
+    "@typescript-eslint/ban-ts-comment": "off",
+    "testing-library/no-debugging-utils": "off"
   }
 }
