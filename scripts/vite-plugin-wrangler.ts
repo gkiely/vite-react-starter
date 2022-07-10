@@ -21,11 +21,6 @@ const startServer = ({ path, port, local }: Params) => {
     stdio: 'inherit',
   });
 
-  // Log a new line between server and wrangler banner
-  if (global.child) {
-    setTimeout(() => console.log(''));
-  }
-
   // Clean up
   child.on('close', code => {
     if (code === 0 && child.killed) return;
