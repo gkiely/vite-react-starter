@@ -7,7 +7,8 @@
 - [Vitest](https://vitest.dev)
 - [React testing library](https://github.com/testing-library/react-testing-library)
 - [Cypress](https://github.com/cypress-io/cypress)
-- [Wrangler](https://github.com/cloudflare/wrangler2) and [Hono](https://github.com/honojs/hono)
+- [Hono](https://github.com/honojs/hono)
+- [Wrangler](https://github.com/cloudflare/wrangler2) or [Node](https://nodejs.dev)
 - pre-commit and pre-push hooks
 
 ### Scripts
