@@ -1,3 +1,6 @@
+- Setup /route example with index page
+- See if there's a way to use react hooks, in a route, it would be useful
+
 - Setup routes
   - Use SDUI for V1
 - Front end deploy to pages

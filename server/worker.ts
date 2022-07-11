@@ -3,12 +3,15 @@ import { prettyJSON } from 'hono/pretty-json';
 import { bodyParse } from 'hono/body-parse';
 import { z } from 'zod';
 
+declare const MINIFLARE: boolean | number;
+const DEV = typeof MINIFLARE !== 'undefined';
+
 const postSchema = z.object({
   id: z.string(),
   title: z.string(),
 });
-export const postsSchema = z.array(postSchema);
 export type Post = z.infer<typeof postSchema>;
+export const postsSchema = z.array(postSchema);
 
 const app = new Hono();
 export const posts: Post[] = [
@@ -17,6 +20,13 @@ export const posts: Post[] = [
   { id: '3', title: 'Good Evening' },
   { id: '4', title: 'Good Night' },
 ];
+
+// Testing routes
+/* c8 ignore next 5 */
+if (DEV) {
+  // eslint-disable-next-line promise/catch-or-return
+  import('./dev-server').then(s => s.default(app));
+}
 
 app.get('/api/posts', prettyJSON(), c => {
   return c.json(posts);

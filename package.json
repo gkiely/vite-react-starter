@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "start": "npm run fast-install && npm run dev",
-    "dev": "vite -- --server server/worker.ts",
+    "dev": "vite -- --server",
     "dev:node": "concurrently -r -g 'npm:server:node' 'vite'",
     "server": "wrangler dev --port 8080 --local server/worker.ts",
     "server:node": "nodemon --watch server -e ts --exec 'vite-node server/node.ts'",

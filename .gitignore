@@ -16,6 +16,7 @@ tsconfig.tsbuildinfo
 tsconfig.node.tsbuildinfo
 coverage
 .eslintcache
+*.js
 
 # Editor directories and files
 .vscode/*

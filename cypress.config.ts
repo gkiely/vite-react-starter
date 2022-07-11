@@ -4,7 +4,7 @@ export default defineConfig({
   component: {
     devServer: {
       viteConfig: {
-        configFile: './vite.e2e.ts',
+        configFile: './vite.cypress.ts',
       },
       framework: 'react',
       bundler: 'vite',

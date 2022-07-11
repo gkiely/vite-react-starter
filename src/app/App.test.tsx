@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import App from './App';
-import { posts } from '../server/worker';
+import { posts } from '../../server/worker';
 import { mockRequestOnce } from './utils/test-utils';
 
 describe('App', () => {

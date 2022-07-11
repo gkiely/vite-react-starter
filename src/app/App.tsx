@@ -1,28 +1,17 @@
-import { useEffect, useState } from 'react';
-import logo from './logo.svg';
+import { useState } from 'react';
+import logo from 'img/logo.svg';
 import * as styles from './App.css';
 import Button from './components/Button';
-import { Post, postsSchema } from '../server/worker';
-
-const fetchPosts = async (s: string): Promise<Post[]> => {
-  try {
-    const response = await fetch(s);
-    const data = await response.json();
-    return postsSchema.parse(data);
-  } catch {
-    throw new Error('Failed to fetch posts');
-  }
-};
+import type { Post } from 'server/worker';
+import routes from './routes';
 
 function App() {
+  const r = routes['/']();
   const [count, setCount] = useState(0);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [error, setError] = useState('');
-  useEffect(() => {
-    fetchPosts('/api/posts')
-      .then(setPosts)
-      .catch(() => setError('Could not load posts'));
-  }, []);
+  // @ts-ignore - temporary until routes are set up
+  const posts = r.components[1].props.posts as Post[];
+  // @ts-ignore - temporary until routes are set up
+  const error = r.components[1].props.error as string;
 
   return (
     <div className={styles.app}>
