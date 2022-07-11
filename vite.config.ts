@@ -3,11 +3,11 @@ import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
 import wranglerPlugin from './scripts/vite-plugin-wrangler';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
+import path from 'node:path';
 
-const serverIndex = process.argv.indexOf('--server');
-const wranglerEnabled = serverIndex > -1;
-const serverPath = wranglerEnabled ? process.argv[serverIndex + 1] : '';
+const wranglerEnabled = process.argv.includes('--server');
 
+// Clear terminal on initial load for vitest
 if (process.env.NODE_ENV === 'test') {
   console.clear();
 }
@@ -16,14 +16,14 @@ if (process.env.NODE_ENV === 'test') {
 export default defineConfig(({ command }) => ({
   test: {
     env: {
-      // Suppress: "ExperimentalWarning: The Fetch API is an experimental feature."
+      // "ExperimentalWarning: The Fetch API is an experimental feature."
       // Remove when fetch is no longer experimental
       NODE_NO_WARNINGS: '1',
     },
     environment: 'happy-dom',
     globals: true,
     setupFiles: ['./setup.vitest.ts'],
-    include: ['src/**/*.test.{ts,tsx}'],
+    include: ['src/**/*.test.{ts,tsx}', 'server/**/*.test.{ts,tsx}'],
     css: false,
     deps: {
       fallbackCJS: true,
@@ -31,19 +31,47 @@ export default defineConfig(({ command }) => ({
     // https://github.com/bcoe/c8#cli-options--configuration
     coverage: {
       enabled: true,
-      include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.{ts,tsx}', 'src/**/*.css.ts', 'src/utils/test-utils.ts'],
+      include: ['src/**/*.{ts,tsx}', 'server/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'server/**/*.test.{ts,tsx}',
+        'src/**/*.css.ts',
+        'src/app/utils/test-utils.ts',
+        'server/dev-server.tsx',
+      ],
       '100': true, // 100% coverage
     },
   },
   plugins: [
     react(),
-    ...(wranglerEnabled ? [wranglerPlugin({ path: serverPath })] : []),
+    ...(wranglerEnabled
+      ? [
+          wranglerPlugin({
+            path: 'server/worker.ts',
+            config: 'server/wrangler.toml',
+          }),
+        ]
+      : []),
     checker({ typescript: true }),
     vanillaExtractPlugin({
       identifiers: command === 'serve' ? 'debug' : 'short',
     }),
   ],
+  resolve: {
+    alias: {
+      img: path.resolve(__dirname, './src/img'),
+      components: './src/components',
+      elements: './src/elements',
+      containers: './src/containers',
+      groups: './src/groups',
+      routes: './src/routes',
+      sections: './src/sections',
+      store: './src/store',
+      utils: './src/utils',
+      common: './src/common',
+      server: './server',
+    },
+  },
   server: {
     proxy: {
       '/api': 'http://localhost:8080/',

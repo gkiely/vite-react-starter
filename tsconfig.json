@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
     "incremental": true,
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
@@ -28,7 +27,20 @@
     "importsNotUsedAsValues": "error",
     "useDefineForClassFields": true,
     "useUnknownInCatchVariables": true,
-    "types": ["@types/node", "@cloudflare/workers-types", "vitest/globals", "@testing-library/jest-dom", "@testing-library/cypress"]
+    "types": ["@types/node", "vitest/globals", "@testing-library/jest-dom", "@testing-library/cypress"],
+    "paths": {
+      "components/*": ["./src/components"],
+      "elements/*": ["./src/elements"],
+      "containers/*": ["./src/containers"],
+      "groups/*": ["./src/groups"],
+      "routes/*": ["./src/routes"],
+      "sections/*": ["./src/sections"],
+      "store/*": ["./src/store"],
+      "utils/*": ["./src/utils"],
+      "img/*": ["./src/img"],
+      "server/*": ["./server/*"],
+      "common/*": ["./src/common"],
+    }
   },
   "include": ["src", "server", "cypress/support/cypress.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

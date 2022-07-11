@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "lib": ["ES2020"],
     "esModuleInterop": true,
     "baseUrl": "./server",
     "skipLibCheck": true,
     "composite": true,
     "noEmit": false,
     "resolveJsonModule": true,
+    "types": ["@types/node", "@cloudflare/workers-types"]
   },
   "include": ["vite.config.ts", "scripts", "package.json"]
 }

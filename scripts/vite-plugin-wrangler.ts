@@ -7,19 +7,33 @@ import { spawn } from 'node:child_process';
 import type { Plugin } from 'vite';
 
 type Params = {
-  path?: string;
-  port?: number;
-  local?: boolean;
+  config: string;
+  path: string;
+  port: number;
+  local: boolean;
 };
 
-const startServer = ({ path, port, local }: Params) => {
+const startServer = ({ path, port, local, config }: Params) => {
   // Restart
   if (global.child) global.child.kill();
 
   // Spawn
-  const child = spawn('wrangler', ['dev', '--port', `${port}`, local ? '--local' : '', path], {
-    stdio: 'inherit',
-  });
+  const child = spawn(
+    'wrangler',
+    [
+      'dev',
+      '--env',
+      'development',
+      '--port',
+      `${port}`,
+      local ? '--local' : '',
+      ...(config ? ['--config', config] : []),
+      path,
+    ],
+    {
+      stdio: 'inherit',
+    }
+  );
 
   // Clean up
   child.on('close', code => {
@@ -32,7 +46,12 @@ const startServer = ({ path, port, local }: Params) => {
   global.child = child;
 };
 
-const wranglerPlugin = ({ path = 'index.ts', port = 8080, local = true } = {}): Plugin => {
+const wranglerPlugin = ({
+  path = 'index.ts',
+  port = 8080,
+  local = true,
+  config = '',
+} = {}): Plugin => {
   let hotUpdatePath = '';
   return {
     name: 'wrangler',
@@ -53,7 +72,7 @@ const wranglerPlugin = ({ path = 'index.ts', port = 8080, local = true } = {}): 
     buildStart() {
       hotUpdatePath = global.child ? '' : path;
       if (!global.child) {
-        startServer({ path, port, local });
+        startServer({ path, port, local, config });
       }
     },
   };
