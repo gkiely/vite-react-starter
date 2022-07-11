@@ -1,25 +1,10 @@
 - Setup routes
   - Use SDUI for V1
-
 - Front end deploy to pages
 - Server deploy to workers
 
-Then
+Later
 - Setup node vite plugin so updates trigger a hot module reload
 - Try miniflare instead of wrangler? Or just wait until js api is supported in wrangler
 https://github.com/cloudflare/miniflare
 https://github.com/cloudflare/wrangler2/issues/771
-
-msw
-// import { setupServer } from 'msw/node';
-// import { rest } from 'msw';
-
-// const server = setupServer(
-//   rest.get('http://localhost:3000/api/posts', (_req, res, ctx) => {
-//     console.log('rest request');
-//     return res(ctx.json(posts));
-//   })
-// );
-// beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
-// afterEach(() => server.resetHandlers());
-// afterAll(() => server.close());
