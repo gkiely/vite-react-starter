@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
-import { DEV, SERVER_HOST } from 'utils/constants';
+import { DEV_SERVER, SERVER_HOST } from 'utils/constants';
 
 type RouteConfig = {
   components: Record<string, unknown>[];
   sections: string[];
 };
 
-const createRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;
+const createClientRoute = (
+  fn: () => [RouteConfig, React.Dispatch<React.SetStateAction<Required<State>>>]
+) => fn;
+const createServerRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;
 
 const fetchPosts = async (s: string): Promise<Post[]> => {
   try {
@@ -19,7 +22,13 @@ const fetchPosts = async (s: string): Promise<Post[]> => {
   }
 };
 
-const render = (posts: Post[], error = ''): RouteConfig => {
+type State = {
+  count?: number;
+  posts: Post[];
+  error?: string;
+};
+
+const render = (state: State = { count: 0, posts: [], error: '' }): RouteConfig => {
   return {
     sections: [],
     components: [
@@ -28,52 +37,74 @@ const render = (posts: Post[], error = ''): RouteConfig => {
         props: {
           title: 'Hello Vite + React',
           body: 'Update App.tsx and save to test HMR updates.',
-          links: [
-            {
-              to: 'https://reactjs.org/',
-              text: 'Learn React',
-            },
-            {
-              to: 'https://vitejs.dev/guide/features.html',
-              text: 'Vite Docs',
-            },
-          ],
         },
+        items: [
+          {
+            component: 'Button',
+            text: `count is: ${state.count}`,
+            action: {
+              type: 'add',
+              payload: {},
+            },
+          },
+          {
+            component: 'Button',
+            text: 'Add a post',
+            action: {
+              type: 'post',
+              payload: {
+                title: 'New Post',
+              },
+            },
+          },
+          {
+            to: 'https://reactjs.org/',
+            text: 'Learn React',
+          },
+          {
+            to: 'https://vitejs.dev/guide/features.html',
+            text: 'Vite Docs',
+          },
+        ],
       },
       {
         component: 'Posts',
         props: {
-          posts,
-          error,
-          DEV,
+          posts: state.posts,
+          error: state.error,
+          DEV_SERVER,
         },
       },
     ],
   };
 };
 
-const serverRoute = createRoute(async () => {
+const client = createClientRoute(() => {
+  const [state, setState] = useState<Required<State>>({
+    count: 0,
+    error: '',
+    posts: [],
+  });
+
+  useEffect(() => {
+    fetchPosts('/api/posts')
+      .then(posts => setState(s => ({ ...s, posts })))
+      .catch(() => setState(s => ({ ...s, error: 'Failed to fetch posts' })));
+  }, []);
+
+  return [render(state), setState];
+});
+
+const server = createServerRoute(async () => {
   try {
     const posts = await fetchPosts(`${SERVER_HOST}/api/posts`);
-    return render(posts);
+    return render({ posts });
   } catch (e) {
-    return render([], 'Could not load posts');
+    return render({ posts: [], error: 'Could not load posts' });
   }
 });
 
-const clientRoute = createRoute(() => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [error, setError] = useState('');
-  useEffect(() => {
-    fetchPosts('/api/posts')
-      .then(setPosts)
-      .catch(() => setError('Could not load posts'));
-  }, []);
-
-  return render(posts, error);
-});
-
 export default {
-  '/': clientRoute,
-  '/routes': serverRoute,
+  '/': client,
+  '/server': server,
 };

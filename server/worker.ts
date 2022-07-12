@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { prettyJSON } from 'hono/pretty-json';
 import { bodyParse } from 'hono/body-parse';
-import { DEV } from 'utils/constants';
+import { DEV_SERVER } from 'utils/constants';
 import { Post, postSchema } from './schemas';
 
 const app = new Hono();
@@ -14,7 +14,7 @@ export const posts: Post[] = [
 
 // Testing routes
 /* c8 ignore next 5 */
-if (DEV) {
+if (DEV_SERVER) {
   // eslint-disable-next-line promise/catch-or-return
   import('./dev-server').then(s => s.default(app));
 }

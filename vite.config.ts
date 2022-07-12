@@ -75,7 +75,7 @@ export default defineConfig(({ command }) => ({
   },
   server: {
     proxy: {
-      '/routes': 'http://localhost:8080/',
+      '/server': 'http://localhost:8080/',
       '/api': 'http://localhost:8080/',
     },
     open: true,
