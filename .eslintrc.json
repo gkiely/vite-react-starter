@@ -22,6 +22,7 @@
   ],
   "rules": {
     "import/no-anonymous-default-export": "off",
+    "promise/no-callback-in-promise": "off",
     "promise/catch-or-return": "warn",
     "no-undef-init": "warn",
     "no-await-in-loop": "error",

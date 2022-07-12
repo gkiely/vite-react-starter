@@ -5,12 +5,14 @@ import checker from 'vite-plugin-checker';
 import wranglerPlugin from './scripts/vite-plugin-wrangler';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import path from 'node:path';
+import clear from 'console-clear';
 
 const wranglerEnabled = process.argv.includes('--server');
 
 // Clear terminal on initial load for vitest
-if (process.env.NODE_ENV === 'test') {
-  console.clear();
+// Clearing after each test will require a PR to vitest
+if (process.env.NODE_ENV === 'test' && process.env.npm_lifecycle_event === 'test') {
+  clear();
 }
 
 // https://vitejs.dev/config/
@@ -46,7 +48,11 @@ export default defineConfig(({ command }) => ({
   },
   plugins: [
     react(),
-    wranglerEnabled ? wranglerPlugin() : null,
+    wranglerEnabled
+      ? wranglerPlugin({
+          path: './server/worker.ts',
+        })
+      : null,
     checker({ typescript: true }) as Plugin,
     vanillaExtractPlugin({
       identifiers: command === 'serve' ? 'debug' : 'short',

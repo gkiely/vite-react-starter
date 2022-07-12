@@ -2,9 +2,11 @@
  * Description:
  * Run wrangler as a vite plugin
  */
-
 import { spawn } from 'node:child_process';
 import type { Plugin } from 'vite';
+declare const global: typeof globalThis & {
+  child: ReturnType<typeof spawn>;
+};
 
 type Params = {
   config: string;
@@ -58,12 +60,14 @@ const wranglerPlugin = ({
     configureServer: server => {
       // It takes wrangler 300ms to restart
       // delay request until server is ready
-      server.middlewares.use(async (req, _res, next) => {
+      server.middlewares.use((req, _res, next) => {
         if (hotUpdatePath.endsWith(path) && req.url.includes(path)) {
-          await new Promise(resolve => setTimeout(resolve, 300));
+          const p = new Promise(resolve => setTimeout(resolve, 300));
+          p.then(next).catch(() => {});
           hotUpdatePath = '';
+        } else {
+          next();
         }
-        next();
       });
     },
     handleHotUpdate(ctx) {
