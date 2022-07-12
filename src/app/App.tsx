@@ -2,15 +2,15 @@ import { useState } from 'react';
 import logo from 'img/logo.svg';
 import * as styles from './App.css';
 import Button from './components/Button';
-import type { Post } from 'server/worker';
+import type { Post } from 'server/schemas';
 import routes from './routes';
 
 function App() {
   const r = routes['/']();
   const [count, setCount] = useState(0);
-  // @ts-ignore - temporary until routes are set up
+  // @ts-expect-error - temporary until routes are set up
   const posts = r.components[1].props.posts as Post[];
-  // @ts-ignore - temporary until routes are set up
+  // @ts-expect-error - temporary until routes are set up
   const error = r.components[1].props.error as string;
 
   return (

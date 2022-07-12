@@ -8,12 +8,14 @@ describe('App', () => {
     render(<App />);
     expect(screen.getByText('Hello Vite + React!')).toBeInTheDocument();
   });
+
   it('should count', () => {
     render(<App />);
     const button = screen.getByRole('button');
     fireEvent.click(button);
     expect(screen.getByText('count is: 1')).toBeInTheDocument();
   });
+
   it('should render posts', async () => {
     mockRequestOnce('/api/posts', posts);
     render(<App />);
@@ -26,6 +28,7 @@ describe('App', () => {
     render(<App />);
     expect(screen.getByText('Hello Vite + React!')).toBeInTheDocument();
   });
+
   it('should show an error if the network request fails', async () => {
     mockRequestOnce('/api/posts', null);
     render(<App />);

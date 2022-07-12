@@ -7,8 +7,7 @@ http
       res.writeHead(200, {
         'Content-Type': 'application/json',
       });
-      // @ts-ignore
-      posts[0].title = 'sup';
+      if (posts[0]) posts[0].title = 'sup';
       res.write(JSON.stringify(posts));
     } else {
       res.writeHead(200, {

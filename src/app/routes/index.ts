@@ -1,18 +1,17 @@
-// import EventEmitter from 'events';d
 import { useEffect, useState } from 'react';
-import { Post, postsSchema } from 'server/worker';
+import { Post, postsSchema } from 'server/schemas';
+import { DEV } from 'utils/constants';
 
 type RouteConfig = {
   components: Record<string, unknown>[];
   sections: string[];
 };
 
-const createRoute = (config: () => RouteConfig) => {
+const createRoute = (config: () => RouteConfig | Promise<RouteConfig>) => {
   return config;
 };
 
 const fetchPosts = async (s: string): Promise<Post[]> => {
-  // console.log('fetching posts');
   try {
     const response = await fetch(s);
     const data = await response.json();
@@ -22,15 +21,7 @@ const fetchPosts = async (s: string): Promise<Post[]> => {
   }
 };
 
-const route = createRoute(() => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [error, setError] = useState('');
-  useEffect(() => {
-    fetchPosts('/api/posts')
-      .then(setPosts)
-      .catch(() => setError('Could not load posts'));
-  }, []);
-
+const render = (posts: Post[], error = ''): RouteConfig => {
   return {
     sections: [],
     components: [
@@ -54,14 +45,37 @@ const route = createRoute(() => {
       {
         component: 'Posts',
         props: {
-          error,
           posts,
+          error,
+          DEV,
         },
       },
     ],
   };
+};
+
+const serverRoute = createRoute(async () => {
+  try {
+    const posts = await fetchPosts('/api/posts');
+    return render(posts);
+  } catch (e) {
+    return render([], 'Could not load posts');
+  }
+});
+
+const clientRoute = createRoute(() => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [error, setError] = useState('');
+  useEffect(() => {
+    fetchPosts('/api/posts')
+      .then(setPosts)
+      .catch(() => setError('Could not load posts'));
+  }, []);
+
+  return render(posts, error);
 });
 
 export default {
-  '/': route,
+  '/': clientRoute,
+  '/routes': serverRoute,
 };
