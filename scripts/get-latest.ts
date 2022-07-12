@@ -1,3 +1,4 @@
+/* eslint-disable prefer-template */
 import packageJSON from '../package.json';
 
 const deps =

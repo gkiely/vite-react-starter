@@ -1,4 +1,5 @@
-import app, { posts, postsSchema } from './worker';
+import { postsSchema } from './schemas';
+import app, { posts } from './worker';
 
 test('GET /api/posts', async () => {
   const res = await app.request('http://localhost/api/posts');
@@ -15,7 +16,7 @@ test('GET /api/post/:id', async () => {
   expect(data).toEqual(posts[0]);
 });
 
-test('GET:404 /api/post/:id', async () => {
+test('GET: 404 /api/post/:id', async () => {
   const res = await app.request('http://localhost/api/post/x');
   expect(res.status).toBe(404);
 });
@@ -35,7 +36,7 @@ test('POST /api/post/:id', async () => {
   expect(data).toEqual(posts);
 });
 
-test('POST:400 /api/post/:id', async () => {
+test('POST: 400 /api/post/:id', async () => {
   const res = await app.request('http://localhost/api/post/1', {
     method: 'POST',
   });

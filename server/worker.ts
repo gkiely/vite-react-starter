@@ -1,17 +1,8 @@
 import { Hono } from 'hono';
 import { prettyJSON } from 'hono/pretty-json';
 import { bodyParse } from 'hono/body-parse';
-import { z } from 'zod';
-
-declare const MINIFLARE: boolean | number;
-export const DEV = typeof MINIFLARE !== 'undefined';
-
-const postSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-});
-export type Post = z.infer<typeof postSchema>;
-export const postsSchema = z.array(postSchema);
+import { DEV } from 'utils/constants';
+import { Post, postSchema } from './schemas';
 
 const app = new Hono();
 export const posts: Post[] = [
@@ -28,9 +19,7 @@ if (DEV) {
   import('./dev-server').then(s => s.default(app));
 }
 
-app.get('/api/posts', prettyJSON(), c => {
-  return c.json(posts);
-});
+app.get('/api/posts', prettyJSON(), c => c.json(posts));
 
 app.get('/api/post/:id', async c => {
   const id = c.req.param('id');

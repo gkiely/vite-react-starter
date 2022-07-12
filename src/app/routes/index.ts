@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Post, postsSchema, DEV } from 'server/worker';
+import { Post, postsSchema } from 'server/schemas';
+import { DEV } from 'utils/constants';
 
 type RouteConfig = {
   components: Record<string, unknown>[];
@@ -15,7 +16,7 @@ const fetchPosts = async (s: string): Promise<Post[]> => {
     const response = await fetch(s);
     const data = await response.json();
     return postsSchema.parse(data);
-  } catch (e) {
+  } catch {
     throw new Error('Failed to fetch posts');
   }
 };
@@ -55,7 +56,7 @@ const render = (posts: Post[], error = ''): RouteConfig => {
 
 const serverRoute = createRoute(async () => {
   try {
-    const posts = await fetchPosts('http://localhost:8080/api/posts');
+    const posts = await fetchPosts('/api/posts');
     return render(posts);
   } catch (e) {
     return render([], 'Could not load posts');
@@ -75,5 +76,6 @@ const clientRoute = createRoute(() => {
 });
 
 export default {
-  '/': DEV ? serverRoute : clientRoute,
+  '/': clientRoute,
+  '/routes': serverRoute,
 };
