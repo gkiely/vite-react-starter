@@ -19,7 +19,9 @@ if (DEV) {
   import('./dev-server').then(s => s.default(app));
 }
 
-app.get('/api/posts', prettyJSON(), c => c.json(posts));
+app.get('/api/posts', prettyJSON(), async c => {
+  return c.json(posts);
+});
 
 app.get('/api/post/:id', async c => {
   const id = c.req.param('id');

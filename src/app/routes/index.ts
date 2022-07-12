@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
-import { DEV } from 'utils/constants';
+import { DEV, SERVER_HOST } from 'utils/constants';
 
 type RouteConfig = {
   components: Record<string, unknown>[];
@@ -56,7 +56,7 @@ const render = (posts: Post[], error = ''): RouteConfig => {
 
 const serverRoute = createRoute(async () => {
   try {
-    const posts = await fetchPosts('/api/posts');
+    const posts = await fetchPosts(`${SERVER_HOST}/api/posts`);
     return render(posts);
   } catch (e) {
     return render([], 'Could not load posts');
