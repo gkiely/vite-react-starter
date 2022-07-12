@@ -7,7 +7,7 @@ type RouteConfig = {
   sections: string[];
 };
 
-const createClientRoute = (
+const createRoute = (
   fn: () => [RouteConfig, React.Dispatch<React.SetStateAction<Required<State>>>]
 ) => fn;
 const createServerRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;
@@ -79,7 +79,7 @@ const render = (state: State = { count: 0, posts: [], error: '' }): RouteConfig 
   };
 };
 
-const client = createClientRoute(() => {
+const client = createRoute(() => {
   const [state, setState] = useState<Required<State>>({
     count: 0,
     error: '',
