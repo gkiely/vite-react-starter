@@ -12,6 +12,7 @@ function App() {
   // @ts-expect-error - temporary until routes are set up
   const error = route.components[1].props.error as string;
   // @ts-expect-error - temporary until routes are set up
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const count = route.components[0].items[0].text as string;
 
   return (

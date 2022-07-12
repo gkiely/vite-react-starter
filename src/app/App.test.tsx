@@ -4,7 +4,7 @@ import { posts } from '../../server/worker';
 import { mockRequestOnce } from './utils/test-utils';
 
 describe('App', () => {
-  it('should render', async () => {
+  it('should render', () => {
     render(<App />);
     expect(screen.getByText('Hello Vite + React!')).toBeInTheDocument();
   });
