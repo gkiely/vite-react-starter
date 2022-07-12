@@ -23,12 +23,18 @@ const fetchPosts = async (s: string): Promise<Post[]> => {
 };
 
 type State = {
-  count?: number;
+  count: number;
   posts: Post[];
-  error?: string;
+  error: string;
 };
 
-const render = (state: State = { count: 0, posts: [], error: '' }): RouteConfig => {
+const initialState: Required<State> = {
+  count: 0,
+  posts: [],
+  error: '',
+};
+
+const render = (state: State = initialState): RouteConfig => {
   return {
     sections: [],
     components: [
@@ -44,7 +50,9 @@ const render = (state: State = { count: 0, posts: [], error: '' }): RouteConfig 
             text: `count is: ${state.count}`,
             action: {
               type: 'add',
-              payload: {},
+              payload: {
+                count: state.count + 1,
+              },
             },
           },
           {
@@ -80,11 +88,7 @@ const render = (state: State = { count: 0, posts: [], error: '' }): RouteConfig 
 };
 
 const client = createRoute(() => {
-  const [state, setState] = useState<Required<State>>({
-    count: 0,
-    error: '',
-    posts: [],
-  });
+  const [state, setState] = useState<Required<State>>(initialState);
 
   useEffect(() => {
     fetchPosts('/api/posts')
@@ -98,9 +102,15 @@ const client = createRoute(() => {
 const server = createServerRoute(async () => {
   try {
     const posts = await fetchPosts(`${SERVER_HOST}/api/posts`);
-    return render({ posts });
+    return render({
+      ...initialState,
+      posts,
+    });
   } catch (e) {
-    return render({ posts: [], error: 'Could not load posts' });
+    return render({
+      ...initialState,
+      error: 'Could not load posts',
+    });
   }
 });
 
