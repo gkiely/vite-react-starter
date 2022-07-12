@@ -89,7 +89,7 @@ const client = createClientRoute(() => {
   useEffect(() => {
     fetchPosts('/api/posts')
       .then(posts => setState(s => ({ ...s, posts })))
-      .catch(() => setState(s => ({ ...s, error: 'Failed to fetch posts' })));
+      .catch(() => setState(s => ({ ...s, error: 'Could not load posts' })));
   }, []);
 
   return [render(state), setState];

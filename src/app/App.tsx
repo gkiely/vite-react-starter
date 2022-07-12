@@ -22,20 +22,18 @@ function App() {
         <p>
           <Button
             type="button"
-            onClick={() =>
+            onClick={() => {
               update(s => ({
                 ...s,
                 count: s.count + 1,
-              }))
-            }
+              }));
+            }}
           >
             {count}
           </Button>
         </p>
         <p>
-          <Button type="button" onClick={() => {}}>
-            Add a post
-          </Button>
+          <Button type="button">Add a post</Button>
         </p>
         <p>
           Update <code>App.tsx</code> and save to test HMR updates.

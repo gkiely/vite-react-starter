@@ -11,8 +11,9 @@ describe('App', () => {
 
   it('should count', () => {
     render(<App />);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: 'count is: 0' });
     fireEvent.click(button);
+
     expect(screen.getByText('count is: 1')).toBeInTheDocument();
   });
 
