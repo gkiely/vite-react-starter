@@ -1,3 +1,4 @@
+import { Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
@@ -45,15 +46,8 @@ export default defineConfig(({ command }) => ({
   },
   plugins: [
     react(),
-    ...(wranglerEnabled
-      ? [
-          wranglerPlugin({
-            path: 'server/worker.ts',
-            config: 'server/wrangler.toml',
-          }),
-        ]
-      : []),
-    checker({ typescript: true }),
+    wranglerEnabled ? wranglerPlugin() : null,
+    checker({ typescript: true }) as Plugin,
     vanillaExtractPlugin({
       identifiers: command === 'serve' ? 'debug' : 'short',
     }),
