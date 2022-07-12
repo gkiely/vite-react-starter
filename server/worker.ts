@@ -4,7 +4,7 @@ import { bodyParse } from 'hono/body-parse';
 import { z } from 'zod';
 
 declare const MINIFLARE: boolean | number;
-const DEV = typeof MINIFLARE !== 'undefined';
+export const DEV = typeof MINIFLARE !== 'undefined';
 
 const postSchema = z.object({
   id: z.string(),
@@ -41,7 +41,7 @@ app.get('/api/post/:id', async c => {
   return c.json<Post>(post);
 });
 
-app.post('/api/post/:id', bodyParse(), async c => {
+app.post('/api/post/:id', bodyParse(), c => {
   try {
     const { req } = c;
     const id = req.param('id');
