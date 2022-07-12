@@ -7,9 +7,7 @@ type RouteConfig = {
   sections: string[];
 };
 
-const createRoute = (config: () => RouteConfig | Promise<RouteConfig>) => {
-  return config;
-};
+const createRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;
 
 const fetchPosts = async (s: string): Promise<Post[]> => {
   try {
