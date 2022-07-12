@@ -2,7 +2,7 @@ import app, { posts } from 'server/worker';
 import { mockFetchOnce } from 'utils/test-utils';
 import routes from './';
 
-test.only('/routes', async () => {
+test('/routes', async () => {
   mockFetchOnce(app);
   const data = await routes['/routes']();
   // @ts-expect-error - temporary until I fix the type
