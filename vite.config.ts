@@ -1,4 +1,4 @@
-import { Plugin } from 'vite';
+import { Plugin, splitVendorChunkPlugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
@@ -57,7 +57,14 @@ export default defineConfig(({ command }) => ({
     vanillaExtractPlugin({
       identifiers: command === 'serve' ? 'debug' : 'short',
     }),
+    command === 'build' ? splitVendorChunkPlugin() : null,
   ],
+  // TODO
+  // Submit fix to esbuild for 'linked': https://github.com/evanw/esbuild/blob/master/pkg/api/api_impl.go#L1458
+  // or change to 'eof', read eof and move to txt and link
+  // esbuild: {
+  //   legalComments: 'linked',
+  // },
   resolve: {
     alias: {
       img: path.resolve(__dirname, './src/img'),
@@ -70,7 +77,7 @@ export default defineConfig(({ command }) => ({
       store: path.resolve(__dirname, './src/app/store'),
       utils: path.resolve(__dirname, './src/app/utils'),
       common: path.resolve(__dirname, './src/app/common'),
-      server: './server',
+      server: path.resolve(__dirname, './server'),
     },
   },
   server: {
