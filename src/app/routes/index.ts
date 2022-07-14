@@ -96,6 +96,16 @@ const client = createRoute(() => {
       .catch(() => setState(s => ({ ...s, error: 'Could not load posts' })));
   }, []);
 
+  // const update = (arg: SetStateAction<Partial<State>>) => {
+  //   if (typeof arg === 'function') {
+  //     return setState(s => ({ ...s, ...arg }));
+  //   }
+  //   return setState({
+  //     ...state,
+  //     ...arg,
+  //   });
+  // };
+
   return [render(state), setState];
 });
 

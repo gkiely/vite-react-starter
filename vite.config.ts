@@ -77,7 +77,7 @@ export default defineConfig(({ command }) => ({
       store: path.resolve(__dirname, './src/app/store'),
       utils: path.resolve(__dirname, './src/app/utils'),
       common: path.resolve(__dirname, './src/app/common'),
-      server: path.resolve(__dirname, './server'),
+      server: './server',
     },
   },
   server: {
