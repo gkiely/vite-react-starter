@@ -20,8 +20,6 @@ function App() {
   // eslint-disable-next-line
   const count = route.components[0].items[0].props.text as string;
 
-  console.log(route);
-
   return (
     <div className={styles.app}>
       <header className={styles.header}>

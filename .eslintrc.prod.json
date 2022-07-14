@@ -5,7 +5,6 @@
     "no-debugger": "warn",
     "no-else-return": "warn",
     "no-implicit-coercion": "error",
-    "no-console": "warn",
     "no-only-tests/no-only-tests": ["error", {"fix": true}],
     "testing-library/no-debugging-utils": "error",
     "@typescript-eslint/no-explicit-any": "error",
