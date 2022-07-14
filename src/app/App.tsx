@@ -5,15 +5,22 @@ import type { Post } from 'server/schemas';
 import routes from './routes';
 
 function App() {
-  const [route, update] = routes['/']();
+  const [route, update] = routes.client['/']();
   // const [count, setCount] = useState(0);
   // @ts-expect-error - temporary until routes are set up
   const posts = route.components[1].props.posts as Post[];
   // @ts-expect-error - temporary until routes are set up
   const error = route.components[1].props.error as string;
+
   // @ts-expect-error - temporary until routes are set up
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const count = route.components[0].items[0].text as string;
+  // eslint-disable-next-line
+  const button = route.components[0].items[0] as any;
+
+  // @ts-expect-error - temporary until routes are set up
+  // eslint-disable-next-line
+  const count = route.components[0].items[0].props.text as string;
+
+  console.log(route);
 
   return (
     <div className={styles.app}>
@@ -23,12 +30,8 @@ function App() {
         <p>
           <Button
             type="button"
-            onClick={() => {
-              update(s => ({
-                ...s,
-                count: s.count + 1,
-              }));
-            }}
+            // eslint-disable-next-line
+            onClick={() => update(button.update)}
           >
             {count}
           </Button>

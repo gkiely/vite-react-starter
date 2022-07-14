@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
+import { assertType } from 'utils';
 import { DEV_SERVER, SERVER_HOST } from 'utils/constants';
 
 type RouteConfig = {
@@ -7,10 +8,27 @@ type RouteConfig = {
   sections: string[];
 };
 
-const createRoute = (
-  fn: () => [RouteConfig, React.Dispatch<React.SetStateAction<Required<State>>>]
-) => fn;
+type SetState<S> = Dispatch<SetStateAction<S>>;
+type UpdateAction<S> = S | ((prevState: S) => Partial<S>);
+const createClientRoute = <S>(fn: () => [RouteConfig, Dispatch<UpdateAction<S>>, SetState<S>]) =>
+  fn;
 const createServerRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;
+const createRender = <S>(fn: (state: S) => RouteConfig) => fn;
+const createUpdate = <S>(setState: SetState<S>) => {
+  return (arg: UpdateAction<S>) => {
+    if (typeof arg === 'function') {
+      assertType<(prevState: S) => Partial<S>>(arg);
+      return setState(s => ({
+        ...s,
+        ...arg(s),
+      }));
+    }
+    return setState(s => ({
+      ...s,
+      ...arg,
+    }));
+  };
+};
 
 const fetchPosts = async (s: string): Promise<Post[]> => {
   try {
@@ -25,16 +43,16 @@ const fetchPosts = async (s: string): Promise<Post[]> => {
 type State = {
   count: number;
   posts: Post[];
-  error: string;
+  error?: string;
 };
 
-const initialState: Required<State> = {
+const initialState: State = {
   count: 0,
   posts: [],
   error: '',
 };
 
-const render = (state: State = initialState): RouteConfig => {
+const render = createRender<State>(state => {
   return {
     sections: [],
     components: [
@@ -47,17 +65,24 @@ const render = (state: State = initialState): RouteConfig => {
         items: [
           {
             component: 'Button',
-            text: `count is: ${state.count}`,
+            props: {
+              text: `count is: ${state.count}`,
+            },
+            update: {
+              count: state.count + 1,
+            },
             action: {
               type: 'add',
               payload: {
-                count: state.count + 1,
+                count: state.count,
               },
             },
           },
           {
             component: 'Button',
-            text: 'Add a post',
+            props: {
+              text: 'Add a post',
+            },
             action: {
               type: 'post',
               payload: {
@@ -85,10 +110,11 @@ const render = (state: State = initialState): RouteConfig => {
       },
     ],
   };
-};
+});
 
-const client = createRoute(() => {
-  const [state, setState] = useState<Required<State>>(initialState);
+const client = createClientRoute(() => {
+  const [state, setState] = useState<State>(initialState);
+  const update = createUpdate(setState);
 
   useEffect(() => {
     fetchPosts('/api/posts')
@@ -96,17 +122,7 @@ const client = createRoute(() => {
       .catch(() => setState(s => ({ ...s, error: 'Could not load posts' })));
   }, []);
 
-  // const update = (arg: SetStateAction<Partial<State>>) => {
-  //   if (typeof arg === 'function') {
-  //     return setState(s => ({ ...s, ...arg }));
-  //   }
-  //   return setState({
-  //     ...state,
-  //     ...arg,
-  //   });
-  // };
-
-  return [render(state), setState];
+  return [render(state), update, setState];
 });
 
 const server = createServerRoute(async () => {
@@ -125,6 +141,10 @@ const server = createServerRoute(async () => {
 });
 
 export default {
-  '/': client,
-  '/server': server,
+  client: {
+    '/': client,
+  },
+  server: {
+    '/': server,
+  },
 };
