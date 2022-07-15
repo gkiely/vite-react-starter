@@ -5,13 +5,16 @@ import type { Post } from 'server/schemas';
 import { useRoute } from './routes';
 
 function App() {
-  const [route, update] = useRoute('/');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [route, update, dispatch] = useRoute('/');
 
   // const [route, update] = routes.client['/']();
   // const [count, setCount] = useState(0);
   // @ts-expect-error - temporary until routes are set up
+  // eslint-disable-next-line
   const posts = route.components[1].props.posts as Post[];
   // @ts-expect-error - temporary until routes are set up
+  // eslint-disable-next-line
   const error = route.components[1].props.error as string;
 
   // @ts-expect-error - temporary until routes are set up
@@ -32,7 +35,9 @@ function App() {
             type="button"
             onClick={() => {
               // eslint-disable-next-line
-              update(button.update);
+              dispatch(button.action);
+              // eslint-disable-next-line
+              // update(button.update);
               // update(s => ({
               //   count: s.count + 1,
               // }));

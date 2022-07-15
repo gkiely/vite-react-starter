@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
 import { DEV_SERVER, SERVER_HOST } from 'utils/constants';
-import { createClientRoute, createRenderer, createServerRoute, createUpdate } from 'utils/routing';
+import {
+  createClientRoute,
+  createDispatch,
+  createReducer,
+  createRenderer,
+  createServerRoute,
+  createUpdate,
+} from 'utils/routing';
 
 const fetchPosts = async (s: string): Promise<Post[]> => {
   try {
@@ -46,9 +53,6 @@ const render = createRenderer<State>(state => {
             },
             action: {
               type: 'add',
-              payload: {
-                count: state.count,
-              },
             },
           },
           {
@@ -85,17 +89,31 @@ const render = createRenderer<State>(state => {
   };
 });
 
+type Actions = 'add';
+const reducer = createReducer<State, Actions>((state, action) => {
+  switch (action.type) {
+    case 'add':
+      return {
+        ...state,
+        count: state.count++,
+      };
+    default:
+      return state;
+  }
+});
+
 const client = createClientRoute(() => {
   const [state, setState] = useState<State>(initialState);
   const update = createUpdate(setState);
+  const dispatch = createDispatch(setState, reducer);
 
   useEffect(() => {
     fetchPosts('/api/posts')
-      .then(posts => setState(s => ({ ...s, posts })))
-      .catch(() => setState(s => ({ ...s, error: 'Could not load posts' })));
-  }, []);
+      .then(posts => update({ posts }))
+      .catch(() => update({ error: 'Could not load posts' }));
+  }, [update]);
 
-  return [render(state), update, setState];
+  return [render(state), update, dispatch];
 });
 
 const server = createServerRoute(async () => {
@@ -123,5 +141,9 @@ const routes = {
 };
 
 export const useRoute = (path: keyof typeof routes.client) => routes.client[path]();
+export const useRouteReducer = (path: keyof typeof routes.client) => {
+  const [route, , dispatch] = routes.client[path]();
+  return [route, dispatch] as const;
+};
 
 export default routes;

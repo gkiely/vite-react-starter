@@ -6,13 +6,14 @@ import { DEV } from 'utils/constants';
 if (DEV) {
   const showErrorOverlay = async (err: unknown) => {
     // Wait for checker overlay to show (5ms)
-    await delay(100);
+    await delay(10);
     const checkerOverlay = document.querySelector('vite-plugin-checker-error-overlay');
     if (checkerOverlay) return;
 
     // Only show first error
     const errorOverlay = document.querySelector('vite-error-overlay');
     if (errorOverlay) return;
+
     const ErrorOverlay = customElements.get('vite-error-overlay');
     if (!ErrorOverlay) {
       return;
