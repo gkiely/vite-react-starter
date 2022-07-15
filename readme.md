@@ -10,6 +10,8 @@
 - [Hono](https://github.com/honojs/hono)
 - [Wrangler](https://github.com/cloudflare/wrangler2) or [Node](https://nodejs.dev)
 - pre-commit and pre-push hooks
+- [Elm](https://guide.elm-lang.org/architecture/) approach to UI
+  - Model, View Update
 
 ### Scripts
 

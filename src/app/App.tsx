@@ -30,8 +30,20 @@ function App() {
         <p>
           <Button
             type="button"
-            // eslint-disable-next-line
-            onClick={() => update(button.update)}
+            onClick={() => {
+              // eslint-disable-next-line
+              update(button.update);
+              // update(s => ({
+              //   count: s.count + 1,
+              // }));
+              // update({
+              //   count: 1,
+              // });
+              // update(s => {
+              //   s.count = 10;
+              //   return s;
+              // });
+            }}
           >
             {count}
           </Button>

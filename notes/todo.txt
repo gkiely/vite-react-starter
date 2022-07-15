@@ -1,5 +1,7 @@
 - Setup / example using route and components
   - Server and client examples (JS and no-js)
+- Server render / and add to readme (client and server rendering)
+
 - Simulate adding a post
 
 - Sharing state between routes
