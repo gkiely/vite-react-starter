@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
-import { DEV_SERVER, SERVER_HOST } from 'utils/constants';
+import { useAsyncEffect } from 'utils';
+import { SERVER_HOST } from 'utils/constants';
 import {
   createClientRoute,
   createDispatch,
@@ -82,7 +83,6 @@ const render = createRenderer<State>(state => {
         props: {
           posts: state.posts,
           error: state.error,
-          DEV_SERVER,
         },
       },
     ],
@@ -105,10 +105,13 @@ const client = createClientRoute(() => {
   const update = createUpdate(setState);
   const dispatch = createDispatch(setState, reducer);
 
-  useEffect(() => {
-    fetchPosts('/api/posts')
-      .then(posts => update({ posts }))
-      .catch(() => update({ error: 'Could not load posts' }));
+  useAsyncEffect(async () => {
+    try {
+      const posts = await fetchPosts('/api/posts');
+      update({ posts });
+    } catch {
+      update({ error: 'Could not load posts' });
+    }
   }, [update]);
 
   return [render(state), update, dispatch];

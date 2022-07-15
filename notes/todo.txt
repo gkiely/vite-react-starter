@@ -12,6 +12,8 @@
   - onEnter has access to state
   - Global store
 
+- Add type builder for hono
+
 - Allow actions
 - Allow using machines
 - Ability to go from update -> createMachine

@@ -59,7 +59,6 @@
     "fp/no-loops": "error",
     "testing-library/no-debugging-utils": "off",
     "testing-library/render-result-naming-convention": "off",
-    "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/require-await": "warn",
     "@typescript-eslint/ban-ts-comment": [
