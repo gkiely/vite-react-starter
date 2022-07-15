@@ -25,13 +25,13 @@ describe('App', () => {
   });
 
   it('should fail gracefully if no posts are returned', () => {
-    mockRequestOnce('/api/posts', null);
+    mockRequestOnce('/api/posts');
     render(<App />);
     expect(screen.getByText('Hello Vite + React!')).toBeInTheDocument();
   });
 
   it('should show an error if the network request fails', async () => {
-    mockRequestOnce('/api/posts', null);
+    mockRequestOnce('/api/posts');
     render(<App />);
     await screen.findByText('Could not load posts');
     expect(screen.getByText('Could not load posts')).toBeInTheDocument();

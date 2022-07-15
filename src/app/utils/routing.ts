@@ -37,7 +37,7 @@ export const createUpdate = <S>(setState: SetState<S>) =>
     };
   }, [setState]);
 
-export const createDispatch =
+export const createSend =
   <S, A>(setState: SetState<S>, reducer: (state: S, action: A) => S) =>
   (action: A) =>
     setState(state => reducer(state, action));

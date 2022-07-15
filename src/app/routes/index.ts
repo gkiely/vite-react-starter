@@ -4,9 +4,9 @@ import { useAsyncEffect } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
 import {
   createClientRoute,
-  createDispatch,
   createReducer,
   createRenderer,
+  createSend,
   createServerRoute,
   createUpdate,
 } from 'utils/routing';
@@ -103,9 +103,10 @@ export const reducer = createReducer<State, Actions>((state, action) => {
 const client = createClientRoute(() => {
   const [state, setState] = useState<State>(initialState);
   const update = createUpdate(setState);
-  const dispatch = createDispatch(setState, reducer);
+  const send = createSend(setState, reducer);
 
   useAsyncEffect(async () => {
+    update({ error: '' });
     try {
       const posts = await fetchPosts('/api/posts');
       update({ posts });
@@ -114,7 +115,7 @@ const client = createClientRoute(() => {
     }
   }, [update]);
 
-  return [render(state), update, dispatch];
+  return [render(state), update, send];
 });
 
 const server = createServerRoute(async () => {
@@ -143,9 +144,9 @@ const routes = {
 
 /* c8 ignore start */
 export const useRoute = (path: keyof typeof routes.client) => routes.client[path]();
-export const useRouteReducer = (path: keyof typeof routes.client) => {
-  const [route, , dispatch] = routes.client[path]();
-  return [route, dispatch] as const;
+export const useRouteSend = (path: keyof typeof routes.client) => {
+  const [route, , send] = routes.client[path]();
+  return [route, send] as const;
 };
 
 export default routes;

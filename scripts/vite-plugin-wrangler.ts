@@ -15,7 +15,10 @@ type Params = {
   local: boolean;
 };
 
-const startServer = ({ path, port, local, config }: Params) => {
+const serverFlag = process.argv.findIndex(o => o === '--server');
+const serverPath = process.argv[serverFlag + 1];
+
+const startServer = ({ port, local, config }: Params) => {
   // Restart
   if (global.child) global.child.kill();
 
@@ -30,7 +33,7 @@ const startServer = ({ path, port, local, config }: Params) => {
       `${port}`,
       local ? '--local' : '',
       ...(config ? ['--config', config] : []),
-      path,
+      serverPath,
     ],
     {
       stdio: 'inherit',
@@ -63,7 +66,7 @@ const wranglerPlugin = ({
       server.middlewares.use((req, _res, next) => {
         if (hotUpdatePath.endsWith(path) && req.url.includes(path)) {
           const p = new Promise(resolve => setTimeout(resolve, 300));
-          p.then(next).catch(() => {});
+          p.then(next).catch(next);
           hotUpdatePath = '';
         } else {
           next();

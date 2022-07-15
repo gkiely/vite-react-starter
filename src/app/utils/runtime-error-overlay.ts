@@ -24,12 +24,12 @@ if (DEV) {
 
   window.addEventListener('error', ({ error }) => {
     showErrorOverlay(error)
-      .then(() => null)
+      .then(() => undefined)
       .catch(() => {});
   });
   window.addEventListener('unhandledrejection', ({ reason }) => {
     showErrorOverlay(reason)
-      .then(() => null)
+      .then(() => undefined)
       .catch(() => {});
   });
 

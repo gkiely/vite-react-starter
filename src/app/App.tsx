@@ -1,15 +1,12 @@
 import logo from 'img/logo.svg';
 import * as styles from './App.css';
-import Button from './components/Button';
+import Button from './elements/Button/Button';
 import type { Post } from 'server/schemas';
 import { useRoute } from './routes';
 
 function App() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [route, update, dispatch] = useRoute('/');
+  const [route, , send] = useRoute('/');
 
-  // const [route, update] = routes.client['/']();
-  // const [count, setCount] = useState(0);
   // @ts-expect-error - temporary until routes are set up
   // eslint-disable-next-line
   const posts = route.components[1].props.posts as Post[];
@@ -35,19 +32,7 @@ function App() {
             type="button"
             onClick={() => {
               // eslint-disable-next-line
-              dispatch(button.action);
-              // eslint-disable-next-line
-              // update(button.update);
-              // update(s => ({
-              //   count: s.count + 1,
-              // }));
-              // update({
-              //   count: 1,
-              // });
-              // update(s => {
-              //   s.count = 10;
-              //   return s;
-              // });
+              send(button.action);
             }}
           >
             {count}

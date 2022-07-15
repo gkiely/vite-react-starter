@@ -7,8 +7,6 @@ import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import path from 'node:path';
 import clear from 'console-clear';
 
-const wranglerEnabled = process.argv.includes('--server');
-
 // Clear terminal on initial load for vitest
 // Clearing after each test will require a PR to vitest
 if (process.env.NODE_ENV === 'test' && process.env.npm_lifecycle_event === 'test') {
@@ -49,11 +47,7 @@ export default defineConfig(({ command }) => ({
   },
   plugins: [
     react(),
-    wranglerEnabled
-      ? wranglerPlugin({
-          path: './server/worker.ts',
-        })
-      : null,
+    process.argv.includes('--server') ? wranglerPlugin() : undefined,
     checker({
       typescript: true,
       eslint: {
@@ -66,7 +60,7 @@ export default defineConfig(({ command }) => ({
     vanillaExtractPlugin({
       identifiers: command === 'serve' ? 'debug' : 'short',
     }),
-    command === 'build' ? splitVendorChunkPlugin() : null,
+    command === 'build' ? splitVendorChunkPlugin() : undefined,
   ],
   // TODO
   // Submit fix to esbuild for 'linked': https://github.com/evanw/esbuild/blob/master/pkg/api/api_impl.go#L1458

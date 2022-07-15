@@ -1,5 +1,8 @@
 - Setup / example using route and components
-  - Server and client examples (JS and no-js)
+  - Create a Header component
+  - Create a List component
+
+
 - Server render / and add to readme (client and server rendering)
 
 - Simulate adding a post
@@ -12,6 +15,7 @@
   - onEnter has access to state
   - Global store
 
+- Write an eslint plugin to require a catch block for async
 - Add type builder for hono
 
 - Allow actions
