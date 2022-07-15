@@ -1,34 +1,7 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
-import { assertType } from 'utils';
 import { DEV_SERVER, SERVER_HOST } from 'utils/constants';
-
-type RouteConfig = {
-  components: Record<string, unknown>[];
-  sections: string[];
-};
-
-type SetState<S> = Dispatch<SetStateAction<S>>;
-type UpdateAction<S> = S | ((prevState: S) => Partial<S>);
-const createClientRoute = <S>(fn: () => [RouteConfig, Dispatch<UpdateAction<S>>, SetState<S>]) =>
-  fn;
-const createServerRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;
-const createRender = <S>(fn: (state: S) => RouteConfig) => fn;
-const createUpdate = <S>(setState: SetState<S>) => {
-  return (arg: UpdateAction<S>) => {
-    if (typeof arg === 'function') {
-      assertType<(prevState: S) => Partial<S>>(arg);
-      return setState(s => ({
-        ...s,
-        ...arg(s),
-      }));
-    }
-    return setState(s => ({
-      ...s,
-      ...arg,
-    }));
-  };
-};
+import { createClientRoute, createRenderer, createServerRoute, createUpdate } from 'utils/routing';
 
 const fetchPosts = async (s: string): Promise<Post[]> => {
   try {
@@ -52,7 +25,7 @@ const initialState: State = {
   error: '',
 };
 
-const render = createRender<State>(state => {
+const render = createRenderer<State>(state => {
   return {
     sections: [],
     components: [

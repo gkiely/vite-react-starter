@@ -41,6 +41,7 @@ export default defineConfig(({ command }) => ({
         'src/**/*.css.ts',
         'src/app/utils/constants.ts',
         'src/app/utils/test-utils.ts',
+        'src/app/utils/runtime-error-overlay.ts',
         'server/dev-server.tsx',
       ],
       '100': true, // 100% coverage
