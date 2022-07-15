@@ -19,4 +19,5 @@ http
   })
   .listen(process.env.port ?? 8080); // 4. Tells the server what port to be on
 
+// eslint-disable-next-line no-console
 console.log('Server started: http://localhost:8080');

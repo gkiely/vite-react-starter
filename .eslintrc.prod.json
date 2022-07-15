@@ -2,7 +2,6 @@
   "extends": [".eslintrc.json"],
   "plugins": ["testing-library", "no-only-tests"],
   "rules": {
-    "no-debugger": "warn",
     "no-else-return": "warn",
     "no-implicit-coercion": "error",
     "no-only-tests/no-only-tests": ["error", {"fix": true}],

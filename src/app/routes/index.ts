@@ -140,7 +140,7 @@ const server = createServerRoute(async () => {
   }
 });
 
-export default {
+const routes = {
   client: {
     '/': client,
   },
@@ -148,3 +148,7 @@ export default {
     '/': server,
   },
 };
+
+export const useRoute = (path: keyof typeof routes.client) => routes.client[path]();
+
+export default routes;

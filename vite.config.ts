@@ -53,7 +53,15 @@ export default defineConfig(({ command }) => ({
           path: './server/worker.ts',
         })
       : null,
-    checker({ typescript: true }) as Plugin,
+    checker({
+      typescript: true,
+      eslint: {
+        lintCommand: 'eslint -c .eslintrc.json --cache --fix --ext ts,tsx src',
+        dev: {
+          logLevel: ['error'],
+        },
+      },
+    }) as Plugin,
     vanillaExtractPlugin({
       identifiers: command === 'serve' ? 'debug' : 'short',
     }),
@@ -77,7 +85,7 @@ export default defineConfig(({ command }) => ({
       store: path.resolve(__dirname, './src/app/store'),
       utils: path.resolve(__dirname, './src/app/utils'),
       common: path.resolve(__dirname, './src/app/common'),
-      server: './server',
+      server: command === 'serve' ? './server' : path.resolve(__dirname, './server'),
     },
   },
   server: {

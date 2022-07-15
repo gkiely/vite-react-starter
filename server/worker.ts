@@ -15,11 +15,11 @@ export const posts: Post[] = [
 // Testing routes
 /* c8 ignore next 5 */
 if (DEV_SERVER) {
-  // eslint-disable-next-line promise/catch-or-return
+  // eslint-disable-next-line
   import('./dev-server').then(s => s.default(app));
 }
 
-app.get('/api/posts', prettyJSON(), async c => {
+app.get('/api/posts', prettyJSON(), c => {
   return c.json(posts);
 });
 

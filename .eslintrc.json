@@ -26,6 +26,7 @@
     "promise/catch-or-return": "warn",
     "no-undef-init": "warn",
     "no-console": "warn",
+    "no-debugger": "warn",
     "no-await-in-loop": "error",
     "array-callback-return": "warn",
     "no-constructor-return": "warn",

@@ -2,10 +2,12 @@ import logo from 'img/logo.svg';
 import * as styles from './App.css';
 import Button from './components/Button';
 import type { Post } from 'server/schemas';
-import routes from './routes';
+import { useRoute } from './routes';
 
 function App() {
-  const [route, update] = routes.client['/']();
+  const [route, update] = useRoute('/');
+
+  // const [route, update] = routes.client['/']();
   // const [count, setCount] = useState(0);
   // @ts-expect-error - temporary until routes are set up
   const posts = route.components[1].props.posts as Post[];
