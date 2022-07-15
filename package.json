@@ -45,8 +45,8 @@
     "pre-commit": "concurrently -r -g 'tsc' 'npm:lint-fix && prettier src --write --loglevel error'"
   },
   "simple-git-hooks": {
-    "pre-commit": "npm run pre-commit",
-    "pre-push": "npm run pre-push"
+    "pre-commit": "pre-commit",
+    "pre-push": "pre-push"
   },
   "dependencies": {
     "hono": "^1.6.4",
