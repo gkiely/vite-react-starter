@@ -20,7 +20,7 @@ const fetchPosts = async (s: string): Promise<Post[]> => {
   }
 };
 
-type State = {
+export type State = {
   count: number;
   posts: Post[];
   error?: string;
@@ -90,15 +90,13 @@ const render = createRenderer<State>(state => {
 });
 
 type Actions = 'add';
-const reducer = createReducer<State, Actions>((state, action) => {
+export const reducer = createReducer<State, Actions>((state, action) => {
   switch (action.type) {
     case 'add':
       return {
         ...state,
-        count: state.count++,
+        count: state.count + 1,
       };
-    default:
-      return state;
   }
 });
 
@@ -140,6 +138,7 @@ const routes = {
   },
 };
 
+/* c8 ignore start */
 export const useRoute = (path: keyof typeof routes.client) => routes.client[path]();
 export const useRouteReducer = (path: keyof typeof routes.client) => {
   const [route, , dispatch] = routes.client[path]();
@@ -147,3 +146,4 @@ export const useRouteReducer = (path: keyof typeof routes.client) => {
 };
 
 export default routes;
+/* c8 ignore stop */

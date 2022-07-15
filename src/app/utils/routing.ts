@@ -37,12 +37,11 @@ export const createUpdate = <S>(setState: SetState<S>) =>
     };
   }, [setState]);
 
-export const createDispatch = <S, A>(
-  setState: SetState<S>,
-  reducer: (state: S, action: A) => S
-) => {
-  return (action: A) => setState(state => reducer(state, action));
-};
+export const createDispatch =
+  <S, A>(setState: SetState<S>, reducer: (state: S, action: A) => S) =>
+  (action: A) =>
+    setState(state => reducer(state, action));
 
-export const createReducer = <S, A>(fn: (state: S, action: Action<A>) => S) => fn;
+export const createReducer = <S, A>(fn: (state: Readonly<S>, action: Readonly<Action<A>>) => S) =>
+  fn;
 /* c8 ignore stop */
