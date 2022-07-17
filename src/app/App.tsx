@@ -1,5 +1,5 @@
 import { createElement } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import * as styles from './App.css';
 import { useRoute } from './routes';
 // import { assertType } from 'utils';
@@ -7,7 +7,7 @@ import * as Components from './components';
 
 function App() {
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [route, send] = useRoute(location.pathname);
 
   return (
