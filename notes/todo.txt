@@ -1,7 +1,13 @@
+- Define the props in the Header component
+  - Then pass the route those props
+  - We also need to pass the possible actions
+    - When property values are an array of object with a component key
+
 - Setup / example using route and components
   - Create a Header component
   - Create a List component
 
+- See why the switch case didn't fail without a default
 
 - Server render / and add to readme (client and server rendering)
 

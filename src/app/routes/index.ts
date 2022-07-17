@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
-import { useAsyncEffect } from 'utils';
+import { assertType, useAsyncEffect } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
 import {
   createClientRoute,
@@ -38,48 +38,60 @@ const render = createRenderer<State>(state => {
     sections: [],
     components: [
       {
+        id: 'Header',
         component: 'Header',
         props: {
-          title: 'Hello Vite + React',
-          body: 'Update App.tsx and save to test HMR updates.',
-        },
-        items: [
-          {
-            component: 'Button',
-            props: {
-              text: `count is: ${state.count}`,
-            },
-            update: {
-              count: state.count + 1,
-            },
-            action: {
-              type: 'add',
-            },
-          },
-          {
-            component: 'Button',
-            props: {
-              text: 'Add a post',
-            },
-            action: {
-              type: 'post',
-              payload: {
-                title: 'New Post',
+          title: 'Hello Vite + React!',
+          body: [
+            { text: 'Update ' },
+            { code: 'App.tsx' },
+            { text: ' and save to test HMR updates.' },
+          ],
+          count: state.count,
+          buttons: [
+            {
+              component: 'Button',
+              props: {
+                text: `count is: ${state.count}`,
+              },
+              action: {
+                type: 'add',
               },
             },
-          },
-          {
-            to: 'https://reactjs.org/',
-            text: 'Learn React',
-          },
-          {
-            to: 'https://vitejs.dev/guide/features.html',
-            text: 'Vite Docs',
-          },
-        ],
+            {
+              component: 'Button',
+              props: {
+                text: 'Add a post',
+              },
+              action: {
+                type: 'post',
+                payload: {
+                  title: 'New Post',
+                },
+              },
+            },
+          ],
+          links: [
+            {
+              element: 'Link',
+              props: {
+                to: 'https://reactjs.org/',
+                text: 'Learn React',
+              },
+            },
+            {
+              element: 'Link',
+              props: {
+                to: 'https://vitejs.dev/guide/features.html',
+                text: 'Vite Docs',
+              },
+            },
+          ],
+        },
       },
       {
-        component: 'Posts',
+        id: 'Posts',
+        component: 'List',
         props: {
           posts: state.posts,
           error: state.error,
@@ -97,6 +109,8 @@ export const reducer = createReducer<State, Actions>((state, action) => {
         ...state,
         count: state.count + 1,
       };
+    default:
+      return state;
   }
 });
 
@@ -115,7 +129,7 @@ const client = createClientRoute(() => {
     }
   }, [update]);
 
-  return [render(state), update, send];
+  return [render(state), send, update];
 });
 
 const server = createServerRoute(async () => {
@@ -143,10 +157,16 @@ const routes = {
 };
 
 /* c8 ignore start */
-export const useRoute = (path: keyof typeof routes.client) => routes.client[path]();
-export const useRouteSend = (path: keyof typeof routes.client) => {
-  const [route, , send] = routes.client[path]();
-  return [route, send] as const;
+export const useRoute = (path: string) => {
+  if (!Object.keys(routes.client).includes(path)) {
+    throw new Error(`No routes found for path: ${path}`);
+  }
+  assertType<keyof typeof routes.client>(path);
+  return routes.client[path]();
+};
+export const useRouteUpdate = (path: keyof typeof routes.client) => {
+  const [route, , update] = routes.client[path]();
+  return [route, update] as const;
 };
 
 export default routes;

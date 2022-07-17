@@ -1,0 +1,18 @@
+/**
+ * Add id's to components
+ */
+// const prepareRoute = (route: RouteConfig) => {
+//   resetIds();
+//   return {
+//     ...route,
+//     components: route.components.map(component => ({
+//       ...component,
+//       id:
+//         component.id ?? `${getId(component.component)}-${getHash(JSON.stringify(component.props))}`,
+//     })),
+//   };
+// };
+
+// const [getId, resetIds] = generateId();
+
+// return (state: S) => prepareRoute(render(state));

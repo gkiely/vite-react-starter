@@ -21,7 +21,6 @@
     "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
   "rules": {
-    "import/no-anonymous-default-export": "off",
     "promise/no-callback-in-promise": "off",
     "promise/catch-or-return": "warn",
     "no-undef-init": "warn",
@@ -41,7 +40,8 @@
     "no-alert": "warn",
     "yoda": "warn",
     "radix": ["warn", "as-needed"],
-    "prefer-template": "warn",
+    "import/first": "warn",
+    "import/no-anonymous-default-export": "error", // This is required for hot reloading
     "prefer-regex-literals": "warn",
     "prefer-object-spread": "warn",
     "prefer-arrow-callback": "warn",
@@ -56,7 +56,6 @@
     "no-shadow-restricted-names": "error",
     "no-constant-binary-expression": "error",
     "fp/no-class": "error",
-    "fp/no-loops": "error",
     "testing-library/no-debugging-utils": "off",
     "testing-library/render-result-naming-convention": "off",
     "@typescript-eslint/no-empty-function": "off",

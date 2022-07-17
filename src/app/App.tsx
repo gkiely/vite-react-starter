@@ -1,75 +1,27 @@
-import logo from 'img/logo.svg';
+import { createElement } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import * as styles from './App.css';
-import Button from './elements/Button/Button';
-import type { Post } from 'server/schemas';
 import { useRoute } from './routes';
+// import { assertType } from 'utils';
+import * as Components from './components';
 
 function App() {
-  const [route, , send] = useRoute('/');
-
-  // @ts-expect-error - temporary until routes are set up
-  // eslint-disable-next-line
-  const posts = route.components[1].props.posts as Post[];
-  // @ts-expect-error - temporary until routes are set up
-  // eslint-disable-next-line
-  const error = route.components[1].props.error as string;
-
-  // @ts-expect-error - temporary until routes are set up
-  // eslint-disable-next-line
-  const button = route.components[0].items[0] as any;
-
-  // @ts-expect-error - temporary until routes are set up
-  // eslint-disable-next-line
-  const count = route.components[0].items[0].props.text as string;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [route, send] = useRoute(location.pathname);
 
   return (
     <div className={styles.app}>
-      <header className={styles.header}>
-        <img src={logo} className={styles.logo} alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <Button
-            type="button"
-            onClick={() => {
-              // eslint-disable-next-line
-              send(button.action);
-            }}
-          >
-            {count}
-          </Button>
-        </p>
-        <p>
-          <Button type="button">Add a post</Button>
-        </p>
-        <p>
-          Update <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className={styles.link}
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className={styles.link}
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-      {error && <p>{error}</p>}
-      {posts.map(post => (
-        <div key={post.id}>
-          <h1>{post.title}</h1>
-        </div>
-      ))}
+      {route.components.map(({ id, component, props, update, action }) => {
+        return createElement(Components[component], {
+          ...props,
+          key: id,
+          update,
+          action,
+          // @ts-expect-error - needs typing
+          send,
+        });
+      })}
     </div>
   );
 }
