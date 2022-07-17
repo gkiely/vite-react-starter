@@ -1,3 +1,5 @@
+- Fix ({ props: {}})
+
 - Define the props in the Header component
   - Then pass the route those props
   - We also need to pass the possible actions

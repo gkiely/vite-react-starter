@@ -67,7 +67,6 @@
         "ts-nocheck": "allow-with-description"
       }
     ],
-    "@typescript-eslint/no-explicit-any": "error",
     "unicorn/no-document-cookie": "error",
     "unicorn/prefer-add-event-listener": "error",
     "unicorn/prefer-array-find": "error",

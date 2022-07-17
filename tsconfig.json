@@ -33,6 +33,7 @@
       "elements/*": ["./src/app/elements/*"],
       "containers/*": ["./src/app/containers/*"],
       "groups/*": ["./src/app/groups/*"],
+      "routes": ["./src/app/routes"],
       "routes/*": ["./src/app/routes/*"],
       "sections/*": ["./src/app/sections/*"],
       "store/*": ["./src/app/store/*"],

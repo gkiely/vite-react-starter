@@ -3,16 +3,19 @@ import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
 import type { Component, Element } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
+import { useSend } from 'routes';
 
 type Props = Component & {
-  count: number;
-  title: string;
-  body: Tags;
-  buttons: Element<{ text: string }>[];
-  links: Element<{ to: string; text: string }>[];
+  props: {
+    title: string;
+    body: Tags;
+    buttons: Element<{ text: string }>[];
+    links: Element<{ to: string; text: string }>[];
+  };
 };
 
-const Header = ({ count, body, title, buttons, links, send }: Props) => {
+const Header = ({ props: { body, title, buttons, links } }: Props) => {
+  const send = useSend();
   return (
     <header className={styles.header}>
       <img src={logo} className={styles.logo} alt="logo" />
@@ -21,8 +24,9 @@ const Header = ({ count, body, title, buttons, links, send }: Props) => {
         <p key={i}>
           <Button
             onClick={() => {
+              console.log(button.action);
               if (button.action) {
-                send?.(button.action);
+                send(button.action);
               }
             }}
           >
