@@ -1,21 +1,19 @@
 import logo from 'img/logo.svg';
 import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
-import { Component, Element, useSend } from 'utils/routing';
+import { Action, useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
 import { Fragment } from 'react';
+import type { CountActions, PostActions } from 'routes';
 
-export type HeaderProps = Component<
-  {
-    title: string;
-    body: Tags;
-    buttons: Required<Element<{ text: string }>>[];
-    links: Element<{ to: string; text: string }>[];
-  },
-  'Header'
->;
+export type Props = {
+  title: string;
+  body: Tags;
+  buttons: { id: string; action?: Action<CountActions | PostActions>; text: string }[];
+  links: { id: string; to: string; text: string }[];
+};
 
-const Header = ({ body, title, buttons, links }: HeaderProps) => {
+const Header = ({ body, title, buttons, links }: Props) => {
   const send = useSend();
   return (
     <header className={styles.header}>
@@ -25,7 +23,7 @@ const Header = ({ body, title, buttons, links }: HeaderProps) => {
         <p key={button.id}>
           <Button
             {...(button.action && {
-              onClick: () => send(button.action),
+              onClick: () => button.action && send(button.action),
             })}
           >
             {button.text}

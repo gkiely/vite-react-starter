@@ -1,15 +1,11 @@
 /* c8 ignore start */
-import { Component, Element } from 'utils/routing';
 
-export type ListProps = Component<
-  {
-    items: Required<Element<{ title: string }>>[];
-    error?: string;
-  },
-  'List'
->;
+export type Props = {
+  items: { title: string }[];
+  error: string;
+};
 
-const List = ({ items, error }: ListProps) => {
+const List = ({ items, error }: Props) => {
   if (error) {
     return <h1>{error}</h1>;
   }

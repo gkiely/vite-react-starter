@@ -1,5 +1,3 @@
-import { HeaderProps } from 'components/Header/Header';
-import { ListProps } from 'components/List/List';
 import { Dispatch, useEffect, useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
 import useSWR from 'swr/immutable';
@@ -13,13 +11,12 @@ import {
   createRenderer,
   createSend,
   createServerRoute,
-  createUpdate,
 } from 'utils/routing';
 
 export type State = {
   count: number;
   posts: Post[];
-  error?: string;
+  error: string;
 };
 
 const initialState: State = {
@@ -28,87 +25,54 @@ const initialState: State = {
   error: '',
 };
 
-const render = createRenderer<State, HeaderProps | ListProps>(state => {
+const render = createRenderer<State>(state => {
   return {
     sections: [],
     components: [
       {
+        id: 'Header',
         component: 'Header',
-        props: {
-          component: 'Header',
-          title: '',
-          body: [],
-          buttons: [],
-          links: [],
-        },
+        title: 'Hello Vite + React!',
+        body: [
+          { text: 'Update ' },
+          { code: 'App.tsx' },
+          { text: ' and save to test HMR updates.' },
+        ],
+        buttons: [
+          {
+            id: 'Button-count-add',
+            text: `count is: ${state.count}`,
+            action: {
+              type: countActions.add,
+            },
+          },
+          {
+            id: 'Button-post-add',
+            text: 'Add a post',
+            action: {
+              type: postActions.add,
+              payload: {
+                id: `${state.posts.length}-added`,
+                title: 'New Post',
+              },
+            },
+          },
+          {
+            id: 'Button-post-remove',
+            text: 'Remove a post',
+            action: {
+              type: postActions.remove,
+            },
+          },
+        ],
+        links: [],
       },
-      // {
-      //   component: 'Header',
-      //   props: {
-      //     title: 'Hello Vite + React!',
-      //     body: [
-      //       { text: 'Update ' },
-      //       { code: 'App.tsx' },
-      //       { text: ' and save to test HMR updates.' },
-      //     ],
-      //     buttons: [
-      //       {
-      //         element: 'Button',
-      //         props: {
-      //           text: `count is: ${state.count}`,
-      //           action: {
-      //             type: countActions.add,
-      //           },
-      //         },
-      //       },
-      //       {
-      //         element: 'Button',
-      //         props: {
-      //           text: 'Add a post',
-      //           action: {
-      //             type: postActions.add,
-      //             payload: {
-      //               id: `${state.posts.length}-added`,
-      //               title: 'New Post',
-      //             },
-      //           },
-      //         },
-      //       },
-      //       {
-      //         element: 'Button',
-      //         props: {
-      //           text: 'Remove a post',
-      //           action: {
-      //             type: postActions.remove,
-      //           },
-      //         },
-      //       },
-      //     ],
-      //     links: [
-      //       {
-      //         element: 'Link',
-      //         props: {
-      //           to: 'https://reactjs.org/',
-      //           text: 'Learn React',
-      //         },
-      //       },
-      //       {
-      //         element: 'Link',
-      //         props: {
-      //           to: 'https://vitejs.dev/guide/features.html',
-      //           text: 'Vite Docs',
-      //         },
-      //       },
-      //     ],
-      //   },
-      // },
-      // {
-      //   component: 'List',
-      //   props: {
-      //     items: state.posts,
-      //     error: state.error,
-      //   },
-      // },
+      {
+        id: 'List',
+        component: 'List',
+        items: state.posts,
+        error: state.error,
+      },
     ],
   };
 });
@@ -117,7 +81,7 @@ const render = createRenderer<State, HeaderProps | ListProps>(state => {
 /// TODO: add typing for action.payload
 // Either with zod or some other way
 const postActions = prefixedEnum('posts/', ['add', 'remove']);
-type PostActions = typeof postActions[keyof typeof postActions];
+export type PostActions = typeof postActions[keyof typeof postActions];
 export const postReducer = createReducer<State, PostActions>((state, action) => {
   switch (action.type) {
     case postActions.add:
@@ -136,7 +100,7 @@ export const postReducer = createReducer<State, PostActions>((state, action) => 
 }, Object.values(postActions));
 
 const countActions = prefixedEnum('count/', ['add']);
-type CountActions = typeof countActions[keyof typeof countActions];
+export type CountActions = typeof countActions[keyof typeof countActions];
 export const reducer = createReducer<State, CountActions>((state, action) => {
   switch (action.type) {
     case countActions.add:
@@ -164,20 +128,19 @@ const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {
 
 const client = createClientRoute(() => {
   const [state, setState] = useState<State>(initialState);
-  const update = createUpdate(setState);
   const reducers = combineReducers<State, Actions>(reducer, postReducer);
   const send = createSend(setState, reducers);
   const { data, error } = useSWR<Post[], Error>('/api/posts', fetchPosts);
 
   useEffect(() => {
     if (data) {
-      update(s => ({ posts: [...new Set([...s.posts, ...data])] }));
+      setState(s => ({ ...s, posts: [...new Set([...s.posts, ...data])] }));
     } else if (error) {
-      update({ error: error.message });
+      setState(s => ({ ...s, error: error.message }));
     }
-  }, [data, error, update]);
+  }, [data, error, setState]);
 
-  return [render(state), send, update];
+  return [render(state), send];
 });
 
 const server = createServerRoute(async () => {
@@ -212,13 +175,9 @@ export const useRoute = (path: string) => {
     throw new Error(`No routes found for path: ${path}`);
   }
   assertType<keyof typeof routes.client>(path);
-  const [route, send, update] = routes.client[path]();
+  const [route, send] = routes.client[path]();
   assertType<Dispatch<Action<string, unknown>>>(send);
-  return [route, send, update] as const;
-};
-export const useRouteUpdate = (path: keyof typeof routes.client) => {
-  const [route, , update] = routes.client[path]();
-  return [route, update] as const;
+  return [route, send] as const;
 };
 
 export default routes;
