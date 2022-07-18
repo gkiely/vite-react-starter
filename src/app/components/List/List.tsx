@@ -13,7 +13,7 @@ const List = ({ items, error }: Props) => {
   return (
     <div>
       {items.map((item, i) => (
-        <h1 key={item.id}>{item.title}</h1>
+        <h1 key={'List-' + item.id}>{item.title}</h1>
       ))}
     </div>
   );

@@ -3,15 +3,10 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
 import wranglerPlugin from './scripts/vite-plugin-wrangler';
+import clearVitest from './scripts/vite-plugin-clear-vitest';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import path from 'node:path';
-import clear from 'console-clear';
-
-// Clear terminal on initial load for vitest
-// Clearing after each test will require a PR to vitest
-if (process.env.NODE_ENV === 'test' && process.env.npm_lifecycle_event === 'test') {
-  clear();
-}
+const DEV_TEST = process.env.NODE_ENV === 'test' && process.env.npm_lifecycle_event === 'test';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
@@ -57,6 +52,8 @@ export default defineConfig(({ command }) => ({
         },
       },
     }) as Plugin,
+    // Clear terminal plugin for vitest
+    DEV_TEST ? clearVitest() : undefined,
     vanillaExtractPlugin({
       identifiers: command === 'serve' ? 'debug' : 'short',
     }),
@@ -65,9 +62,9 @@ export default defineConfig(({ command }) => ({
   // TODO
   // Submit fix to esbuild for 'linked': https://github.com/evanw/esbuild/blob/master/pkg/api/api_impl.go#L1458
   // or change to 'eof', read eof and move to txt and link
-  // esbuild: {
-  //   legalComments: 'linked',
-  // },
+  esbuild: {
+    legalComments: 'none',
+  },
   resolve: {
     alias: {
       img: path.resolve(__dirname, './src/img'),

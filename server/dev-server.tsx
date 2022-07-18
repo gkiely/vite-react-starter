@@ -1,7 +1,7 @@
 import type { Hono } from 'hono';
 import routes from '../src/app/routes';
 
-export default (app: Hono) => {
+const server = (app: Hono) => {
   app.get('/server', async c => {
     try {
       const json = await routes.server['/']();
@@ -11,3 +11,5 @@ export default (app: Hono) => {
     }
   });
 };
+
+export default server;

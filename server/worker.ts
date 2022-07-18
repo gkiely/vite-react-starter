@@ -3,6 +3,7 @@ import { prettyJSON } from 'hono/pretty-json';
 import { bodyParse } from 'hono/body-parse';
 import { DEV_SERVER } from 'utils/constants';
 import { Post, postSchema } from './schemas';
+// import { delayMiddleware } from 'utils';
 
 const app = new Hono();
 export const posts: Post[] = [
@@ -19,9 +20,8 @@ if (DEV_SERVER) {
   import('./dev-server').then(s => s.default(app));
 }
 
-app.get('/api/posts', prettyJSON(), c => {
-  return c.json(posts);
-});
+app.get('/api/posts', prettyJSON(), c => c.json(posts));
+// app.get('/api/posts', prettyJSON(), delayMiddleware(3000), c => c.json(posts));
 
 app.get('/api/post/:id', async c => {
   const id = c.req.param('id');

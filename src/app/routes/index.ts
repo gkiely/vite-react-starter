@@ -1,6 +1,7 @@
-import { Dispatch, useState } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
-import { prefixedEnum, assertType, useAsyncEffect } from 'utils';
+import useSWR from 'swr/immutable';
+import { prefixedEnum, assertType } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
 import {
   Action,
@@ -12,16 +13,6 @@ import {
   createServerRoute,
   createUpdate,
 } from 'utils/routing';
-
-const fetchPosts = async (s: string): Promise<Post[]> => {
-  try {
-    const response = await fetch(s);
-    const data = await response.json();
-    return postsSchema.parse(data);
-  } catch {
-    throw new Error('Failed to fetch posts');
-  }
-};
 
 export type State = {
   count: number;
@@ -65,7 +56,7 @@ const render = createRenderer<State>(state => {
                 action: {
                   type: postActions.add,
                   payload: {
-                    id: state.posts.length + 1,
+                    id: `${state.posts.length}-added`,
                     title: 'New Post',
                   },
                 },
@@ -149,21 +140,30 @@ export const reducer = createReducer<State, CountActions>((state, action) => {
 type Actions = CountActions & PostActions;
 /* c8 ignore end */
 
+const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {
+  try {
+    const response = await fetch(s, signal ? { signal } : {});
+    const data = await response.json();
+    return postsSchema.parse(data);
+  } catch {
+    throw new Error('Could not load posts');
+  }
+};
+
 const client = createClientRoute(() => {
   const [state, setState] = useState<State>(initialState);
   const update = createUpdate(setState);
   const reducers = combineReducers<State, Actions>(reducer, postReducer);
   const send = createSend(setState, reducers);
+  const { data, error } = useSWR<Post[], Error>('/api/posts', fetchPosts);
 
-  useAsyncEffect(async () => {
-    update({ error: '' });
-    try {
-      const posts = await fetchPosts('/api/posts');
-      update({ posts });
-    } catch {
-      update({ error: 'Could not load posts' });
+  useEffect(() => {
+    if (data) {
+      update(s => ({ posts: [...new Set([...s.posts, ...data])] }));
+    } else if (error) {
+      update({ error: error.message });
     }
-  }, [update]);
+  }, [data, error, update]);
 
   return [render(state), send, update];
 });
