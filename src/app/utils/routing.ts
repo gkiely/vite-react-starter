@@ -36,7 +36,7 @@ export const createReducer = <S, A>(
   };
 };
 
-export const createClientRoute = <S, U = string>(
+export const createClientRoute = <U = string>(
   fn: () => readonly [RouteConfig, Dispatch<Action<U>>]
 ) => fn;
 
