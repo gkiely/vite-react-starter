@@ -5,12 +5,15 @@ import { Component, Element, useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
 import { Fragment } from 'react';
 
-export type HeaderProps = Component<{
-  title: string;
-  body: Tags;
-  buttons: Required<Element<{ text: string }>>[];
-  links: Element<{ to: string; text: string }>[];
-}>;
+export type HeaderProps = Component<
+  {
+    title: string;
+    body: Tags;
+    buttons: Required<Element<{ text: string }>>[];
+    links: Element<{ to: string; text: string }>[];
+  },
+  'Header'
+>;
 
 const Header = ({ body, title, buttons, links }: HeaderProps) => {
   const send = useSend();
