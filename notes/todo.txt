@@ -11,10 +11,6 @@
 - Server render / and add to readme (client and server rendering)
 - Use a machine instead of reducer
 
-- See why the switch case didn't fail without a default
-
-
-
 Then
 - Add error boundary
 - File typescript bug for object spread

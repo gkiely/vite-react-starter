@@ -51,6 +51,7 @@ export const createRenderer =
   <S>(render: (state: Readonly<S>) => RouteConfig) =>
   (state: Readonly<S>): PreparedRouteConfig =>
     prepareRoute(render(state));
+
 export const createUpdate = <S>(setState: SetState<S>) =>
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useMemo(() => {

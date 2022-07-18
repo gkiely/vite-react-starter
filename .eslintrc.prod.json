@@ -5,6 +5,7 @@
     "no-else-return": "warn",
     "no-implicit-coercion": "error",
     "no-only-tests/no-only-tests": ["error", {"fix": true}],
+    "@typescript-eslint/no-unused-vars": "warn",
     "testing-library/no-debugging-utils": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/ban-ts-comment": [

@@ -61,7 +61,19 @@
     "regexp/no-unused-capturing-group": "off",
     "testing-library/no-debugging-utils": "off",
     "testing-library/render-result-naming-convention": "off",
+    "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "interface",
+        "format": ["PascalCase"],
+        "custom": {
+          "regex": "^I[A-Z]",
+          "match": false
+        }
+      }
+    ],
     "@typescript-eslint/require-await": "warn",
     "@typescript-eslint/ban-ts-comment": [
       "warn",
