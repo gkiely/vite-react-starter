@@ -65,7 +65,18 @@ const render = createRenderer<State>(state => {
             },
           },
         ],
-        links: [],
+        links: [
+          {
+            id: 'react',
+            to: 'https://reactjs.org/',
+            text: 'Learn React',
+          },
+          {
+            id: 'vite',
+            to: 'https://vitejs.dev/guide/features.html',
+            text: 'Vite Docs',
+          },
+        ],
       },
       {
         id: 'List',

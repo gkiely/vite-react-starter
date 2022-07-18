@@ -1,5 +1,3 @@
-- Rewrite types from scratch
-
 - Sharing state between routes
   - Render a second page with the count
 
