@@ -56,13 +56,25 @@ export function pick<T extends object, K extends keyof T>(obj: T, keys: K[]) {
 }
 
 export const generateId = () => {
-  let i = 0;
+  const prefixes = new Map<string, number>();
+
   return [
-    (prefix = ''): string => {
-      return `${prefix}-${i++}`;
+    (prefix?: string): string => {
+      if (prefix === undefined) {
+        // eslint-disable-next-line no-param-reassign
+        prefix = 'id';
+      }
+      const p = prefixes.get(prefix);
+      const count = p === undefined ? 0 : p + 1;
+      prefixes.set(prefix, count);
+      return `${prefix}-${count}`;
     },
-    () => (i = 0),
+    () => prefixes.clear(),
   ] as const;
+};
+
+export const id = (prefix = '', i: number) => {
+  return `${prefix}-${i}`;
 };
 
 type Tag = 'text' | 'code';
@@ -71,11 +83,46 @@ export type Tags = {
 }[];
 
 export const renderTags = (tags: Tags) => {
-  return tags.map(({ text, code }) => {
-    if (text) return <>{text}</>;
-    if (code) return <code>{code}</code>;
+  return tags.map(({ text, code }, i) => {
+    if (text) return <span key={id('tag', i)}>{text}</span>;
+    if (code) return <code key={id('tag', i)}>{code}</code>;
     return undefined;
   });
+};
+
+export const isObject = (value: unknown): value is object => {
+  return typeof value === 'object' && !Array.isArray(value) && value !== null;
+};
+
+export const omit = (obj: object, keys: string[]) => {
+  const result: { [key: string]: unknown } = {};
+  for (const key in obj) {
+    if (!keys.includes(key)) {
+      result[key] = obj[key as keyof typeof obj];
+    }
+  }
+  return result;
+};
+
+// array to enum
+export const toEnum = <T extends string>(array: readonly T[]) => {
+  const result: { [key in T]: key } = {} as { [key in T]: key };
+  for (const key of array) {
+    result[key] = key;
+  }
+  return result;
+};
+
+// prefix enum
+export const prefixedEnum = <P extends string, T extends string>(
+  prefix: P,
+  array: readonly T[]
+) => {
+  const result: { [key in T]: `${P}${T}` } = {} as { [key in T]: `${P}${T}` };
+  for (const key of array) {
+    result[key] = `${prefix}${key}`;
+  }
+  return result;
 };
 
 /* c8 ignore stop */

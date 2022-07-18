@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { Dispatch, useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
-import { assertType, useAsyncEffect } from 'utils';
+import { prefixedEnum, assertType, useAsyncEffect } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
 import {
+  Action,
+  combineReducers,
   createClientRoute,
   createReducer,
   createRenderer,
@@ -38,7 +40,6 @@ const render = createRenderer<State>(state => {
     sections: [],
     components: [
       {
-        id: 'Header',
         component: 'Header',
         props: {
           title: 'Hello Vite + React!',
@@ -47,26 +48,26 @@ const render = createRenderer<State>(state => {
             { code: 'App.tsx' },
             { text: ' and save to test HMR updates.' },
           ],
-          count: state.count,
           buttons: [
             {
-              component: 'Button',
+              element: 'Button',
               props: {
                 text: `count is: ${state.count}`,
-              },
-              action: {
-                type: 'add',
+                action: {
+                  type: countActions.add,
+                },
               },
             },
             {
-              component: 'Button',
+              element: 'Button',
               props: {
                 text: 'Add a post',
-              },
-              action: {
-                type: 'post',
-                payload: {
-                  title: 'New Post',
+                action: {
+                  type: postActions.add,
+                  payload: {
+                    id: state.posts.length + 1,
+                    title: 'New Post',
+                  },
                 },
               },
             },
@@ -90,10 +91,9 @@ const render = createRenderer<State>(state => {
         },
       },
       {
-        id: 'Posts',
         component: 'List',
         props: {
-          posts: state.posts,
+          items: state.posts,
           error: state.error,
         },
       },
@@ -101,10 +101,28 @@ const render = createRenderer<State>(state => {
   };
 });
 
-type Actions = 'add';
-export const reducer = createReducer<State, Actions>((state, action) => {
+/* c8 ignore start */
+const postActions = prefixedEnum('posts/', ['add']);
+type PostActions = typeof postActions[keyof typeof postActions];
+export const postReducer = createReducer<State, PostActions>((state, action) => {
   switch (action.type) {
-    case 'add':
+    case postActions.add:
+      return {
+        ...state,
+        /// TODO: add typing for payload
+        // Either with zod or some other way
+        posts: [...state.posts, action.payload as Post],
+      };
+    default:
+      return state;
+  }
+}, Object.values(postActions));
+
+const countActions = prefixedEnum('count/', ['add']);
+type CountActions = typeof countActions[keyof typeof countActions];
+export const reducer = createReducer<State, CountActions>((state, action) => {
+  switch (action.type) {
+    case countActions.add:
       return {
         ...state,
         count: state.count + 1,
@@ -112,12 +130,16 @@ export const reducer = createReducer<State, Actions>((state, action) => {
     default:
       return state;
   }
-});
+}, Object.values(countActions));
+
+type Actions = CountActions & PostActions;
+/* c8 ignore end */
 
 const client = createClientRoute(() => {
   const [state, setState] = useState<State>(initialState);
   const update = createUpdate(setState);
-  const send = createSend(setState, reducer);
+  const reducers = combineReducers<State, Actions>(reducer, postReducer);
+  const send = createSend(setState, reducers);
 
   useAsyncEffect(async () => {
     update({ error: '' });
@@ -147,8 +169,10 @@ const server = createServerRoute(async () => {
   }
 });
 
+/// TODO add array routing
 const routes = {
   client: {
+    '': client,
     '/': client,
   },
   server: {
@@ -162,7 +186,9 @@ export const useRoute = (path: string) => {
     throw new Error(`No routes found for path: ${path}`);
   }
   assertType<keyof typeof routes.client>(path);
-  return routes.client[path]();
+  const [route, send, update] = routes.client[path]();
+  assertType<Dispatch<Action<string, unknown>>>(send);
+  return [route, send, update] as const;
 };
 export const useRouteUpdate = (path: keyof typeof routes.client) => {
   const [route, , update] = routes.client[path]();

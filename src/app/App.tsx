@@ -2,27 +2,25 @@ import { createElement } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as styles from './App.css';
 import { useRoute } from './routes';
-// import { assertType } from 'utils';
 import * as Components from './components';
+import RouteContext from './SendContext';
 
 function App() {
   const location = useLocation();
-  // const navigate = useNavigate();
-  const [route, send] = useRoute(location.pathname);
+  const [route, send, update] = useRoute(location.pathname);
 
   return (
-    <div className={styles.app}>
-      {route.components.map(({ id, component, props, update, action }) => {
-        return createElement(Components[component], {
-          ...props,
-          key: id,
-          update,
-          action,
-          // @ts-expect-error - needs typing
-          send,
-        });
-      })}
-    </div>
+    <RouteContext send={send} update={update}>
+      <div className={styles.app}>
+        {route.components.map(({ id, component, props }) => {
+          // @ts-expect-error - disable typing until fixed
+          return createElement(Components[component], {
+            ...props,
+            key: id,
+          });
+        })}
+      </div>
+    </RouteContext>
   );
 }
 

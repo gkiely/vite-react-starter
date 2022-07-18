@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import * as styles from './Button.css';
 
 interface ButtonProps
@@ -14,3 +15,4 @@ const Button: React.FC<ButtonProps> = props => {
 };
 
 export default Button;
+/* c8 ignore stop */

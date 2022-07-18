@@ -1,20 +1,3 @@
-- Fix ({ props: {}})
-
-- Define the props in the Header component
-  - Then pass the route those props
-  - We also need to pass the possible actions
-    - When property values are an array of object with a component key
-
-- Setup / example using route and components
-  - Create a Header component
-  - Create a List component
-
-- See why the switch case didn't fail without a default
-
-- Server render / and add to readme (client and server rendering)
-
-- Simulate adding a post
-
 - Sharing state between routes
   - Render a second page with the count
 
@@ -22,6 +5,28 @@
   - Current route calls nextRoute with appropriate state, which then calls onEnter
   - onEnter has access to state
   - Global store
+
+
+- Array support for routes
+
+
+- Setup / example using route and components
+  - Create a Header component
+  - Create a List component
+
+- Add types to components that are then passed to route
+
+
+- Server render / and add to readme (client and server rendering)
+- Setup machine
+
+- See why the switch case didn't fail without a default
+
+
+
+Then
+- Add error boundary
+- File typescript bug for object spread
 
 - Write an eslint plugin to require a catch block for async
 - Add type builder for hono
@@ -32,6 +37,18 @@
 
 - Front end deploy to pages
 - Server deploy to workers
+
+
+V2
+- Setup time travel debugging
+- Add a check for combining reducers, making sure duplicate actions aren't used
+- Ability to create sub routes
+  - Essentially I can break out an existing route, create a new one and have it be used
+    - I will have to think about how this would work with send
+    - Either via passing the prop to the component, or potentially having sub routes via the url, that then direct where they are sent
+      /home
+      /home/posts
+  - Ability to createRenderer in render function
 
 Later
 - Setup node vite plugin so node updates trigger a hot module reload

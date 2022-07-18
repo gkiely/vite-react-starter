@@ -24,7 +24,6 @@
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
-    "importsNotUsedAsValues": "error",
     "useDefineForClassFields": true,
     "useUnknownInCatchVariables": true,
     "types": ["@types/node", "vitest/globals", "@testing-library/jest-dom", "@testing-library/cypress"],

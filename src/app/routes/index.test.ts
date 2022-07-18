@@ -1,12 +1,12 @@
-import app, { posts } from 'server/worker';
+import app from 'server/worker';
 import { mockFetchOnce } from 'utils/test-utils';
 import routes, { reducer } from './';
 
 test('/server', async () => {
   mockFetchOnce(app);
   const data = await routes.server['/']();
-  // @ts-expect-error - temporary until I fix the type
-  expect(data.components[1].props.posts).toMatchObject(posts);
+  expect(data.components).toEqual(expect.any(Array));
+  expect(data.sections).toEqual(expect.any(Array));
 });
 
 test('reducer: add', () => {
@@ -15,7 +15,7 @@ test('reducer: add', () => {
     posts: [],
   };
   const action = {
-    type: 'add',
+    type: 'count/add',
   } as const;
   const newState = reducer(state, action);
   expect(newState).toMatchObject({
