@@ -8,15 +8,15 @@ type GetComponentProps<K extends ComponentName = ComponentName> = Omit<
   Parameters<typeof Components[K]>[number],
   'component' | 'key'
 >;
-type GetAllComponentProps<K extends ComponentName = ComponentName> = Parameters<
-  typeof Components[K]
->[number];
+// type GetAllComponentProps<K extends ComponentName = ComponentName> = Parameters<
+//   typeof Components[K]
+// >[number];
 
 type ComponentProps = GetComponentProps;
 
-type ComponentPropsMapped = {
-  [K in ComponentName]: GetComponentProps<K>;
-};
+// type ComponentPropsMapped = {
+//   [K in ComponentName]: GetComponentProps<K>;
+// };
 
 export type Action<T = string, P = unknown> = {
   type: T;
