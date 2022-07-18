@@ -114,7 +114,7 @@ export const toEnum = <T extends string>(array: readonly T[]) => {
 };
 
 // prefix enum
-export const prefixedEnum = <P extends string, T extends string, U extends string>(
+export const prefixedEnum = <P extends string, T extends string>(
   prefix: P,
   array: readonly T[]
 ) => {
