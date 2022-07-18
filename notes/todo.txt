@@ -1,3 +1,4 @@
+- Add component types and use them in routes
 - Sharing state between routes
   - Render a second page with the count
 
@@ -6,19 +7,9 @@
   - onEnter has access to state
   - Global store
 
-
-- Array support for routes
-
-
-- Setup / example using route and components
-  - Create a Header component
-  - Create a List component
-
-- Add types to components that are then passed to route
-
-
+- Array support for routes names ['', '/']
 - Server render / and add to readme (client and server rendering)
-- Setup machine
+- Use a machine instead of reducer
 
 - See why the switch case didn't fail without a default
 

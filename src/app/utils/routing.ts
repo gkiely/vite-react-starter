@@ -25,6 +25,7 @@ export type RouteComponent<P = Record<string, unknown>> = Base & {
 } & { [K in keyof P]: P[K] };
 
 export type Component<P = Record<string, unknown>> = Base & {
+  key: string;
   component: ComponentName;
 } & { [K in keyof P]: P[K] };
 
@@ -33,16 +34,22 @@ export type RouteConfig = Readonly<{
   components: RouteComponent[];
 }>;
 
+export type PreparedRouteConfig = Readonly<{
+  sections?: string[];
+  components: Component[];
+}>;
+
 type SetState<S> = Dispatch<SetStateAction<S>>;
 export type UpdateAction<S> = Partial<S> | ((prevState: Readonly<S>) => Partial<S>);
 /* c8 ignore start */
 export const createClientRoute = <S, U = string>(
-  fn: () => readonly [RouteConfig, Dispatch<Action<U>>, Dispatch<UpdateAction<S>>]
+  fn: () => readonly [PreparedRouteConfig, Dispatch<Action<U>>, Dispatch<UpdateAction<S>>]
 ) => fn;
-export const createServerRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;
+export const createServerRoute = (fn: () => PreparedRouteConfig | Promise<PreparedRouteConfig>) =>
+  fn;
 export const createRenderer =
   <S>(render: (state: Readonly<S>) => RouteConfig) =>
-  (state: Readonly<S>) =>
+  (state: Readonly<S>): PreparedRouteConfig =>
     prepareRoute(render(state));
 export const createUpdate = <S>(setState: SetState<S>) =>
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -85,46 +92,50 @@ export const createReducer = <S, A>(
  * Moves props for child elements from object key to directly passed to the element
  */
 const [getId, resetIds] = generateId();
-export const prepareRoute = (route: RouteConfig) => {
+export const prepareRoute = (route: RouteConfig): PreparedRouteConfig => {
   resetIds();
   return {
     ...route,
-    components: route.components.map(component => ({
-      ...component,
-      id: component.id ?? `${getId(component.component)}`,
-      props: Object.entries(component.props).reduce((curr, acc) => {
-        const [key, value] = acc;
-        if (Array.isArray(value)) {
+    components: route.components.map(component => {
+      const id = component.id ?? `${getId(component.component)}`;
+      return {
+        ...(omit(component, ['props']) as Component),
+        id,
+        key: id,
+        ...Object.entries(component.props).reduce((curr, acc) => {
+          const [key, value] = acc;
+          if (Array.isArray(value)) {
+            return {
+              ...curr,
+              [key]: value.map(v => {
+                if (isObject(v) && ('element' in v || 'component' in v)) {
+                  assertType<{
+                    id?: string;
+                    element?: string;
+                    component?: string;
+                    props?: Record<string, unknown>;
+                  }>(v);
+                  return {
+                    ...(v.props
+                      ? {
+                          ...v.props,
+                          ...omit(v, ['props']),
+                        }
+                      : v),
+                    id: v.id ?? `${getId(v.element)}` ?? `${getId(v.component)}`,
+                  };
+                }
+                return v as unknown;
+              }),
+            };
+          }
           return {
             ...curr,
-            [key]: value.map(v => {
-              if (isObject(v) && ('element' in v || 'component' in v)) {
-                assertType<{
-                  id?: string;
-                  element?: string;
-                  component?: string;
-                  props?: Record<string, unknown>;
-                }>(v);
-                return {
-                  ...(v.props
-                    ? {
-                        ...v.props,
-                        ...omit(v, ['props']),
-                      }
-                    : v),
-                  id: v.id ?? `${getId(v.element)}` ?? `${getId(v.component)}`,
-                };
-              }
-              return v as unknown;
-            }),
+            [key]: value,
           };
-        }
-        return {
-          ...curr,
-          [key]: value,
-        };
-      }, {}),
-    })),
+        }, {}),
+      };
+    }),
   };
 };
 

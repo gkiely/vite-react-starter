@@ -10,8 +10,10 @@
 - [Hono](https://github.com/honojs/hono)
 - [Wrangler](https://github.com/cloudflare/wrangler2) or [Node](https://nodejs.dev)
 - [pre-commit and pre-push](https://github.com/toplenboren/simple-git-hooks) hooks
-- [Elm style approach](https://guide.elm-lang.org/architecture/) to UI
-  - Model, View Update
+- [Elm-style architecture](https://guide.elm-lang.org/architecture/)
+  - Uses the names `state, render, reducer` in place of Elms `Model, View, Update`
+  - Uses a `send` method in place of Elms concept of [messages](https://guide.elm-lang.org/architecture/buttons.html#:~:text=generate%20a-,message)
+- SSR via server routes
 
 ### Scripts
 

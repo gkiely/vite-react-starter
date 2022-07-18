@@ -48,6 +48,8 @@
     "prefer-arrow-callback": "warn",
     "no-unneeded-ternary": "error",
     "object-shorthand": "warn",
+    "default-case": "error",
+    "@typescript-eslint/switch-exhaustiveness-check": "error",
     "no-useless-call": "error",
     "no-eq-null": "error",
     "no-extra-bind": "error",

@@ -6,7 +6,15 @@ import { DEV } from 'utils/constants';
 if (DEV) {
   const showErrorOverlay = async (err: unknown) => {
     // Wait for checker overlay to show (5ms)
-    await delay(10);
+    await delay(400);
+    const checkError = async (count = 10) => {
+      await delay(100);
+      const checkerOverlay = document.querySelector('vite-plugin-checker-error-overlay');
+      const errorOverlay = document.querySelector('vite-error-overlay');
+      if (checkerOverlay) errorOverlay?.remove();
+      else await checkError(count - 1);
+    };
+
     const checkerOverlay = document.querySelector('vite-plugin-checker-error-overlay');
     if (checkerOverlay) return;
 
@@ -20,6 +28,7 @@ if (DEV) {
     }
     const overlay = new ErrorOverlay(err);
     document.body.appendChild(overlay);
+    await checkError();
   };
 
   window.addEventListener('error', ({ error }) => {

@@ -71,6 +71,15 @@ const render = createRenderer<State>(state => {
                 },
               },
             },
+            {
+              element: 'Button',
+              props: {
+                text: 'Remove a post',
+                action: {
+                  type: postActions.remove,
+                },
+              },
+            },
           ],
           links: [
             {
@@ -102,16 +111,21 @@ const render = createRenderer<State>(state => {
 });
 
 /* c8 ignore start */
-const postActions = prefixedEnum('posts/', ['add']);
+/// TODO: add typing for action.payload
+// Either with zod or some other way
+const postActions = prefixedEnum('posts/', ['add', 'remove']);
 type PostActions = typeof postActions[keyof typeof postActions];
 export const postReducer = createReducer<State, PostActions>((state, action) => {
   switch (action.type) {
     case postActions.add:
       return {
         ...state,
-        /// TODO: add typing for payload
-        // Either with zod or some other way
         posts: [...state.posts, action.payload as Post],
+      };
+    case postActions.remove:
+      return {
+        ...state,
+        posts: state.posts.slice(0, -1),
       };
     default:
       return state;

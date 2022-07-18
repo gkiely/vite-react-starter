@@ -14,7 +14,6 @@ type Props = Component & {
 
 const Header = ({ body, title, buttons, links }: Props) => {
   const send = useSend();
-
   return (
     <header className={styles.header}>
       <img src={logo} className={styles.logo} alt="logo" />

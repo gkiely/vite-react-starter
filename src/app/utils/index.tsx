@@ -114,11 +114,11 @@ export const toEnum = <T extends string>(array: readonly T[]) => {
 };
 
 // prefix enum
-export const prefixedEnum = <P extends string, T extends string>(
+export const prefixedEnum = <P extends string, T extends string, U extends string>(
   prefix: P,
   array: readonly T[]
 ) => {
-  const result: { [key in T]: `${P}${T}` } = {} as { [key in T]: `${P}${T}` };
+  const result = {} as { [key in T]: `${P}${key}` };
   for (const key of array) {
     result[key] = `${prefix}${key}`;
   }
