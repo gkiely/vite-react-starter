@@ -4,6 +4,19 @@ import type * as Components from '../components';
 import { RouteContext } from '../SendContext';
 
 type ComponentName = keyof typeof Components;
+type GetComponentProps<K extends ComponentName = ComponentName> = Omit<
+  Parameters<typeof Components[K]>[number],
+  'component' | 'key'
+>;
+type GetAllComponentProps<K extends ComponentName = ComponentName> = Parameters<
+  typeof Components[K]
+>[number];
+
+type ComponentProps = GetComponentProps;
+
+type ComponentPropsMapped = {
+  [K in ComponentName]: GetComponentProps<K>;
+};
 
 export type Action<T = string, P = unknown> = {
   type: T;
@@ -19,24 +32,23 @@ export type Element<P = Record<string, unknown>> = Base & {
   element: string;
 } & { [K in keyof P]: P[K] };
 
-export type RouteComponent<P = Record<string, unknown>> = Base & {
-  props: P;
+export type RouteComponent<P extends ComponentProps = ComponentProps> = Base & {
+  props: Omit<P, 'component' | 'key'>;
   component: ComponentName;
+};
+
+export type Component<P, N = ComponentName> = Base & {
+  component: N;
 } & { [K in keyof P]: P[K] };
 
-export type Component<P = Record<string, unknown>> = Base & {
-  key: string;
-  component: ComponentName;
-} & { [K in keyof P]: P[K] };
-
-export type RouteConfig = Readonly<{
+export type RouteConfig<P extends ComponentProps = ComponentProps> = Readonly<{
   sections?: string[];
-  components: RouteComponent[];
+  components: RouteComponent<P>[];
 }>;
 
-export type PreparedRouteConfig = Readonly<{
+export type PreparedRouteConfig<P extends ComponentProps = ComponentProps> = Readonly<{
   sections?: string[];
-  components: Component[];
+  components: Component<P>[];
 }>;
 
 type SetState<S> = Dispatch<SetStateAction<S>>;
@@ -48,8 +60,8 @@ export const createClientRoute = <S, U = string>(
 export const createServerRoute = (fn: () => PreparedRouteConfig | Promise<PreparedRouteConfig>) =>
   fn;
 export const createRenderer =
-  <S>(render: (state: Readonly<S>) => RouteConfig) =>
-  (state: Readonly<S>): PreparedRouteConfig =>
+  <S, P extends ComponentProps>(render: (state: Readonly<S>) => RouteConfig<P>) =>
+  (state: Readonly<S>): PreparedRouteConfig<P> =>
     prepareRoute(render(state));
 
 export const createUpdate = <S>(setState: SetState<S>) =>
@@ -93,14 +105,16 @@ export const createReducer = <S, A>(
  * Moves props for child elements from object key to directly passed to the element
  */
 const [getId, resetIds] = generateId();
-export const prepareRoute = (route: RouteConfig): PreparedRouteConfig => {
+export const prepareRoute = <P extends ComponentProps>(
+  route: RouteConfig
+): PreparedRouteConfig<P> => {
   resetIds();
   return {
     ...route,
     components: route.components.map(component => {
       const id = component.id ?? `${getId(component.component)}`;
       return {
-        ...(omit(component, ['props']) as Component),
+        ...(omit(component, ['props']) as Component<P>),
         id,
         key: id,
         ...Object.entries(component.props).reduce((curr, acc) => {

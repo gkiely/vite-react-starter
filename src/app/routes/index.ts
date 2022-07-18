@@ -1,3 +1,5 @@
+import { HeaderProps } from 'components/Header/Header';
+import { ListProps } from 'components/List/List';
 import { Dispatch, useEffect, useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
 import useSWR from 'swr/immutable';
@@ -26,7 +28,7 @@ const initialState: State = {
   error: '',
 };
 
-const render = createRenderer<State>(state => {
+const render = createRenderer<State, HeaderProps | ListProps>(state => {
   return {
     sections: [],
     components: [
@@ -88,13 +90,6 @@ const render = createRenderer<State>(state => {
               },
             },
           ],
-        },
-      },
-      {
-        component: 'List',
-        props: {
-          items: state.posts,
-          error: state.error,
         },
       },
     ],

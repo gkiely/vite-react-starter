@@ -1,4 +1,5 @@
-- Add component types and use them in routes
+- Rewrite types from scratch
+
 - Sharing state between routes
   - Render a second page with the count
 
@@ -27,6 +28,9 @@ Then
 
 
 V2
+- Rewrite types from scratch
+
+
 - Setup time travel debugging
 - Add a check for combining reducers, making sure duplicate actions aren't used
 - Ability to create sub routes

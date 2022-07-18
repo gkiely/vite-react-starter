@@ -1,19 +1,19 @@
 /* c8 ignore start */
 import { Component, Element } from 'utils/routing';
 
-type Props = Component & {
-  items: Required<Element<{ id: string; title: string }>>[];
+export type ListProps = Component<{
+  items: Required<Element<{ title: string }>>[];
   error?: string;
-};
+}>;
 
-const List = ({ items, error }: Props) => {
+const List = ({ items, error }: ListProps) => {
   if (error) {
     return <h1>{error}</h1>;
   }
   return (
     <div>
       {items.map((item, i) => (
-        <h1 key={'List-' + item.id}>{item.title}</h1>
+        <h1 key={`List-${i}`}>{item.title}</h1>
       ))}
     </div>
   );

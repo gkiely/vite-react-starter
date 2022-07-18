@@ -91,7 +91,7 @@ export const id = (prefix = '', i: number) => {
 
 type Tag = 'text' | 'code';
 export type Tags = {
-  [key in Tag]: string;
+  [key in Tag]?: string;
 }[];
 
 export const renderTags = (tags: Tags) => {
