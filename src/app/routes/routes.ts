@@ -8,7 +8,6 @@ import {
   combineReducers,
   createClientRoute,
   createReducer,
-  createReducer2,
   createRenderer,
   createSend,
   createServerRoute,
@@ -103,7 +102,7 @@ export type PostActions =
       type: typeof postActions.remove;
     };
 
-export const postReducer = createReducer2<State, PostActions>((state, action) => {
+export const postReducer = createReducer<State, PostActions>((state, action) => {
   switch (action.type) {
     case postActions.add:
       return {
@@ -121,7 +120,10 @@ export const postReducer = createReducer2<State, PostActions>((state, action) =>
 }, Object.values(postActions));
 
 const countActions = prefixedEnum('count/', ['add']);
-export type CountActions = typeof countActions[keyof typeof countActions];
+export type CountActionTypes = typeof countActions[keyof typeof countActions];
+export type CountActions = {
+  type: typeof countActions.add;
+};
 export const reducer = createReducer<State, CountActions>((state, action) => {
   switch (action.type) {
     case countActions.add:
@@ -134,7 +136,7 @@ export const reducer = createReducer<State, CountActions>((state, action) => {
   }
 }, Object.values(countActions));
 
-type Actions = CountActions & PostActionTypes;
+type Actions = CountActionTypes & PostActionTypes;
 /* c8 ignore end */
 
 const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {

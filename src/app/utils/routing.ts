@@ -24,19 +24,7 @@ export const useSend = () => useContext(RouteContext).send;
 
 export const createRenderer = <S>(fn: (state: S) => RouteConfig) => fn;
 
-export const createReducer = <S, A>(
-  fn: (state: Readonly<S>, action: Readonly<Action<A>>) => S,
-  actions?: A[]
-) => {
-  return (state: Readonly<S>, action: Readonly<Action<A>>) => {
-    if (!actions || actions.length === 0 || actions.includes(action.type)) {
-      return fn(state, action);
-    }
-    return state;
-  };
-};
-
-export const createReducer2 = <S, A extends Action>(
+export const createReducer = <S, A extends Action>(
   fn: (state: Readonly<S>, action: Readonly<A>) => S,
   actions?: A['type'][]
 ) => {

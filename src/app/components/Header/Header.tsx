@@ -1,7 +1,7 @@
 import logo from 'img/logo.svg';
 import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
-import { Action, useSend } from 'utils/routing';
+import { useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
 import { Fragment } from 'react';
 import type { CountActions, PostActions } from 'routes/routes';
@@ -9,7 +9,7 @@ import type { CountActions, PostActions } from 'routes/routes';
 export type Props = {
   title: string;
   body: Tags;
-  buttons: { id: string; action?: Action<CountActions> | PostActions; text: string }[];
+  buttons: { id: string; action?: CountActions | PostActions; text: string }[];
   links: { id: string; to: string; text: string }[];
 };
 
