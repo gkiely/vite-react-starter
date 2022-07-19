@@ -36,6 +36,18 @@ export const createReducer = <S, A>(
   };
 };
 
+export const createReducer2 = <S, A extends Action>(
+  fn: (state: Readonly<S>, action: Readonly<A>) => S,
+  actions?: A['type'][]
+) => {
+  return (state: Readonly<S>, action: Readonly<A>) => {
+    if (!actions || actions.length === 0 || actions.includes(action.type)) {
+      return fn(state, action);
+    }
+    return state;
+  };
+};
+
 export const createClientRoute = <U = string>(
   fn: () => readonly [RouteConfig, Dispatch<Action<U>>]
 ) => fn;

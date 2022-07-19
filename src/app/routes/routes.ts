@@ -8,6 +8,7 @@ import {
   combineReducers,
   createClientRoute,
   createReducer,
+  createReducer2,
   createRenderer,
   createSend,
   createServerRoute,
@@ -51,7 +52,6 @@ const render = createRenderer<State>(state => {
             text: 'Add a post',
             action: {
               type: postActions.add,
-              // Commenting this out and pressing the Add a post button will cause the app to crash
               payload: {
                 id: `${state.posts.length}-added`,
                 title: 'New Post',
@@ -93,18 +93,22 @@ const render = createRenderer<State>(state => {
 /// TODO: add typing for action.payload
 // Either with zod or some other way
 const postActions = prefixedEnum('posts/', ['add', 'remove']);
-export type PostActions = typeof postActions[keyof typeof postActions];
-type PostActionsConfig = {
-  [postActions.add]: Post;
-  [postActions.remove]: undefined;
-};
+export type PostActionTypes = typeof postActions[keyof typeof postActions];
+export type PostActions =
+  | {
+      type: typeof postActions.add;
+      payload: Post;
+    }
+  | {
+      type: typeof postActions.remove;
+    };
 
-export const postReducer = createReducer<State, PostActions>((state, action) => {
+export const postReducer = createReducer2<State, PostActions>((state, action) => {
   switch (action.type) {
     case postActions.add:
       return {
         ...state,
-        posts: [...state.posts, action.payload as Post],
+        posts: [...state.posts, action.payload],
       };
     case postActions.remove:
       return {
@@ -130,7 +134,7 @@ export const reducer = createReducer<State, CountActions>((state, action) => {
   }
 }, Object.values(countActions));
 
-type Actions = CountActions & PostActions;
+type Actions = CountActions & PostActionTypes;
 /* c8 ignore end */
 
 const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {

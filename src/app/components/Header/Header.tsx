@@ -9,7 +9,7 @@ import type { CountActions, PostActions } from 'routes/routes';
 export type Props = {
   title: string;
   body: Tags;
-  buttons: { id: string; action?: Action<CountActions | PostActions>; text: string }[];
+  buttons: { id: string; action?: Action<CountActions> | PostActions; text: string }[];
   links: { id: string; to: string; text: string }[];
 };
 
