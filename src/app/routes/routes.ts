@@ -51,6 +51,7 @@ const render = createRenderer<State>(state => {
             text: 'Add a post',
             action: {
               type: postActions.add,
+              // Commenting this out and pressing the Add a post button will cause the app to crash
               payload: {
                 id: `${state.posts.length}-added`,
                 title: 'New Post',
@@ -93,6 +94,11 @@ const render = createRenderer<State>(state => {
 // Either with zod or some other way
 const postActions = prefixedEnum('posts/', ['add', 'remove']);
 export type PostActions = typeof postActions[keyof typeof postActions];
+type PostActionsConfig = {
+  [postActions.add]: Post;
+  [postActions.remove]: undefined;
+};
+
 export const postReducer = createReducer<State, PostActions>((state, action) => {
   switch (action.type) {
     case postActions.add:

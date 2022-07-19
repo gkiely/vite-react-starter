@@ -8,8 +8,8 @@ type Props = {
   [K in keyof C]: { component: K; id: string } & Parameters<C[K]>[number];
 };
 
-export type Action<T = string, P = unknown> = {
-  type: T;
+export type Action<A = string, P = unknown> = {
+  type: A;
   payload?: P;
 };
 

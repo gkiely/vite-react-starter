@@ -98,7 +98,7 @@ export const renderTags = (tags: Tags) => {
   return tags.map(({ text, code }, i) => {
     if (text) return <span key={id('tag', i)}>{text}</span>;
     if (code) return <code key={id('tag', i)}>{code}</code>;
-    return undefined;
+    return [];
   });
 };
 

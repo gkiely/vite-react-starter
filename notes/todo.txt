@@ -1,3 +1,6 @@
+- Type actions/payloads
+  - Should be able to determine payload based on the action
+  - It should be typed in the route
 - Sharing state between routes
   - Render a second page with the count
 
