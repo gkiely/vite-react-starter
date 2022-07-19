@@ -80,6 +80,11 @@ export default defineConfig(({ command }) => ({
       server: command === 'serve' ? './server' : path.resolve(__dirname, './server'),
     },
   },
+  build: {
+    rollupOptions: {
+      external: ['./utils/runtime-error-overlay'],
+    },
+  },
   server: {
     proxy: {
       '/server': 'http://localhost:8080/',

@@ -18,14 +18,12 @@ function App() {
       <div className={styles.app}>
         {route.components.map(props => {
           const Component = Components[props.component];
-          // Apply id to key
           if (props.id) {
             assertType<{ key: string }>(props);
             props.key = props.id;
           }
 
-          // Convert union types to intersection types
-          // to allow for creating elements dynamically
+          // Convert union to intersection type for dynamic components
           assertType<Intersect<typeof props>>(props);
           assertType<Intersect<typeof Component>>(Component);
           return createElement(Component, props);
