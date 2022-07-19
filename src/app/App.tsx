@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as styles from './App.css';
-import { useRoute } from './routes';
+import { useRoute } from 'routes/routes';
 import * as Components from './components';
 import RouteContext from './RouteContext';
 import { assertType } from 'utils';

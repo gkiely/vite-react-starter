@@ -4,7 +4,7 @@ import Button from 'elements/Button/Button';
 import { Action, useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
 import { Fragment } from 'react';
-import type { CountActions, PostActions } from 'routes';
+import type { CountActions, PostActions } from 'routes/routes';
 
 export type Props = {
   title: string;

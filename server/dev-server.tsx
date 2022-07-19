@@ -1,5 +1,5 @@
 import type { Hono } from 'hono';
-import routes from '../src/app/routes';
+import routes from '../src/app/routes/routes';
 
 const server = (app: Hono) => {
   app.get('/server', async c => {

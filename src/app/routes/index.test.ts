@@ -1,6 +1,6 @@
 import app from 'server/worker';
 import { mockFetchOnce } from 'utils/test-utils';
-import routes, { reducer } from './';
+import routes, { reducer } from './routes';
 
 test('/server', async () => {
   mockFetchOnce(app);
