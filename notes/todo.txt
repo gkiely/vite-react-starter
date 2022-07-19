@@ -1,8 +1,4 @@
-- Type actions/payloads
-  - Should be able to determine payload based on the action
-  - It should be typed in the route
-- Sharing state between routes
-  - Render a second page with the count
+- Render a second page with the prev route count
 
   Some options:
   - Current route calls nextRoute with appropriate state, which then calls onEnter

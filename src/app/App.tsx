@@ -1,7 +1,7 @@
-import { createElement } from 'react';
+import { createElement, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as styles from './App.css';
-import { useRoute } from 'routes/routes';
+import { Path, States, useRoute } from 'routes/routes';
 import * as Components from './components';
 import RouteContext from './RouteContext';
 import { assertType } from 'utils';
@@ -9,9 +9,14 @@ import { Intersect } from 'utils/types';
 
 function App() {
   const location = useLocation();
-  const [route, send] = useRoute(location.pathname);
+  assertType<Path>(location.pathname);
+  const prevState = useRef<States>();
+  const prevPath = useRef(location.pathname);
+  const [route, send, state] = useRoute(location.pathname, prevState.current, prevPath.current);
 
-  // console.log(route);
+  // Store the last state and path so new routes have access to it
+  prevState.current = state;
+  prevPath.current = location.pathname;
 
   return (
     <RouteContext send={send}>

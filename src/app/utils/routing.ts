@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useContext } from 'react';
+import { Path, States } from 'routes/routes';
 import type * as Components from '../components';
 import { RouteContext } from '../RouteContext';
 
@@ -36,8 +37,8 @@ export const createReducer = <S, A extends Action>(
   };
 };
 
-export const createClientRoute = <U = string>(
-  fn: () => readonly [RouteConfig, Dispatch<Action<U>>]
+export const createClientRoute = <S, U = string>(
+  fn: (prevState?: States, prevPath?: Path) => readonly [RouteConfig, Dispatch<Action<U>>, S]
 ) => fn;
 
 export const createServerRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;

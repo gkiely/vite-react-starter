@@ -149,7 +149,7 @@ const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {
   }
 };
 
-const client = createClientRoute(() => {
+const client = createClientRoute((prevState, prevPath) => {
   const [state, setState] = useState<State>(initialState);
   const reducers = combineReducers<State, Actions>(reducer, postReducer);
   const send = createSend(setState, reducers);
@@ -163,7 +163,7 @@ const client = createClientRoute(() => {
     }
   }, [data, error, setState]);
 
-  return [render(state), send];
+  return [render(state), send, state];
 });
 
 const server = createServerRoute(async () => {
@@ -182,7 +182,20 @@ const server = createServerRoute(async () => {
 });
 
 /// TODO add array routing
-const routes = {
+export type States = State;
+export type Path = '' | '/';
+type ServerPath = Exclude<Path, ''>;
+
+type Routes = {
+  client: {
+    [k in Path]: typeof client;
+  };
+  server: {
+    [k in ServerPath]: typeof server;
+  };
+};
+
+const routes: Routes = {
   client: {
     '': client,
     '/': client,
@@ -193,14 +206,13 @@ const routes = {
 };
 
 /* c8 ignore start */
-export const useRoute = (path: string) => {
+export const useRoute = (path: Path, prevState?: States, prevPath?: Path) => {
   if (!Object.keys(routes.client).includes(path)) {
     throw new Error(`No routes found for path: ${path}`);
   }
-  assertType<keyof typeof routes.client>(path);
-  const [route, send] = routes.client[path]();
+  const [route, send, state] = routes.client[path](prevState, prevPath);
   assertType<Dispatch<Action<string, unknown>>>(send);
-  return [route, send] as const;
+  return [route, send, state] as const;
 };
 
 export default routes;
