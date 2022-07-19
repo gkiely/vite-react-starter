@@ -11,9 +11,9 @@
 - [Wrangler](https://github.com/cloudflare/wrangler2) or [Node](https://nodejs.dev)
 - [pre-commit and pre-push](https://github.com/toplenboren/simple-git-hooks) hooks
 - [Elm-style architecture](https://guide.elm-lang.org/architecture/)
-  - Uses the names `state, render, reducer` in place of Elms `Model, View, Update`
-  - Uses a `send` method in place of Elms concept of [messages](https://guide.elm-lang.org/architecture/buttons.html#:~:text=generate%20a-,message)
-- SSR via server routes
+  - Uses `state, render, reducer` in place of `Model, View, Update`
+  - Uses `send` in place of `messages`
+- SSR via server routes (WIP)
 
 ### Scripts
 
@@ -28,3 +28,10 @@
 `test:e2e`: Runs all Cypress component tests
 
 `install-latest`: Updates all dependencies
+
+### Additional notes
+
+- ESLint configuration:
+  - `.eslintrc.json`: VSCode and vite-checker-plugin
+  - `.eslintrc.dev.json`: pre-commit hook (fast)
+  - `.eslintrc.prod.json`: pre-push hook (slow)
