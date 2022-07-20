@@ -81,7 +81,10 @@ export const client = createClientRoute((prevState, prevPath) => {
     if (prevState?.count) {
       setState((s) => ({ ...s, count: prevState.count }));
     }
-  }, [prevState?.count]);
+    if (prevState?.posts) {
+      setState((s) => ({ ...s, posts: prevState.posts }));
+    }
+  }, [prevState?.count, prevState?.posts]);
 
   return [render(state), send, state];
 });

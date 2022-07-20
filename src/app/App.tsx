@@ -65,14 +65,12 @@ function App() {
 
   // Render the route
   return (
-    <>
-      <Route
-        key={location.pathname}
-        prevState={prevState}
-        prevPath={prevPath}
-        prevShadow={prevShadow}
-      />
-    </>
+    <Route
+      key={location.pathname}
+      prevState={prevState}
+      prevPath={prevPath}
+      prevShadow={prevShadow}
+    />
   );
 }
 

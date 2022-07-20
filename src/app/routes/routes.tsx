@@ -156,15 +156,20 @@ const client = createClientRoute((prevState) => {
     if (prevState?.count) {
       setState((s) => ({ ...s, count: prevState.count }));
     }
-  }, [prevState?.count]);
+    if (prevState?.posts) {
+      setState((s) => ({ ...s, posts: prevState.posts }));
+    }
+  }, [prevState?.count, prevState?.posts]);
 
   useEffect(() => {
+    if (prevState?.posts) return;
     if (data) {
       setState((s) => ({ ...s, posts: [...new Set([...s.posts, ...data])] }));
-    } else if (error) {
+    }
+    if (error) {
       setState((s) => ({ ...s, error: error.message }));
     }
-  }, [data, error, setState]);
+  }, [data, error, setState, prevState?.posts]);
 
   return [render(state), send, state];
 });
