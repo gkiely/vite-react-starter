@@ -1,12 +1,9 @@
+- Setup single store for all routes
+- See if you can get the UI to work on both the server and UI
+  - Switch to calling API for making updates, client can use hono directly
 - See if you can set up hono on client
-  - Each route should get req, db, user
-    - req: hono req
-    - db: all state stored in memory
-    - user: user data
-  - Server
-    - routes
-    - components
-- See if you can get the UI to work on both the server and UI with this approach
+
+- Setup db/store object and req obj for each route
 
 - Instead of actions living in the route
   - UI calls API
@@ -14,6 +11,13 @@
   - UI requests new json once request completes
     - Each route has access to req, db, user
   - See if you can Hono to work locally as well as server
+  - Each route should get req, db, user
+    - req: hono req
+    - db: all state stored in memory
+    - user: user data
+  - Server
+    - routes
+    - components  
 
 
 
