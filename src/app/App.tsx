@@ -1,18 +1,36 @@
-import { createElement, useRef } from 'react';
+import { createElement, MutableRefObject, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as styles from './App.css';
-import routes, { Path, States, useRoute } from 'routes/routes';
+import { Path, States, useRoute } from 'routes/routes';
 import * as Components from './components';
 import RouteContext from './RouteContext';
 import { assertType } from 'utils';
 import { Intersect } from 'utils/types';
 
-const Route = () => {
+type RouteProps = {
+  prevState: MutableRefObject<States | undefined>;
+  prevPath: MutableRefObject<Path>;
+  prevShadow: {
+    state: RouteProps['prevState'];
+    path: RouteProps['prevPath'];
+  };
+};
+/* c8 ignore start */
+const Route = ({ prevState, prevPath, prevShadow }: RouteProps) => {
   const location = useLocation();
   assertType<Path>(location.pathname);
-  const prevState = useRef<States>();
-  const prevPath = useRef(location.pathname);
   const [route, send, state] = useRoute(location.pathname, prevState.current, prevPath.current);
+
+  // Commit the update when the route changes
+  if (prevShadow.path.current !== location.pathname) {
+    prevState.current = prevShadow.state.current;
+    prevPath.current = prevShadow.path.current;
+  }
+
+  // Keep track of prevState and prevPath
+  prevShadow.state.current = state;
+  prevShadow.path.current = location.pathname;
+
   return (
     <RouteContext send={send}>
       <div className={styles.app}>
@@ -32,48 +50,30 @@ const Route = () => {
     </RouteContext>
   );
 };
+/* c8 ignore stop */
 
 function App() {
   const location = useLocation();
-  // assertType<Path>(location.pathname);
+  assertType<Path>(location.pathname);
   const prevState = useRef<States>();
   const prevPath = useRef(location.pathname);
 
-  // Get the route
-  // const [route, send, state] = useRoute(location.pathname, prevState.current, prevPath.current);
-
-  // console.log(location.pathname, R1());
-
-  // Store the current state and path to give the next route access to them
-  // prevState.current = state;
-  // prevPath.current = location.pathname;
+  const prevShadow = {
+    state: useRef<States>(),
+    path: useRef<Path>(location.pathname),
+  };
 
   // Render the route
   return (
     <>
-      {Object.keys(routes.client)
-        .filter((path) => path === location.pathname)
-        .map((path) => (
-          <Route key={path} />
-        ))}
+      <Route
+        key={location.pathname}
+        prevState={prevState}
+        prevPath={prevPath}
+        prevShadow={prevShadow}
+      />
     </>
   );
-  // <RouteContext send={send}>
-  //   <div className={styles.app}>
-  //     {route.components.map((props) => {
-  //       const Component = Components[props.component];
-  //       if (props.id) {
-  //         assertType<{ key: string }>(props);
-  //         props.key = props.id;
-  //       }
-
-  //       // Convert union to intersection type for dynamic components
-  //       assertType<Intersect<typeof props>>(props);
-  //       assertType<Intersect<typeof Component>>(Component);
-  //       return createElement(Component, props);
-  //     })}
-  //   </div>
-  // </RouteContext>
 }
 
 export default App;

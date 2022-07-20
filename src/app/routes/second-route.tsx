@@ -1,18 +1,8 @@
 /* c8 ignore start */
-import { Dispatch, useEffect, useState } from 'react';
-import { Post, postsSchema } from 'server/schemas';
-import useSWR from 'swr/immutable';
-import { prefixedEnum, assertType } from 'utils';
-import { SERVER_HOST } from 'utils/constants';
-import {
-  Action,
-  combineReducers,
-  createClientRoute,
-  createReducer,
-  createRenderer,
-  createSend,
-  createServerRoute,
-} from 'utils/routing';
+import { useEffect, useState } from 'react';
+import { Post } from 'server/schemas';
+import { prefixedEnum } from 'utils';
+import { createClientRoute, createReducer, createRenderer, createSend } from 'utils/routing';
 
 export type State = {
   count: number;
@@ -43,6 +33,9 @@ const render = createRenderer<State>((state) => {
           {
             id: 'Button-count-add',
             text: `count is: ${state.count}`,
+            action: {
+              type: countActions.add,
+            },
           },
         ],
         links: [
@@ -63,11 +56,32 @@ const render = createRenderer<State>((state) => {
   };
 });
 
-export const client = createClientRoute((prevState) => {
-  const [state, setState] = useState<State>(initialState);
-  const send = createSend(setState, () => state);
+const countActions = prefixedEnum('count/', ['add']);
+export type CountActionTypes = typeof countActions[keyof typeof countActions];
+export type CountActions = {
+  type: typeof countActions.add;
+};
+export const reducer = createReducer<State, CountActions>((state, action) => {
+  switch (action.type) {
+    case countActions.add:
+      return {
+        ...state,
+        count: state.count + 1,
+      };
+    default:
+      return state;
+  }
+}, Object.values(countActions));
 
-  console.log(prevState);
+export const client = createClientRoute((prevState, prevPath) => {
+  const [state, setState] = useState<State>(initialState);
+  const send = createSend(setState, reducer);
+
+  useEffect(() => {
+    if (prevState?.count) {
+      setState((s) => ({ ...s, count: prevState.count }));
+    }
+  }, [prevState?.count]);
 
   return [render(state), send, state];
 });

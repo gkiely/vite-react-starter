@@ -3,7 +3,7 @@ import { Post, postsSchema } from 'server/schemas';
 import useSWR from 'swr/immutable';
 import { prefixedEnum, assertType } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
-import { client as secondRouteClient, State as SecondRouteState } from './second-route';
+import { client as secondRouteClient } from './second-route';
 
 import {
   Action,
@@ -146,13 +146,17 @@ const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {
   }
 };
 
-let timeout: NodeJS.Timeout;
-
-const client = createClientRoute(() => {
+const client = createClientRoute((prevState) => {
   const [state, setState] = useState<State>(initialState);
   const reducers = combineReducers<State, Actions>(reducer, postReducer);
   const send = createSend(setState, reducers);
   const { data, error } = useSWR<Post[], Error>('/api/posts', fetchPosts);
+
+  useEffect(() => {
+    if (prevState?.count) {
+      setState((s) => ({ ...s, count: prevState.count }));
+    }
+  }, [prevState?.count]);
 
   useEffect(() => {
     if (data) {

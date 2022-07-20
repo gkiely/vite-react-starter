@@ -32,6 +32,7 @@
     "no-constructor-return": "warn",
     "no-duplicate-imports": "error",
     "no-unreachable-loop": "error",
+    "no-empty": "warn",
     "no-unused-private-class-members": "warn",
     "dot-notation": "warn",
     "guard-for-in": "error",
@@ -61,7 +62,7 @@
     "regexp/no-unused-capturing-group": "off",
     "testing-library/no-debugging-utils": "off",
     "testing-library/render-result-naming-convention": "off",
-    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/naming-convention": [
       "error",

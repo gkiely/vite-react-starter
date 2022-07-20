@@ -14,6 +14,7 @@ export type Props = {
   links: { id: string; to: string; text: string }[];
 };
 
+/* c8 ignore start */
 const Header = ({ body, title, buttons, links }: Props) => {
   const send = useSend();
   return (
@@ -45,5 +46,6 @@ const Header = ({ body, title, buttons, links }: Props) => {
     </header>
   );
 };
+/* c8 ignore stop */
 
 export default Header;
