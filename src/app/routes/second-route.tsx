@@ -1,8 +1,8 @@
 /* c8 ignore start */
-import { useEffect, useState } from 'react';
 import { Post } from 'server/schemas';
 import { prefixedEnum } from 'utils';
-import { createClientRoute, createReducer, createRenderer, createSend } from 'utils/routing';
+import { Action, createClientRoute, createRenderer, createSend } from 'utils/routing';
+import { useStore } from './store';
 
 export type State = {
   count: number;
@@ -35,6 +35,9 @@ const render = createRenderer<State>((state) => {
             text: `count is: ${state.count}`,
             action: {
               type: countActions.add,
+              payload: {
+                amount: 2,
+              },
             },
           },
         ],
@@ -62,32 +65,21 @@ export type CountActionTypes = typeof countActions[keyof typeof countActions];
 export type CountActions = {
   type: typeof countActions.add;
 };
-export const reducer = createReducer<State, CountActions>((state, action) => {
-  switch (action.type) {
-    case countActions.add:
-      return {
-        ...state,
-        count: state.count + 2,
-      };
-    default:
-      return state;
-  }
-}, Object.values(countActions));
 
 export const client = createClientRoute((prevState, prevPath) => {
-  const [state, setState] = useState<State>(initialState);
-  const send = createSend(setState, reducer);
+  const store = useStore();
 
-  useEffect(() => {
-    if (prevState?.count) {
-      setState((s) => ({ ...s, count: prevState.count }));
+  const send = (action: Action<CountActionTypes>) => {
+    // @ts-expect-error - testing
+    // eslint-disable-next-line
+    if (store[action.type]) {
+      // @ts-expect-error - testing
+      // eslint-disable-next-line
+      store[action.type](action.payload);
     }
-    if (prevState?.posts) {
-      setState((s) => ({ ...s, posts: prevState.posts }));
-    }
-  }, [prevState?.count, prevState?.posts]);
+  };
 
-  return [render(state), send, state];
+  return [render(store), send];
 });
 
 /* c8 ignore stop */

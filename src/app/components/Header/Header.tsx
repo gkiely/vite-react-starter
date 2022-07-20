@@ -5,7 +5,7 @@ import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
 import { useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
-import type { CountActions, PostActions } from 'routes/routes';
+import type { CountActions, PostActions } from 'routes/store';
 
 export type Props = {
   title: string;

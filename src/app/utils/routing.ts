@@ -38,8 +38,8 @@ export const createReducer = <S, A extends Action>(
   };
 };
 
-export const createClientRoute = <S, U = string>(
-  fn: (prevState?: States, prevPath?: Path) => readonly [RouteConfig, Dispatch<Action<U>>, S]
+export const createClientRoute = <U = string>(
+  fn: (prevState?: States, prevPath?: Path) => readonly [RouteConfig, Dispatch<Action<U>>]
 ) => fn;
 
 export const createServerRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;

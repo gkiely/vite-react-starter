@@ -1,8 +1,25 @@
-- Replace effects and reducer with zustand
-- Add a post with an input via the api to the server
-- Store the state for every route
-- Commit
+- Commit this
+- Have a crack at the server approach
+  - Click count -> send is called
+  - Post to server via an awaited request
+    - Set loading bar after 300ms
+  - Server updates it's own store
+  - Server responds
+  - Re-render
+  - No store is needed, just app.request every time and call setState to re-render when the server responds
 
+action: {
+  path: '/api/post',
+  method: 'POST',
+  payload: {
+    id: `${state.posts.length}-added`,
+    title: 'New Post',
+  },
+},
+
+Then
+- Add typing for action payloads
+- Type zustand and make createSend
 - Create a version that works with a machine: feature/machine
   - Make adding/removing posts go via the api and take 1s
 

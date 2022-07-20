@@ -32,14 +32,20 @@ app.get('/api/post/:id', async (c) => {
   return c.json<Post>(post);
 });
 
-app.post('/api/post/:id', bodyParse(), (c) => {
+app.delete('/api/post/:id', async (c) => {
+  const id = c.req.param('id');
+  const post = posts.find((p) => p.id === id);
+  if (!post) {
+    return c.notFound();
+  }
+  posts.splice(posts.indexOf(post), 1);
+  return c.json(post);
+});
+
+app.post('/api/post', bodyParse(), (c) => {
   try {
     const { req } = c;
-    const id = req.param('id');
-    const post = postSchema.parse({
-      ...req.parsedBody,
-      id,
-    });
+    const post = postSchema.parse(req.parsedBody);
     posts.push(post);
     return c.json<Post[]>(posts);
   } catch (err) {

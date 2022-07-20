@@ -19,17 +19,7 @@ type RouteProps = {
 const Route = ({ prevState, prevPath, prevShadow }: RouteProps) => {
   const location = useLocation();
   assertType<Path>(location.pathname);
-  const [route, send, state] = useRoute(location.pathname, prevState.current, prevPath.current);
-
-  // Commit the update when the route changes
-  if (prevShadow.path.current !== location.pathname) {
-    prevState.current = prevShadow.state.current;
-    prevPath.current = prevShadow.path.current;
-  }
-
-  // Keep track of prevState and prevPath
-  prevShadow.state.current = state;
-  prevShadow.path.current = location.pathname;
+  const [route, send] = useRoute(location.pathname, prevState.current, prevPath.current);
 
   return (
     <RouteContext send={send}>

@@ -1,19 +1,12 @@
-import { Dispatch, useEffect, useState } from 'react';
+import { Dispatch, useEffect } from 'react';
 import { Post, postsSchema } from 'server/schemas';
 import useSWR from 'swr/immutable';
-import { prefixedEnum, assertType, unique } from 'utils';
+import { assertType, unique } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
 import { client as secondRouteClient, State as SecondRouteState } from './second-route';
-import {
-  Action,
-  combineReducers,
-  createClientRoute,
-  createEffects,
-  createReducer,
-  createRenderer,
-  createSend,
-  createServerRoute,
-} from 'utils/routing';
+
+import { Actions, countActions, postActions, useStore } from './store';
+import { Action, createClientRoute, createRenderer, createServerRoute } from 'utils/routing';
 
 export type State = {
   count: number;
@@ -22,7 +15,7 @@ export type State = {
   loading: string;
 };
 
-const initialState: State = {
+export const initialState: State = {
   count: 0,
   posts: [],
   error: '',
@@ -64,13 +57,20 @@ const render = createRenderer<State>((state) => {
               },
             },
           },
-          {
-            id: 'Button-post-remove',
-            text: 'Remove a post',
-            action: {
-              type: postActions.remove,
-            },
-          },
+          ...(state.posts.length > 0
+            ? [
+                {
+                  id: 'Button-post-remove',
+                  text: 'Remove a post',
+                  action: {
+                    type: postActions.remove,
+                    payload: {
+                      id: state.posts[state.posts.length - 1]?.id,
+                    },
+                  },
+                },
+              ]
+            : []),
         ],
         links: [
           {
@@ -94,63 +94,6 @@ const render = createRenderer<State>((state) => {
 /* c8 ignore start */
 /// TODO: add typing for action.payload
 // Either with zod or some other way
-const postActions = prefixedEnum('posts/', ['add', 'remove']);
-export type PostActionTypes = typeof postActions[keyof typeof postActions];
-export type PostActions =
-  | {
-      type: typeof postActions.add;
-      payload: Post;
-    }
-  | {
-      type: typeof postActions.remove;
-    };
-
-export const postReducer = createReducer<State, PostActions>((state, action) => {
-  switch (action.type) {
-    case postActions.add:
-      return {
-        ...state,
-        posts: [...state.posts, action.payload],
-      };
-    case postActions.remove:
-      return {
-        ...state,
-        posts: state.posts.slice(0, -1),
-      };
-    default:
-      return state;
-  }
-}, Object.values(postActions));
-
-const countActions = prefixedEnum('count/', ['add']);
-export type CountActionTypes = typeof countActions[keyof typeof countActions];
-export type CountActions = {
-  type: typeof countActions.add;
-};
-export const reducer = createReducer<State, CountActions>((state, action) => {
-  switch (action.type) {
-    case countActions.add:
-      return {
-        ...state,
-        count: state.count + 1,
-      };
-    default:
-      return state;
-  }
-}, Object.values(countActions));
-
-type Actions = CountActionTypes & PostActionTypes;
-
-// eslint-disable-next-line @typescript-eslint/require-await
-const effects = createEffects<State, Action<Actions>>(async (action, setState) => {
-  switch (action.type) {
-    case countActions.add:
-      return;
-    default:
-      return;
-  }
-});
-
 const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {
   try {
     const response = await fetch(s, signal ? { signal } : {});
@@ -161,39 +104,23 @@ const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {
   }
 };
 
-const client = createClientRoute((prevState) => {
-  const [state, setState] = useState<State>(initialState);
-  const reducers = combineReducers<State, Actions>(reducer, postReducer);
-  const send = createSend(setState, reducers, effects);
-  const { data, isValidating, error } = useSWR<Post[], Error>('/api/posts', fetchPosts);
+const client = createClientRoute(() => {
+  const store = useStore();
+  if (store.posts.length === 0 && !store.loading && !store.error) {
+    // @ts-expect-error - testing
+    // eslint-disable-next-line
+    store['posts/get']();
+  }
 
-  // Previous route count
-  useEffect(() => {
-    if (!prevState?.count) return;
-    setState((s) => ({ ...s, count: prevState.count }));
-  }, [prevState?.count]);
-
-  // Previous route posts
-  useEffect(() => {
-    if (!prevState?.posts) return;
-    setState((s) => ({ ...s, posts: unique([...prevState.posts, ...(data ?? [])]) }));
-  }, [prevState?.posts, data]);
-
-  // Fetching posts
-  useEffect(() => {
-    if (prevState?.posts.length) return;
-    if (isValidating) {
-      return setState((s) => ({ ...s, loading: 'Loading posts...' }));
+  const send = (action: Action<Actions>) => {
+    assertType<keyof typeof store>(action.type);
+    if (store[action.type]) {
+      // @ts-expect-error - testing
+      // eslint-disable-next-line
+      store[action.type](action.payload);
     }
-    if (error) {
-      return setState((s) => ({ ...s, loading: '', error: error.message }));
-    }
-    if (data) {
-      return setState((s) => ({ ...s, loading: '', posts: unique([...s.posts, ...data]) }));
-    }
-  }, [data, error, prevState?.posts, isValidating]);
-
-  return [render(state), send, state];
+  };
+  return [render(store), send];
 });
 
 const server = createServerRoute(async () => {
@@ -240,9 +167,9 @@ export const useRoute = (path: Path, prevState?: States, prevPath?: Path) => {
   if (!Object.keys(routes.client).includes(path)) {
     throw new Error(`No routes found for path: ${path}`);
   }
-  const [route, send, state] = routes.client[path](prevState, prevPath);
+  const [route, send] = routes.client[path](prevState, prevPath);
   assertType<Dispatch<Action<string, unknown>>>(send);
-  return [route, send, state] as const;
+  return [route, send] as const;
 };
 
 export default routes;
