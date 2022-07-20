@@ -137,4 +137,6 @@ export const prefixedEnum = <P extends string, T extends string>(
   return result;
 };
 
+export const unique = <T extends unknown>(arr: T[]) => [...new Set(arr)];
+
 /* c8 ignore stop */

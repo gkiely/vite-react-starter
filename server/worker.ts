@@ -17,22 +17,22 @@ export const posts: Post[] = [
 /* c8 ignore next 5 */
 if (DEV_SERVER) {
   // eslint-disable-next-line
-  import('./dev-server').then(s => s.default(app));
+  import('./dev-server').then((s) => s.default(app));
 }
 
-app.get('/api/posts', prettyJSON(), c => c.json(posts));
-// app.get('/api/posts', prettyJSON(), delayMiddleware(3000), c => c.json(posts));
+app.get('/api/posts', prettyJSON(), (c) => c.json(posts));
+// app.get('/api/posts', prettyJSON(), delayMiddleware(2000), (c) => c.json(posts));
 
-app.get('/api/post/:id', async c => {
+app.get('/api/post/:id', async (c) => {
   const id = c.req.param('id');
-  const post = posts.find(p => p.id === id);
+  const post = posts.find((p) => p.id === id);
   if (!post) {
     return c.notFound();
   }
   return c.json<Post>(post);
 });
 
-app.post('/api/post/:id', bodyParse(), c => {
+app.post('/api/post/:id', bodyParse(), (c) => {
   try {
     const { req } = c;
     const id = req.param('id');

@@ -14,6 +14,7 @@ test('reducer: add', () => {
     count: 0,
     posts: [],
     error: '',
+    loading: '',
   };
   const action = {
     type: 'count/add',

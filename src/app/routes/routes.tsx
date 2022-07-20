@@ -1,14 +1,14 @@
 import { Dispatch, useEffect, useState } from 'react';
 import { Post, postsSchema } from 'server/schemas';
 import useSWR from 'swr/immutable';
-import { prefixedEnum, assertType } from 'utils';
+import { prefixedEnum, assertType, unique } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
-import { client as secondRouteClient } from './second-route';
-
+import { client as secondRouteClient, State as SecondRouteState } from './second-route';
 import {
   Action,
   combineReducers,
   createClientRoute,
+  createEffects,
   createReducer,
   createRenderer,
   createSend,
@@ -19,12 +19,14 @@ export type State = {
   count: number;
   posts: Post[];
   error: string;
+  loading: string;
 };
 
 const initialState: State = {
   count: 0,
   posts: [],
   error: '',
+  loading: '',
 };
 
 const render = createRenderer<State>((state) => {
@@ -45,6 +47,9 @@ const render = createRenderer<State>((state) => {
             id: 'Button-count-add',
             text: `count is: ${state.count}`,
             action: {
+              path: '/count',
+              method: 'POST',
+              payload: { count: state.count + 1 },
               type: countActions.add,
             },
           },
@@ -80,6 +85,7 @@ const render = createRenderer<State>((state) => {
         component: 'List',
         items: state.posts,
         error: state.error,
+        loading: state.loading,
       },
     ],
   };
@@ -134,7 +140,16 @@ export const reducer = createReducer<State, CountActions>((state, action) => {
 }, Object.values(countActions));
 
 type Actions = CountActionTypes & PostActionTypes;
-/* c8 ignore end */
+
+// eslint-disable-next-line @typescript-eslint/require-await
+const effects = createEffects<State, Action<Actions>>(async (action, setState) => {
+  switch (action.type) {
+    case countActions.add:
+      return;
+    default:
+      return;
+  }
+});
 
 const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {
   try {
@@ -149,27 +164,34 @@ const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {
 const client = createClientRoute((prevState) => {
   const [state, setState] = useState<State>(initialState);
   const reducers = combineReducers<State, Actions>(reducer, postReducer);
-  const send = createSend(setState, reducers);
-  const { data, error } = useSWR<Post[], Error>('/api/posts', fetchPosts);
+  const send = createSend(setState, reducers, effects);
+  const { data, isValidating, error } = useSWR<Post[], Error>('/api/posts', fetchPosts);
 
+  // Previous route count
   useEffect(() => {
-    if (prevState?.count) {
-      setState((s) => ({ ...s, count: prevState.count }));
-    }
-    if (prevState?.posts) {
-      setState((s) => ({ ...s, posts: prevState.posts }));
-    }
-  }, [prevState?.count, prevState?.posts]);
+    if (!prevState?.count) return;
+    setState((s) => ({ ...s, count: prevState.count }));
+  }, [prevState?.count]);
 
+  // Previous route posts
   useEffect(() => {
-    if (prevState?.posts) return;
-    if (data) {
-      setState((s) => ({ ...s, posts: [...new Set([...s.posts, ...data])] }));
+    if (!prevState?.posts) return;
+    setState((s) => ({ ...s, posts: unique([...prevState.posts, ...(data ?? [])]) }));
+  }, [prevState?.posts, data]);
+
+  // Fetching posts
+  useEffect(() => {
+    if (prevState?.posts.length) return;
+    if (isValidating) {
+      return setState((s) => ({ ...s, loading: 'Loading posts...' }));
     }
     if (error) {
-      setState((s) => ({ ...s, error: error.message }));
+      return setState((s) => ({ ...s, loading: '', error: error.message }));
     }
-  }, [data, error, setState, prevState?.posts]);
+    if (data) {
+      return setState((s) => ({ ...s, loading: '', posts: unique([...s.posts, ...data]) }));
+    }
+  }, [data, error, prevState?.posts, isValidating]);
 
   return [render(state), send, state];
 });
@@ -190,13 +212,13 @@ const server = createServerRoute(async () => {
 });
 
 /// TODO add array routing
-export type States = State;
+export type States = State | SecondRouteState;
 export type Path = '' | '/' | '/second';
 type ServerPath = Extract<Path, '/'>;
 
 type Routes = {
   client: {
-    [k in Path]: typeof client;
+    [k in Path]: typeof client | typeof secondRouteClient;
   };
   server: {
     [k in ServerPath]: typeof server;
@@ -214,7 +236,6 @@ const routes: Routes = {
   },
 };
 
-/* c8 ignore start */
 export const useRoute = (path: Path, prevState?: States, prevPath?: Path) => {
   if (!Object.keys(routes.client).includes(path)) {
     throw new Error(`No routes found for path: ${path}`);

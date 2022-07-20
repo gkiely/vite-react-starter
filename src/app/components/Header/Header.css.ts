@@ -11,7 +11,7 @@ export const rotate = keyframes({
 });
 
 export const logo = style({
-  height: '40vmin',
+  height: '20vmin',
   pointerEvents: 'none',
   '@media': {
     '(prefers-reduced-motion: no-preference)': {
@@ -22,7 +22,7 @@ export const logo = style({
 
 export const header = style({
   backgroundColor: '#282c34',
-  minHeight: '90vh',
+  minHeight: '70vh',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',

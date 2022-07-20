@@ -22,7 +22,7 @@ const Header = ({ body, title, buttons, links }: Props) => {
       <img src={logo} className={styles.logo} alt="logo" />
       <p>{title}</p>
       {buttons.map((button) => (
-        <p key={button.id}>
+        <div style={{ paddingBottom: '.5em' }} key={button.id}>
           <Button
             {...(button.action && {
               onClick: () => button.action && send(button.action),
@@ -30,7 +30,7 @@ const Header = ({ body, title, buttons, links }: Props) => {
           >
             {button.text}
           </Button>
-        </p>
+        </div>
       ))}
       <p>{renderTags(body)}</p>
       <p>

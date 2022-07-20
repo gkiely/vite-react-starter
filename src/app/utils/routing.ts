@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useContext } from 'react';
 import { Path, States } from 'routes/routes';
+import { assertType } from 'utils';
 import type * as Components from '../components';
 import { RouteContext } from '../RouteContext';
 
@@ -50,10 +51,27 @@ export const combineReducers = <S, A>(...reducers: Reducer<S, A>[]) => {
   };
 };
 
-type SetState<S> = Dispatch<SetStateAction<S>>;
-export const createSend =
-  <S, A>(setState: SetState<S>, reducer: (state: S, action: A) => S) =>
-  (action: A) =>
-    setState((state) => reducer(state, action));
+export type SetState<S> = Dispatch<SetStateAction<S>>;
 
+const asyncRun = async (fn: () => Promise<void>) => await fn();
+export const createSend =
+  <S, A>(
+    setState: SetState<S>,
+    reducer: (state: S, action: A) => S,
+    effects?: ReturnType<typeof createEffects>
+  ) =>
+  (action: A) => {
+    if (effects) {
+      void asyncRun(async () => {
+        assertType<Action<never, unknown>>(action);
+        assertType<SetState<unknown>>(setState);
+        await effects(action, setState);
+      });
+    }
+    return setState((state) => reducer(state, action));
+  };
+
+export const createEffects = <S, A extends Action<never, unknown>>(
+  fn: (action: A, setState: SetState<S>) => Promise<void>
+) => fn;
 /* c8 ignore stop */

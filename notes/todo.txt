@@ -1,7 +1,25 @@
-- Setup single store for all routes
-- See if you can get the UI to work on both the server and UI
-  - Switch to calling API for making updates, client can use hono directly
-- See if you can set up hono on client
+- Replace effects and reducer with zustand
+- Add a post with an input via the api to the server
+- Store the state for every route
+- Commit
+
+- Create a version that works with a machine: feature/machine
+  - Make adding/removing posts go via the api and take 1s
+
+- Make a version of send that works with the server
+  - Hits API
+  - API updates server store
+  - Returns response
+  - Send then hits the route
+  - Don't worry about loading states, it should just wait
+
+
+
+- Remove sections and components, just use an array
+- Create a time travel debugger down the bottom
+  - Debugger component that can be dropped in to any route
+
+- hono on the client?
 
 - Setup db/store object and req obj for each route
 

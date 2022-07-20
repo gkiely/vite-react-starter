@@ -3,11 +3,15 @@
 export type Props = {
   items: { title: string }[];
   error: string;
+  loading: string;
 };
 
-const List = ({ items, error }: Props) => {
+const List = ({ items, error, loading }: Props) => {
   if (error) {
     return <h1>{error}</h1>;
+  }
+  if (loading) {
+    return <h1>{loading}</h1>;
   }
   return (
     <div>

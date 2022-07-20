@@ -51,6 +51,7 @@ const render = createRenderer<State>((state) => {
         component: 'List',
         items: state.posts,
         error: state.error,
+        loading: '',
       },
     ],
   };
@@ -66,7 +67,7 @@ export const reducer = createReducer<State, CountActions>((state, action) => {
     case countActions.add:
       return {
         ...state,
-        count: state.count + 1,
+        count: state.count + 2,
       };
     default:
       return state;

@@ -62,6 +62,7 @@
     "regexp/no-unused-capturing-group": "off",
     "testing-library/no-debugging-utils": "off",
     "testing-library/render-result-naming-convention": "off",
+    "@typescript-eslint/no-unnecessary-type-constraint": "off",
     "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/naming-convention": [
