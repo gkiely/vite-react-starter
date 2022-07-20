@@ -1,9 +1,10 @@
+import { Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import logo from 'img/logo.svg';
 import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
 import { useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
-import { Fragment } from 'react';
 import type { CountActions, PostActions } from 'routes/routes';
 
 export type Props = {
@@ -19,7 +20,7 @@ const Header = ({ body, title, buttons, links }: Props) => {
     <header className={styles.header}>
       <img src={logo} className={styles.logo} alt="logo" />
       <p>{title}</p>
-      {buttons.map(button => (
+      {buttons.map((button) => (
         <p key={button.id}>
           <Button
             {...(button.action && {
@@ -34,9 +35,9 @@ const Header = ({ body, title, buttons, links }: Props) => {
       <p>
         {links.map((link, i) => (
           <Fragment key={link.id}>
-            <a className={styles.link} href={link.to} target="_blank" rel="noopener noreferrer">
+            <Link className={styles.link} to={link.to}>
               {link.text}
-            </a>
+            </Link>
             {i < links.length - 1 ? ' | ' : ''}
           </Fragment>
         ))}

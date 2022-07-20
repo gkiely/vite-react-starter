@@ -1,4 +1,8 @@
-- Render a second page with the prev route count
+- The current problem is useRoute is being called, which then can call many useEffects all within the App component
+  - But if I moved the useRoute into it's own component per route, it should be able to call with a different amount of hooks
+
+
+- Render a second page with the prev routes posts
 
   Some options:
   - Current route calls nextRoute with appropriate state, which then calls onEnter

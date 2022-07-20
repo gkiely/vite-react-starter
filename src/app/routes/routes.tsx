@@ -3,6 +3,8 @@ import { Post, postsSchema } from 'server/schemas';
 import useSWR from 'swr/immutable';
 import { prefixedEnum, assertType } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
+import { client as secondRouteClient, State as SecondRouteState } from './second-route';
+
 import {
   Action,
   combineReducers,
@@ -25,7 +27,7 @@ const initialState: State = {
   error: '',
 };
 
-const render = createRenderer<State>(state => {
+const render = createRenderer<State>((state) => {
   return {
     sections: [],
     components: [
@@ -67,14 +69,9 @@ const render = createRenderer<State>(state => {
         ],
         links: [
           {
-            id: 'react',
-            to: 'https://reactjs.org/',
-            text: 'Learn React',
-          },
-          {
-            id: 'vite',
-            to: 'https://vitejs.dev/guide/features.html',
-            text: 'Vite Docs',
+            id: '/second',
+            to: '/second',
+            text: 'Second route',
           },
         ],
       },
@@ -149,7 +146,9 @@ const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {
   }
 };
 
-const client = createClientRoute((prevState, prevPath) => {
+let timeout: NodeJS.Timeout;
+
+const client = createClientRoute(() => {
   const [state, setState] = useState<State>(initialState);
   const reducers = combineReducers<State, Actions>(reducer, postReducer);
   const send = createSend(setState, reducers);
@@ -157,9 +156,9 @@ const client = createClientRoute((prevState, prevPath) => {
 
   useEffect(() => {
     if (data) {
-      setState(s => ({ ...s, posts: [...new Set([...s.posts, ...data])] }));
+      setState((s) => ({ ...s, posts: [...new Set([...s.posts, ...data])] }));
     } else if (error) {
-      setState(s => ({ ...s, error: error.message }));
+      setState((s) => ({ ...s, error: error.message }));
     }
   }, [data, error, setState]);
 
@@ -183,8 +182,8 @@ const server = createServerRoute(async () => {
 
 /// TODO add array routing
 export type States = State;
-export type Path = '' | '/';
-type ServerPath = Exclude<Path, ''>;
+export type Path = '' | '/' | '/second';
+type ServerPath = Extract<Path, '/'>;
 
 type Routes = {
   client: {
@@ -199,6 +198,7 @@ const routes: Routes = {
   client: {
     '': client,
     '/': client,
+    '/second': secondRouteClient,
   },
   server: {
     '/': server,
