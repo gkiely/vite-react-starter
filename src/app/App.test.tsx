@@ -3,14 +3,25 @@ import App from './App';
 import { posts } from '../../server/worker';
 import { mockRequestOnce } from './utils/test-utils';
 import { BrowserRouter /* MemoryRouter */ } from 'react-router-dom';
-import { SWRConfig } from 'swr';
+// import { SWRConfig } from 'swr';
 import { PropsWithChildren } from 'react';
+import { useStore } from 'routes/store';
 
-const wrapper = ({ children }: PropsWithChildren) => (
-  <SWRConfig value={{ provider: () => new Map() }}>
-    <BrowserRouter>{children}</BrowserRouter>
-  </SWRConfig>
-);
+// swc
+// const wrapper = ({ children }: PropsWithChildren) => (
+//   // <SWRConfig value={{ provider: () => new Map() }}>
+//   //   <BrowserRouter>{children}</BrowserRouter>
+//   // </SWRConfig>
+// );
+
+// zustand
+const initialStoreState = useStore.getState();
+beforeEach(() => {
+  useStore.setState(initialStoreState, true);
+});
+
+const wrapper = ({ children }: PropsWithChildren) => <BrowserRouter>{children}</BrowserRouter>;
+
 describe('App', () => {
   it('should render', () => {
     render(<App />, { wrapper });
@@ -38,7 +49,7 @@ describe('App', () => {
   });
 
   it('should show an error if the network request fails', async () => {
-    mockRequestOnce('/api/posts');
+    mockRequestOnce('/api/posts', undefined);
     render(<App />, { wrapper });
     await screen.findByText('Could not load posts');
     expect(screen.getByText('Could not load posts')).toBeInTheDocument();

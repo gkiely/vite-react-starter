@@ -1,4 +1,7 @@
+- Get tests working
 - Commit this
+
+Tmrw
 - Have a crack at the server approach
   - Click count -> send is called
   - Post to server via an awaited request

@@ -1,5 +1,7 @@
+/* c8 ignore start */
 import { Post, postsSchema } from 'server/schemas';
 import { prefixedEnum } from 'utils';
+import { CLIENT_HOST } from 'utils/constants';
 import create from 'zustand';
 import { State } from './routes';
 
@@ -34,11 +36,11 @@ export const useStore = create<State>((set) => ({
   'posts/get': async () => {
     set({ loading: 'Loading posts...' });
     try {
-      const data = await fetch('/api/posts').then((r) => r.json());
+      const data = await fetch(CLIENT_HOST + '/api/posts').then((r) => r.json());
       const posts = postsSchema.parse(data);
       set({ posts, loading: '' });
     } catch (err) {
-      set({ error: 'Error loading posts', loading: '' });
+      set({ error: 'Could not load posts', loading: '' });
     }
   },
   'post/add': async (post: Post) => {
@@ -72,3 +74,5 @@ export const useStore = create<State>((set) => ({
   },
   'count/add': ({ amount = 1 }) => set((state) => ({ ...state, count: state.count + amount })),
 }));
+
+/* c8 ignore stop */

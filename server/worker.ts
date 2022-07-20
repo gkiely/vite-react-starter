@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import { Hono } from 'hono';
 import { prettyJSON } from 'hono/pretty-json';
 import { bodyParse } from 'hono/body-parse';
@@ -14,7 +15,6 @@ export const posts: Post[] = [
 ];
 
 // Testing routes
-/* c8 ignore next 5 */
 if (DEV_SERVER) {
   // eslint-disable-next-line
   import('./dev-server').then((s) => s.default(app));
@@ -54,3 +54,4 @@ app.post('/api/post', bodyParse(), (c) => {
 });
 
 export default app;
+/* c8 ignore stop */

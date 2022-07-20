@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import { Dispatch, SetStateAction, useContext } from 'react';
 import { Path, States } from 'routes/routes';
 import { assertType } from 'utils';

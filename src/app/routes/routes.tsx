@@ -5,7 +5,7 @@ import { assertType } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
 import { client as secondRouteClient, State as SecondRouteState } from './second-route';
 
-import { Actions, countActions, postActions, useStore } from './store';
+import { Actions, countActions, initialState, postActions, useStore } from './store';
 import { Action, createClientRoute, createRenderer, createServerRoute } from 'utils/routing';
 
 export type State = {
@@ -13,13 +13,6 @@ export type State = {
   posts: Post[];
   error: string;
   loading: string;
-};
-
-export const initialState: State = {
-  count: 0,
-  posts: [],
-  error: '',
-  loading: '',
 };
 
 const render = createRenderer<State>((state) => {
