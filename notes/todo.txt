@@ -1,5 +1,20 @@
-- The current problem is useRoute is being called, which then can call many useEffects all within the App component
-  - But if I moved the useRoute into it's own component per route, it should be able to call with a different amount of hooks
+- See if you can set up hono on client
+  - Each route should get req, db, user
+    - req: hono req
+    - db: all state stored in memory
+    - user: user data
+  - Server
+    - routes
+    - components
+- See if you can get the UI to work on both the server and UI with this approach
+
+- Instead of actions living in the route
+  - UI calls API
+  - The api updates the global db and responds
+  - UI requests new json once request completes
+    - Each route has access to req, db, user
+  - See if you can Hono to work locally as well as server
+
 
 
 - Render a second page with the prev routes posts
