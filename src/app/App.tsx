@@ -1,4 +1,4 @@
-import { createElement, PropsWithChildren, useEffect, useRef } from 'react';
+import { createElement, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as styles from './App.css';
 import routes, { Path, States, useRoute } from 'routes/routes';

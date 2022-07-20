@@ -21,7 +21,7 @@ export function assertType<T>(value: unknown): asserts value is T {
 }
 
 export const delay = (ms: number, fn = () => {}) =>
-  new Promise(resolve => setTimeout(() => resolve(fn()), ms));
+  new Promise((resolve) => setTimeout(() => resolve(fn()), ms));
 
 export const delayMiddleware = (timeout = 1000) => {
   return async (_c: Context, next: Next) => {
@@ -38,7 +38,7 @@ export const useAsyncEffect = (
     const cleanup = effect();
     return () => {
       void (async () => {
-        await cleanup.then(p => void p?.());
+        await cleanup.then((p) => void p?.());
       })();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

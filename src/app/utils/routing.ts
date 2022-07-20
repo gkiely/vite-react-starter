@@ -54,6 +54,6 @@ type SetState<S> = Dispatch<SetStateAction<S>>;
 export const createSend =
   <S, A>(setState: SetState<S>, reducer: (state: S, action: A) => S) =>
   (action: A) =>
-    setState(state => reducer(state, action));
+    setState((state) => reducer(state, action));
 
 /* c8 ignore stop */
