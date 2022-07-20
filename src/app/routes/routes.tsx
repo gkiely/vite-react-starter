@@ -1,7 +1,7 @@
-import { Dispatch, useEffect } from 'react';
+import { Dispatch } from 'react';
 import { Post, postsSchema } from 'server/schemas';
-import useSWR from 'swr/immutable';
-import { assertType, unique } from 'utils';
+// import useSWR from 'swr/immutable';
+import { assertType } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
 import { client as secondRouteClient, State as SecondRouteState } from './second-route';
 

@@ -1,19 +1,13 @@
 /* c8 ignore start */
 import { Post } from 'server/schemas';
 import { prefixedEnum } from 'utils';
-import { Action, createClientRoute, createRenderer, createSend } from 'utils/routing';
+import { Action, createClientRoute, createRenderer } from 'utils/routing';
 import { useStore } from './store';
 
 export type State = {
   count: number;
   posts: Post[];
   error: string;
-};
-
-const initialState: State = {
-  count: 0,
-  posts: [],
-  error: '',
 };
 
 const render = createRenderer<State>((state) => {
