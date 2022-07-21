@@ -1,4 +1,7 @@
 TODO:
+- See if setRoute can be moved to routes.tsx
+- Test loading: true for a slow endpoint
+- Fix tests
 - Setup second-route.tsx
 - Fix types
 - Consolidate server and client into a single route
