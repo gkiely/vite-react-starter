@@ -1,6 +1,6 @@
 TODO:
+- Test loading: true and early render for a slow endpoint
 - See if setRoute can be moved to routes.tsx
-- Test loading: true for a slow endpoint
 - Fix tests
 - Setup second-route.tsx
 - Fix types
@@ -8,12 +8,6 @@ TODO:
 - Move over rest of buttons
 - Fix hot reload
 
-
-What's cool about this approach
-- No stores/reducers
-  - Just api requests
-- I can type it all fully
-- I can test and potentially drive UI with post requests
 
 
 - If there was a stack of current pending actions, we could do loading based off which ones are pending
@@ -30,7 +24,8 @@ action: {
 
 Then
 - Add typing for action payloads
-- Type zustand and make createSend
+- Do a document explaining how the client side server/api works
+
 - Create a version that works with a machine: feature/machine
   - Make adding/removing posts go via the api and take 1s
 

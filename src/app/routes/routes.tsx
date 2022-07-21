@@ -153,6 +153,19 @@ export const useRoute = (path: Path, setRoute: SetState<RouteConfig>) => {
   }
   const send = async (action: Action<Actions>) => {
     try {
+      // Early render for slow endpoint
+      // @ts-expect-error - testing
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (action.options.loading) {
+        const data = await app.request(`${SERVER_HOST}/api/store`);
+        const store = storeSchema.parse(data);
+        setRoute(
+          render({
+            ...store,
+            loading: 'Loading a slow endpoint...',
+          })
+        );
+      }
       // @ts-expect-error - testing
       // eslint-disable-next-line
       const response = await app.request(action.path, {
@@ -164,9 +177,8 @@ export const useRoute = (path: Path, setRoute: SetState<RouteConfig>) => {
         body: JSON.stringify(action.options.body),
       });
       if (!response.ok) throw new Error(response.statusText);
-      const store = await response.json();
-      // @ts-expect-error - testing
-      // eslint-disable-next-line
+      const data = await response.json();
+      const store = storeSchema.parse(data);
       setRoute(render(store));
     } catch (err) {
       // eslint-disable-next-line no-console

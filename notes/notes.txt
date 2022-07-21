@@ -1,3 +1,9 @@
+Client side server for store - What's cool about this approach
+- No stores/reducers
+  - Just api requests
+- I can type it all fully
+- I can test and potentially drive UI with post requests
+
 Folder structure
 - src
   - html (maybe replace these with public?)
