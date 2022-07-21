@@ -2,9 +2,9 @@ import type { Hono } from 'hono';
 import routes from '../src/app/routes/routes';
 
 const server = (app: Hono) => {
-  app.get('/server', async c => {
+  app.get('/server', async (c) => {
     try {
-      const json = await routes.server['/']();
+      const json = await routes['/']();
       return c.json(json);
     } catch {
       return c.text('Error rendering routes', 400);

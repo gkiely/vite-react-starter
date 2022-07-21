@@ -1,7 +1,5 @@
 /* c8 ignore start */
 import { Dispatch, SetStateAction, useContext } from 'react';
-import { Path, States } from 'routes/routes';
-import { assertType } from 'utils';
 import type * as Components from '../components';
 import { RouteContext } from '../RouteContext';
 
@@ -18,7 +16,7 @@ export type Action<A = string, P = unknown> = {
 
 type ComponentConfig = Props[keyof C];
 
-type RouteConfig = {
+export type RouteConfig = {
   sections: string[];
   components: ComponentConfig[];
 };
@@ -39,11 +37,7 @@ export const createReducer = <S, A extends Action>(
   };
 };
 
-export const createClientRoute = <U = string>(
-  fn: (prevState?: States, prevPath?: Path) => readonly [RouteConfig, Dispatch<Action<U>>]
-) => fn;
-
-export const createServerRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;
+export const createRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;
 
 type Reducer<S, A> = (state: Readonly<S>, action: Readonly<Action<A, unknown>>) => S;
 export const combineReducers = <S, A>(...reducers: Reducer<S, A>[]) => {
@@ -53,26 +47,4 @@ export const combineReducers = <S, A>(...reducers: Reducer<S, A>[]) => {
 };
 
 export type SetState<S> = Dispatch<SetStateAction<S>>;
-
-const asyncRun = async (fn: () => Promise<void>) => await fn();
-export const createSend =
-  <S, A>(
-    setState: SetState<S>,
-    reducer: (state: S, action: A) => S,
-    effects?: ReturnType<typeof createEffects>
-  ) =>
-  (action: A) => {
-    if (effects) {
-      void asyncRun(async () => {
-        assertType<Action<never, unknown>>(action);
-        assertType<SetState<unknown>>(setState);
-        await effects(action, setState);
-      });
-    }
-    return setState((state) => reducer(state, action));
-  };
-
-export const createEffects = <S, A extends Action<never, unknown>>(
-  fn: (action: A, setState: SetState<S>) => Promise<void>
-) => fn;
 /* c8 ignore stop */

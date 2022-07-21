@@ -1,4 +1,4 @@
-import { createElement, MutableRefObject, useRef } from 'react';
+import { createElement, MutableRefObject, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as styles from './App.css';
 import { Path, States, useRoute } from 'routes/routes';
@@ -6,6 +6,7 @@ import * as Components from './components';
 import RouteContext from './RouteContext';
 import { assertType } from 'utils';
 import { Intersect } from 'utils/types';
+import { RouteConfig } from 'utils/routing';
 
 type RouteProps = {
   prevState: MutableRefObject<States | undefined>;
@@ -19,7 +20,13 @@ type RouteProps = {
 const Route = ({ prevState, prevPath, prevShadow }: RouteProps) => {
   const location = useLocation();
   assertType<Path>(location.pathname);
-  const [route, send] = useRoute(location.pathname, prevState.current, prevPath.current);
+
+  const [route, setRoute] = useState<RouteConfig>({
+    sections: [],
+    components: [],
+  });
+
+  const send = useRoute(location.pathname, setRoute);
 
   return (
     <RouteContext send={send}>

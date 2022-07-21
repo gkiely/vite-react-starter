@@ -1,8 +1,8 @@
 /* c8 ignore start */
 import { Post } from 'server/schemas';
 import { prefixedEnum } from 'utils';
-import { Action, createClientRoute, createRenderer } from 'utils/routing';
-import { useStore } from './store';
+import { createRoute, createRenderer } from 'utils/routing';
+import { initialState } from './store';
 
 export type State = {
   count: number;
@@ -60,20 +60,10 @@ export type CountActions = {
   type: typeof countActions.add;
 };
 
-export const client = createClientRoute((prevState, prevPath) => {
-  const store = useStore();
+export const client = createRoute(() => {
+  const store = initialState;
 
-  const send = (action: Action<CountActionTypes>) => {
-    // @ts-expect-error - testing
-    // eslint-disable-next-line
-    if (store[action.type]) {
-      // @ts-expect-error - testing
-      // eslint-disable-next-line
-      store[action.type](action.payload);
-    }
-  };
-
-  return [render(store), send];
+  return render(store);
 });
 
 /* c8 ignore stop */

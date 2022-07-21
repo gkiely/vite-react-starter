@@ -1,11 +1,20 @@
-- Have a crack at the server approach
-  - Click count -> send is called
-  - Post to server via an awaited request
-    - Set loading bar after 300ms
-  - Server updates it's own store
-  - Server responds
-  - Re-render
-  - No store is needed, just app.request every time and call setState to re-render when the server responds
+TODO:
+- Setup second-route.tsx
+- Fix types
+- Consolidate server and client into a single route
+- Move over rest of buttons
+- Fix hot reload
+
+
+What's cool about this approach
+- No stores/reducers
+  - Just api requests
+- I can type it all fully
+- I can test and potentially drive UI with post requests
+
+
+- If there was a stack of current pending actions, we could do loading based off which ones are pending
+- We could also potentially abort on unmount
 
 action: {
   path: '/api/post',

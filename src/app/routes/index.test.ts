@@ -4,7 +4,7 @@ import routes from './routes';
 
 test('/server', async () => {
   mockFetchOnce(app);
-  const data = await routes.server['/']();
+  const data = await routes['/']();
   expect(data.components).toEqual(expect.any(Array));
   expect(data.sections).toEqual(expect.any(Array));
 });

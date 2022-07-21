@@ -1,21 +1,42 @@
-import { Dispatch } from 'react';
-import { Post, postsSchema } from 'server/schemas';
-// import useSWR from 'swr/immutable';
-import { assertType } from 'utils';
-import { SERVER_HOST } from 'utils/constants';
+import { Dispatch, useEffect, useRef } from 'react';
+import { Store, storeSchema } from 'server/schemas';
+import { assertType, delayMiddleware } from 'utils';
 import { client as secondRouteClient, State as SecondRouteState } from './second-route';
 
-import { Actions, countActions, initialState, postActions, useStore } from './store';
-import { Action, createClientRoute, createRenderer, createServerRoute } from 'utils/routing';
+import { Hono } from 'hono';
+import { bodyParse } from 'hono/body-parse';
 
-export type State = {
-  count: number;
-  posts: Post[];
-  error: string;
-  loading: string;
+import { Actions, initialState, postActions } from './store';
+import { Action, createRenderer, createRoute, RouteConfig, SetState } from 'utils/routing';
+import { SERVER_HOST } from 'utils/constants';
+
+export type State = Store;
+
+let store: Store = {
+  ...initialState,
+  posts: [
+    { id: '1', title: 'Good Morning' },
+    { id: '2', title: 'Good Aternoon' },
+    { id: '3', title: 'Good Evening' },
+    { id: '4', title: 'Good Night' },
+  ],
 };
 
-const render = createRenderer<State>((state) => {
+const app = new Hono();
+app.post('/api/store', delayMiddleware(0), bodyParse(), (c) => {
+  const { req } = c;
+  // eslint-disable-next-line
+  store = {
+    ...store,
+    ...JSON.parse(req.parsedBody as string),
+  };
+
+  return c.json(store);
+});
+app.get('/api/store', (c) => c.json(store));
+
+// @ts-expect-error - testing
+const render = createRenderer<Store>((state) => {
   return {
     sections: [],
     components: [
@@ -33,10 +54,22 @@ const render = createRenderer<State>((state) => {
             id: 'Button-count-add',
             text: `count is: ${state.count}`,
             action: {
-              path: '/count',
-              method: 'POST',
-              payload: { count: state.count + 1 },
-              type: countActions.add,
+              path: '/api/store',
+              options: {
+                method: 'POST',
+                body: { count: state.count + 1 },
+              },
+            },
+          },
+          {
+            id: 'Button-count-subtract',
+            text: `Subtract count`,
+            action: {
+              path: '/api/store',
+              options: {
+                method: 'POST',
+                body: { count: state.count - 1 },
+              },
             },
           },
           {
@@ -84,45 +117,12 @@ const render = createRenderer<State>((state) => {
   };
 });
 
-/* c8 ignore start */
-/// TODO: add typing for action.payload
-// Either with zod or some other way
-const fetchPosts = async (s: string, signal?: AbortSignal): Promise<Post[]> => {
+const client = createRoute(async () => {
   try {
-    const response = await fetch(s, signal ? { signal } : {});
+    const response = await app.request(`${SERVER_HOST}/api/store`);
     const data = await response.json();
-    return postsSchema.parse(data);
-  } catch {
-    throw new Error('Could not load posts');
-  }
-};
-
-const client = createClientRoute(() => {
-  const store = useStore();
-  if (store.posts.length === 0 && !store.loading && !store.error) {
-    // @ts-expect-error - testing
-    // eslint-disable-next-line
-    store[postActions.getAll]();
-  }
-
-  const send = (action: Action<Actions>) => {
-    assertType<keyof typeof store>(action.type);
-    if (store[action.type]) {
-      // @ts-expect-error - testing
-      // eslint-disable-next-line
-      store[action.type](action.payload);
-    }
-  };
-  return [render(store), send];
-});
-
-const server = createServerRoute(async () => {
-  try {
-    const posts = await fetchPosts(`${SERVER_HOST}/api/posts`);
-    return render({
-      ...initialState,
-      posts,
-    });
+    const state = storeSchema.parse(data);
+    return render(state);
   } catch (e) {
     return render({
       ...initialState,
@@ -132,37 +132,55 @@ const server = createServerRoute(async () => {
 });
 
 /// TODO add array routing
-export type States = State | SecondRouteState;
+export type States = Store | SecondRouteState;
 export type Path = '' | '/' | '/second';
-type ServerPath = Extract<Path, '/'>;
 
 type Routes = {
-  client: {
-    [k in Path]: typeof client | typeof secondRouteClient;
-  };
-  server: {
-    [k in ServerPath]: typeof server;
-  };
+  [k in Path]: Parameters<typeof createRoute>[number];
 };
 
 const routes: Routes = {
-  client: {
-    '': client,
-    '/': client,
-    '/second': secondRouteClient,
-  },
-  server: {
-    '/': server,
-  },
+  '': client,
+  '/': client,
+  '/second': secondRouteClient,
 };
 
-export const useRoute = (path: Path, prevState?: States, prevPath?: Path) => {
-  if (!Object.keys(routes.client).includes(path)) {
+/// TODO: move useRoute to utils/routing
+export const useRoute = (path: Path, setRoute: SetState<RouteConfig>) => {
+  // const [rendered, setRendered] = useReducer(() => true, false);
+  if (!Object.keys(routes).includes(path)) {
     throw new Error(`No routes found for path: ${path}`);
   }
-  const [route, send] = routes.client[path](prevState, prevPath);
+  const send = async (action: Action<Actions>) => {
+    try {
+      // @ts-expect-error - testing
+      // eslint-disable-next-line
+      const response = await app.request(action.path, {
+        // @ts-expect-error - testing
+        // eslint-disable-next-line
+        ...action.options,
+        // @ts-expect-error - testing
+        // eslint-disable-next-line
+        body: JSON.stringify(action.options.body),
+      });
+      if (!response.ok) throw new Error(response.statusText);
+      const store = await response.json();
+      // @ts-expect-error - testing
+      // eslint-disable-next-line
+      setRoute(render(store));
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log('Error:', err);
+    }
+  };
+
+  const route = useRef(routes[path]());
+  useEffect(() => {
+    void Promise.resolve(route.current).then(setRoute);
+  }, [setRoute]);
+
   assertType<Dispatch<Action<string, unknown>>>(send);
-  return [route, send] as const;
+  return send;
 };
 
 export default routes;

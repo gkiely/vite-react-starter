@@ -2,23 +2,8 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import App from './App';
 import { posts } from '../../server/worker';
 import { mockRequestOnce } from './utils/test-utils';
-import { BrowserRouter /* MemoryRouter */ } from 'react-router-dom';
-// import { SWRConfig } from 'swr';
+import { BrowserRouter } from 'react-router-dom';
 import { PropsWithChildren } from 'react';
-import { useStore } from 'routes/store';
-
-// swc
-// const wrapper = ({ children }: PropsWithChildren) => (
-//   // <SWRConfig value={{ provider: () => new Map() }}>
-//   //   <BrowserRouter>{children}</BrowserRouter>
-//   // </SWRConfig>
-// );
-
-// zustand
-const initialStoreState = useStore.getState();
-beforeEach(() => {
-  useStore.setState(initialStoreState, true);
-});
 
 const wrapper = ({ children }: PropsWithChildren) => <BrowserRouter>{children}</BrowserRouter>;
 

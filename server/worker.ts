@@ -4,7 +4,7 @@ import { prettyJSON } from 'hono/pretty-json';
 import { bodyParse } from 'hono/body-parse';
 import { DEV_SERVER } from 'utils/constants';
 import { Post, postSchema } from './schemas';
-// import { delayMiddleware } from 'utils';
+import { delayMiddleware } from 'utils';
 
 const app = new Hono();
 export const posts: Post[] = [
@@ -42,7 +42,7 @@ app.delete('/api/post/:id', async (c) => {
   return c.json(post);
 });
 
-app.post('/api/post', bodyParse(), (c) => {
+app.post('/api/post', delayMiddleware(0), bodyParse(), (c) => {
   try {
     const { req } = c;
     const post = postSchema.parse(req.parsedBody);
