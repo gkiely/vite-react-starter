@@ -12,7 +12,10 @@ export const initialState: State = {
   loading: '',
 };
 
-export const postActions = prefixedEnum('post/', ['add', 'remove']);
+export const postActions = {
+  ...prefixedEnum('post/', ['add', 'remove']),
+  getAll: 'posts/get',
+};
 export type PostActionTypes = typeof postActions[keyof typeof postActions];
 export type PostActions =
   | {

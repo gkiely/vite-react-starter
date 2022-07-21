@@ -102,7 +102,7 @@ const client = createClientRoute(() => {
   if (store.posts.length === 0 && !store.loading && !store.error) {
     // @ts-expect-error - testing
     // eslint-disable-next-line
-    store['posts/get']();
+    store[postActions.getAll]();
   }
 
   const send = (action: Action<Actions>) => {
