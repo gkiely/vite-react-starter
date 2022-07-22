@@ -76,6 +76,7 @@ Then
 
 
 V2
+- Write a client router that behaves the same way as hono, currently it takes .3-.5ms to respond
 - Rewrite types from scratch
 
 

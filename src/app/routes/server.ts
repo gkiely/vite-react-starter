@@ -1,4 +1,4 @@
-import { Store, storeSchema } from 'server/schemas';
+import { partialStore, Store } from 'server/schemas';
 // import { delayMiddleware } from 'utils';
 
 import { Hono } from 'hono';
@@ -18,7 +18,7 @@ export let store: Store = {
 export const app = new Hono();
 app.post('/api/store', bodyParse(), (c) => {
   const { req } = c;
-  const storeUpdate = storeSchema.partial().parse(req.parsedBody) as Partial<Store>;
+  const storeUpdate = partialStore.parse(req.parsedBody) as Partial<Store>;
   store = {
     ...store,
     ...storeUpdate,

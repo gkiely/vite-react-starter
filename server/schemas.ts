@@ -16,5 +16,7 @@ export const storeSchema = z.object({
   loading: z.string(),
 });
 
+export const partialStore = storeSchema.partial().strict();
+
 export type Store = z.infer<typeof storeSchema>;
 /* c8 ignore stop */

@@ -25,7 +25,9 @@ const Header = ({ body, title, buttons, links }: Props) => {
         <div style={{ paddingBottom: '.5em' }} key={button.id}>
           <Button
             {...(button.action && {
-              onClick: () => button.action && send(button.action),
+              onClick: () => {
+                button.action && send(button.action);
+              },
             })}
           >
             {button.text}

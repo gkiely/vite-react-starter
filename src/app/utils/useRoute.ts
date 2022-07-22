@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Store, storeSchema } from 'server/schemas';
+import { partialStore, Store, storeSchema } from 'server/schemas';
 import { assertType, omit } from 'utils';
 
 import { APIAction } from '../routes/store';
@@ -9,13 +9,20 @@ import { useLocation } from 'react-router-dom';
 import routes, { Path, renderers } from 'routes/routes';
 import { app } from 'routes/server';
 
+/* c8 ignore start */
 // Until exact types are supported: https://github.com/microsoft/TypeScript/issues/12936
 // We parse objects sent from the route and throw a runtime error
 const partialParse = (store: Partial<Store>) => {
-  return storeSchema.partial().strict().parse(store) as Partial<Store>;
+  return partialStore.parse(store) as Partial<Store>;
 };
 
-/* c8 ignore start */
+const getStore = async () => {
+  const response = await app.request(`${SERVER_HOST}/api/store`);
+  const data = await response.json();
+  const store = storeSchema.parse(data);
+  return store;
+};
+
 const useRoute = (setRoute: SetState<RouteConfig>) => {
   const location = useLocation();
   assertType<Path>(location.pathname);
@@ -30,9 +37,7 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
     try {
       // Early rendering of the loading state
       if (action.loading) {
-        const response = await app.request(`${SERVER_HOST}/api/store`);
-        const data = await response.json();
-        const store = storeSchema.parse(data);
+        const store = await getStore();
         const parsedStore = partialParse(action.loading);
         setRoute(
           render({
@@ -52,15 +57,12 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
         ...(action.options ? omit(action.options, 'body') : {}),
         ...(body ? { body } : {}),
       };
-
       const response = await app.request(`${SERVER_HOST}${action.path}`, options);
       if (!response.ok) throw new Error(response.statusText);
       const data = await response.json();
       const store = storeSchema.parse(data);
       setRoute(render(store));
     } catch (err) {
-      // eslint-disable-next-line no-console
-      // console.error('Error:', err);
       throw new Error(err as string);
     }
   };
