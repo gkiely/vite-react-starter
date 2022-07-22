@@ -10,7 +10,7 @@ export const initialState: Store = {
 };
 
 export type APIAction = {
-  path: '/api/store' | `/api/store/${keyof Store}/:id`;
+  path: '/api/store' | `/api/store/${keyof Store}` | `/api/store/${keyof Store}/:id`;
   loading?: AtLeastOne<Store>;
   append?: boolean;
   options?: {

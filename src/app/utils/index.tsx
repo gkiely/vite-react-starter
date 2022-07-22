@@ -20,8 +20,21 @@ export function assertType<T>(value: unknown): asserts value is T {
   }
 }
 
-export const delay = (ms: number, fn = () => {}) =>
-  new Promise((resolve) => setTimeout(() => resolve(fn()), ms));
+export const delay = (ms: number, signal?: AbortController['signal']) => {
+  if (signal) {
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(resolve, ms);
+      const abort = () => {
+        clearTimeout(timeout);
+        reject();
+        signal.removeEventListener('abort', abort);
+      };
+      signal.addEventListener('abort', abort);
+    });
+  }
+
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
 
 export function delayMiddleware(timeout = 1000) {
   return async (_c: Context, next: Next) => {

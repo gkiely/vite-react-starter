@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { partialStore, Store, storeSchema } from 'server/schemas';
-import { assertType, omit } from 'utils';
+import { assertType, delay, omit } from 'utils';
 
 import { APIAction } from '../routes/store';
 import { RouteConfig, SetState } from 'utils/routing';
@@ -23,6 +23,8 @@ const getStore = async () => {
   return store;
 };
 
+const actions: string[] = [];
+
 const useRoute = (setRoute: SetState<RouteConfig>) => {
   const location = useLocation();
   assertType<Path>(location.pathname);
@@ -34,17 +36,30 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
   }
 
   const send = async (action: APIAction) => {
+    // Action already in progress
+    if (actions.includes(JSON.stringify(action))) return;
+    actions.push(JSON.stringify(action));
+
+    let controller: AbortController | undefined;
     try {
       // Early rendering of the loading state
       if (action.loading) {
-        const store = await getStore();
-        const parsedStore = partialParse(action.loading);
-        setRoute(
-          render({
-            ...store,
-            ...parsedStore,
-          })
-        );
+        // Show loading state after 10ms to avoid flicker when the response is fast
+        controller = new AbortController();
+        const p = delay(10, controller.signal);
+        p.then(async () => {
+          controller = undefined;
+          if (!action.loading) return;
+          const store = await getStore();
+          const parsedStore = partialParse(action.loading);
+
+          setRoute(
+            render({
+              ...store,
+              ...parsedStore,
+            })
+          );
+        }).catch(() => {});
       }
 
       const parsedBody = action.options?.body ? partialParse(action.options?.body) : undefined;
@@ -58,12 +73,16 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
         ...(body ? { body } : {}),
       };
       const response = await app.request(`${SERVER_HOST}${action.path}`, options);
+      controller?.abort();
       if (!response.ok) throw new Error(response.statusText);
       const data = await response.json();
       const store = storeSchema.parse(data);
       setRoute(render(store));
     } catch (err) {
       throw new Error(err as string);
+    } finally {
+      controller?.abort();
+      actions.shift();
     }
   };
 

@@ -17,10 +17,13 @@ export const render = createRenderer<Store>((state) => {
           id: 'Button-count-add',
           text: `count is: ${state.count}`,
           action: {
-            path: '/api/store',
+            loading: {
+              loading: 'Adding...',
+            },
+            path: '/api/store/count',
             options: {
               method: 'POST',
-              body: { count: state.count + 1 },
+              body: { count: 1 },
             },
           },
         },
@@ -28,10 +31,10 @@ export const render = createRenderer<Store>((state) => {
           id: 'Button-count-subtract',
           text: `Subtract count`,
           action: {
-            path: '/api/store',
+            path: '/api/store/count',
             options: {
               method: 'POST',
-              body: { count: state.count - 1 },
+              body: { count: -1 },
             },
           },
         },

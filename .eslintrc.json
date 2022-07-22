@@ -22,6 +22,7 @@
   ],
   "rules": {
     "no-sequences": "off",
+    "promise/always-return": "off",
     "promise/no-callback-in-promise": "off",
     "promise/catch-or-return": "warn",
     "no-undef-init": "warn",

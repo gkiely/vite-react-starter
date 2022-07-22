@@ -1,9 +1,11 @@
 TODO:
-- Fix tests
-- Fix hot reloading
-- Better delete and append
+- Remove total state from payloads, leave it up to server to update state
+- Drive the front end from the backend, you might need to do either server push or something else
+- Get server rendering working
+  - No javascript application
 
 Then
+- Better delete and append
 - See if setRoute can be moved to routes.tsx
 - Pending actions
   - Avoid duplicate requests when interacting
