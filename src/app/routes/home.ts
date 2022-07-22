@@ -1,7 +1,7 @@
 import { Store, storeSchema } from 'server/schemas';
 
 import { SERVER_HOST } from 'utils/constants';
-import { initialState } from './store';
+import { initialState } from 'routes/server';
 import { createRenderer, createRoute } from 'utils/routing';
 import { app } from './server';
 
@@ -20,60 +20,54 @@ export const render = createRenderer<Store>((state) => {
             loading: {
               loading: 'Adding...',
             },
-            path: '/api/store/count',
+            path: '/api/count',
             options: {
               method: 'POST',
               body: { count: 1 },
             },
           },
         },
-        {
-          id: 'Button-count-subtract',
-          text: `Subtract count`,
-          action: {
-            path: '/api/store/count',
-            options: {
-              method: 'POST',
-              body: { count: -1 },
-            },
-          },
-        },
-        {
-          id: 'Button-post-add',
-          text: 'Add a post',
-          action: {
-            path: '/api/store',
-            options: {
-              method: 'POST',
-              body: {
-                posts: [...state.posts, { id: `${state.posts.length + 1}`, title: 'New Post' }],
-              },
-            },
-          },
-        },
-        ...(state.posts.length > 0
-          ? [
-              {
-                id: 'Button-post-remove',
-                text: 'Remove a post',
-                action: {
-                  path: '/api/store',
-                  options: {
-                    method: 'POST',
-                    body: {
-                      posts: state.posts.slice(0, state.posts.length - 1),
-                    },
-                  },
-                  // Proposed
-                  // path: '/api/store/posts/:id',
-                  // options: {
-                  //   method: 'DELETE',
-                  //   params: { id: state.posts.slice(-1)[0]?.id },
-                  // },
-                },
-              } as const,
-            ]
-          : []),
+        // {
+        //   id: 'Button-count-subtract',
+        //   text: `Subtract count`,
+        //   action: {
+        //     path: '/api/count',
+        //     options: {
+        //       method: 'POST',
+        //       body: { count: -1 },
+        //     },
+        //   },
+        // },
+        // {
+        //   id: 'Button-post-add',
+        //   text: 'Add a post',
+        //   action: {
+        //     path: '/api/post',
+        //     options: {
+        //       method: 'POST',
+        //       body: {
+        //         posts: { title: 'New Post' },
+        //       },
+        //     },
+        //   },
+        // },
+        // ...(state.posts.length > 0
+        //   ? [
+        //       {
+        //         id: 'Button-post-remove',
+        //         text: 'Remove a post',
+        //         action: {
+        //           path: '/api/post',
+        //           options: {
+        //             method: 'DELETE',
+        //             body: {
+        //               post: state.posts.slice(-1),
+        //             },
+        //           },
+        //         },
+        //       } as const,
+        //     ]
+        //   : []),
       ],
       links: [
         {

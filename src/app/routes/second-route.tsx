@@ -3,8 +3,7 @@ import { Store, storeSchema } from 'server/schemas';
 import { prefixedEnum } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
 import { createRoute, createRenderer } from 'utils/routing';
-import { app } from 'routes/server';
-import { initialState } from './store';
+import { app, initialState } from 'routes/server';
 
 export const render = createRenderer<Store>((state) => {
   return [
@@ -18,13 +17,13 @@ export const render = createRenderer<Store>((state) => {
           id: 'Button-count-add',
           text: `count is: ${state.count}`,
           action: {
-            path: '/api/store',
-            // loading: {
-            //   loading: 'Adding...',
-            // },
+            path: '/api/count',
+            loading: {
+              loading: 'Adding...',
+            },
             options: {
               method: 'POST',
-              body: { count: state.count + 2 },
+              body: { count: 2 },
             },
           },
         },

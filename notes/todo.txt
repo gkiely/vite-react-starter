@@ -1,11 +1,14 @@
 TODO:
-- Remove total state from payloads, leave it up to server to update state
+- Switch to zod for APIAction
+  - parseRequest instead of partialParse
+
+Then
 - Drive the front end from the backend, you might need to do either server push or something else
 - Get server rendering working
   - No javascript application
-
-Then
-- Better delete and append
+- Test loading bar
+  loading && { component: 'LoadingBar' }
+  https://github.com/klendi/react-top-loading-bar
 - See if setRoute can be moved to routes.tsx
 - Pending actions
   - Avoid duplicate requests when interacting

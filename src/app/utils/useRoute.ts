@@ -1,13 +1,11 @@
 import { useEffect } from 'react';
 import { partialStore, Store, storeSchema } from 'server/schemas';
 import { assertType, delay, omit } from 'utils';
-
-import { APIAction } from '../routes/store';
 import { RouteConfig, SetState } from 'utils/routing';
 import { SERVER_HOST } from 'utils/constants';
 import { useLocation } from 'react-router-dom';
 import routes, { Path, renderers } from 'routes/routes';
-import { app } from 'routes/server';
+import { app, APIAction } from 'routes/server';
 
 /* c8 ignore start */
 // Until exact types are supported: https://github.com/microsoft/TypeScript/issues/12936

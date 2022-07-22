@@ -1,5 +1,5 @@
 import { createContext, Dispatch, PropsWithChildren } from 'react';
-import { APIAction } from 'routes/store';
+import { APIAction } from 'routes/server';
 
 /* c8 ignore start */
 export const RouteContext = createContext<{ send: Dispatch<APIAction> }>({

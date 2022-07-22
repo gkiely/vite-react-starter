@@ -5,7 +5,7 @@ import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
 import { useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
-import type { APIAction } from 'routes/store';
+import type { APIAction } from 'routes/server';
 
 export type Props = {
   title: string;
