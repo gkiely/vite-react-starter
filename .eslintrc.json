@@ -104,7 +104,6 @@
     "unicorn/no-zero-fractions": "error",
     "unicorn/no-unsafe-regex": "error",
     "unicorn/no-unreadable-iife": "error",
-    "unicorn/no-nested-ternary": "error",
     "unicorn/no-null": "error",
     "validate-jsx-nesting/no-invalid-jsx-nesting": "error"
   }

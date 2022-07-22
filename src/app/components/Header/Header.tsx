@@ -5,12 +5,12 @@ import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
 import { useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
-import type { CountActions, PostActions } from 'routes/store';
+import type { APIAction } from 'routes/store';
 
 export type Props = {
   title: string;
   body: Tags;
-  buttons: { id: string; action?: CountActions | PostActions; text: string }[];
+  buttons: { id: string; action?: APIAction; text: string }[];
   links: { id: string; to: string; text: string }[];
 };
 

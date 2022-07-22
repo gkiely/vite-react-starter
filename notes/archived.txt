@@ -114,3 +114,32 @@ export default useFetch;
 //   //   <BrowserRouter>{children}</BrowserRouter>
 //   // </SWRConfig>
 // );
+
+
+action: {
+  path: '/api/store',
+  append: true,
+}
+
+// Append
+let appendedBody: Partial<Store> = undefined;
+if (action.append && action.options?.body) {
+  const response = await app.request(`${SERVER_HOST}/api/store`);
+  const data = await response.json();
+  const store = storeSchema.parse(data);
+  const parsedBody = partialParse(action.options.body);
+
+  // @ts-expect-error - testing
+  appendedBody = Object.keys(parsedBody).reduce((acc, key) => {
+    const value = store[key];
+    const bodyValue = acc[key];
+    if (value === null || bodyValue === null) return acc;
+    if (Array.isArray(value) && Array.isArray(bodyValue)) {
+      return [...value, ...bodyValue];
+    } else if (typeof value === 'object' && typeof bodyValue === 'object') {
+      return { ...value, ...bodyValue };
+    }
+    return acc;
+  }, parsedBody);
+}
+const body = appendedBody ?? action.options?.body ? partialParse(action.options?.body) : null;

@@ -1,28 +1,15 @@
 TODO:
-- Test loading: true and early render for a slow endpoint
-- See if setRoute can be moved to routes.tsx
 - Fix tests
-- Setup second-route.tsx
-- Fix types
-- Consolidate server and client into a single route
-- Move over rest of buttons
-- Fix hot reload
-
-
-
-- If there was a stack of current pending actions, we could do loading based off which ones are pending
-- We could also potentially abort on unmount
-
-action: {
-  path: '/api/post',
-  method: 'POST',
-  payload: {
-    id: `${state.posts.length}-added`,
-    title: 'New Post',
-  },
-},
+- Fix hot reloading
+- Better delete and append
 
 Then
+- See if setRoute can be moved to routes.tsx
+- Pending actions
+  - Avoid duplicate requests when interacting
+- Write a request module, that handles communication and requires handling these types:
+https://youtu.be/NLcRzOyrH08?t=758
+
 - Add typing for action payloads
 - Do a document explaining how the client side server/api works
 

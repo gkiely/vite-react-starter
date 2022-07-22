@@ -7,8 +7,5 @@ test('GET /api/routes', async () => {
   const res = await app.request('http://localhost/server');
   const data = await res.json();
   expect(res.status).toBe(200);
-  expect(data).toMatchObject({
-    components: expect.any(Array),
-    sections: expect.any(Array),
-  });
+  expect(data).toMatchObject(expect.any(Array));
 });

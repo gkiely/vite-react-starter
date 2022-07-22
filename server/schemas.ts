@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+/* c8 ignore start */
 export const postSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -14,4 +15,6 @@ export const storeSchema = z.object({
   error: z.string(),
   loading: z.string(),
 });
+
 export type Store = z.infer<typeof storeSchema>;
+/* c8 ignore stop */

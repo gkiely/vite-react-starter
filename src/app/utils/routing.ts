@@ -16,10 +16,7 @@ export type Action<A = string, P = unknown> = {
 
 type ComponentConfig = Props[keyof C];
 
-export type RouteConfig = {
-  sections: string[];
-  components: ComponentConfig[];
-};
+export type RouteConfig = ComponentConfig[];
 
 export const useSend = () => useContext(RouteContext).send;
 

@@ -1,57 +1,50 @@
 /* c8 ignore start */
-import { Post } from 'server/schemas';
+import { Store, storeSchema } from 'server/schemas';
 import { prefixedEnum } from 'utils';
+import { SERVER_HOST } from 'utils/constants';
 import { createRoute, createRenderer } from 'utils/routing';
+import { app } from 'routes/server';
 import { initialState } from './store';
 
-export type State = {
-  count: number;
-  posts: Post[];
-  error: string;
-};
-
-const render = createRenderer<State>((state) => {
-  return {
-    sections: [],
-    components: [
-      {
-        id: 'Header',
-        component: 'Header',
-        title: 'Hello Vite + React!',
-        body: [
-          { text: 'Update ' },
-          { code: 'App.tsx' },
-          { text: ' and save to test HMR updates.' },
-        ],
-        buttons: [
-          {
-            id: 'Button-count-add',
-            text: `count is: ${state.count}`,
-            action: {
-              type: countActions.add,
-              payload: {
-                amount: 2,
-              },
+export const render = createRenderer<Store>((state) => {
+  return [
+    {
+      id: 'Header',
+      component: 'Header',
+      title: 'Hello Vite + React!',
+      body: [{ text: 'Update ' }, { code: 'App.tsx' }, { text: ' and save to test HMR updates.' }],
+      buttons: [
+        {
+          id: 'Button-count-add',
+          text: `count is: ${state.count}`,
+          action: {
+            path: '/api/store',
+            // loading: {
+            //   loading: 'Adding...',
+            // },
+            options: {
+              method: 'POST',
+              body: { count: state.count + 2 },
             },
           },
-        ],
-        links: [
-          {
-            id: '/',
-            to: '/',
-            text: 'Home route',
-          },
-        ],
-      },
-      {
-        id: 'List',
-        component: 'List',
-        items: state.posts,
-        error: state.error,
-        loading: '',
-      },
-    ],
-  };
+        },
+      ],
+      links: [
+        {
+          id: '/',
+          to: '/',
+          text: 'Home route',
+        },
+      ],
+    },
+    {
+      id: 'List',
+      component: 'List',
+      items: state.posts,
+      error: state.error,
+      loading: '',
+    },
+  ];
 });
 
 const countActions = prefixedEnum('count/', ['add']);
@@ -60,10 +53,18 @@ export type CountActions = {
   type: typeof countActions.add;
 };
 
-export const client = createRoute(() => {
-  const store = initialState;
-
-  return render(store);
+export const client = createRoute(async () => {
+  try {
+    const response = await app.request(`${SERVER_HOST}/api/store`);
+    const data = await response.json();
+    const store = storeSchema.parse(data);
+    return render(store);
+  } catch (e) {
+    return render({
+      ...initialState,
+      error: 'Could not load posts',
+    });
+  }
 });
 
 /* c8 ignore stop */

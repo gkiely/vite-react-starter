@@ -106,7 +106,7 @@ export const isObject = (value: unknown): value is object => {
   return typeof value === 'object' && !Array.isArray(value) && value !== null;
 };
 
-export const omit = (obj: object, keys: string[]) => {
+export const omit = (obj: object, ...keys: string[]) => {
   const result: { [key: string]: unknown } = {};
   for (const key in obj) {
     if (!keys.includes(key)) {

@@ -1,37 +1,30 @@
-import { createElement, MutableRefObject, useRef, useState } from 'react';
+import { createElement, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as styles from './App.css';
-import { Path, States, useRoute } from 'routes/routes';
+import useRoute from 'utils/useRoute';
+import { Path, renderers } from 'routes/routes';
+import { store } from 'routes/server';
 import * as Components from './components';
 import RouteContext from './RouteContext';
 import { assertType } from 'utils';
 import { Intersect } from 'utils/types';
 import { RouteConfig } from 'utils/routing';
 
-type RouteProps = {
-  prevState: MutableRefObject<States | undefined>;
-  prevPath: MutableRefObject<Path>;
-  prevShadow: {
-    state: RouteProps['prevState'];
-    path: RouteProps['prevPath'];
-  };
-};
 /* c8 ignore start */
-const Route = ({ prevState, prevPath, prevShadow }: RouteProps) => {
+const Route = () => {
   const location = useLocation();
   assertType<Path>(location.pathname);
 
-  const [route, setRoute] = useState<RouteConfig>({
-    sections: [],
-    components: [],
-  });
+  const render = renderers[location.pathname];
+  const [route, setRoute] = useState<RouteConfig>(render(store));
+  const send = useRoute(setRoute);
 
-  const send = useRoute(location.pathname, setRoute);
+  if (route.length === 0) return <></>;
 
   return (
     <RouteContext send={send}>
       <div className={styles.app}>
-        {route.components.map((props) => {
+        {route.map((props) => {
           const Component = Components[props.component];
           if (props.id) {
             assertType<{ key: string }>(props);
@@ -51,24 +44,9 @@ const Route = ({ prevState, prevPath, prevShadow }: RouteProps) => {
 
 function App() {
   const location = useLocation();
-  assertType<Path>(location.pathname);
-  const prevState = useRef<States>();
-  const prevPath = useRef(location.pathname);
-
-  const prevShadow = {
-    state: useRef<States>(),
-    path: useRef<Path>(location.pathname),
-  };
 
   // Render the route
-  return (
-    <Route
-      key={location.pathname}
-      prevState={prevState}
-      prevPath={prevPath}
-      prevShadow={prevShadow}
-    />
-  );
+  return <Route key={location.pathname} />;
 }
 
 export default App;

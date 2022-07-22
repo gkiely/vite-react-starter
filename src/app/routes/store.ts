@@ -1,35 +1,25 @@
 /* c8 ignore start */
-import { Post } from 'server/schemas';
-import { prefixedEnum } from 'utils';
-import { State } from './routes';
+import { Store } from 'server/schemas';
+import { AtLeastOne } from 'utils/types';
 
-export const initialState: State = {
+export const initialState: Store = {
   count: 0,
   posts: [],
   error: '',
   loading: '',
 };
 
-export const postActions = {
-  ...prefixedEnum('post/', ['add', 'remove']),
-  getAll: 'posts/get',
-};
-export type PostActionTypes = typeof postActions[keyof typeof postActions];
-export type PostActions =
-  | {
-      type: typeof postActions.add;
-      payload: Post;
-    }
-  | {
-      type: typeof postActions.remove;
+export type APIAction = {
+  path: '/api/store' | `/api/store/${keyof Store}/:id`;
+  loading?: AtLeastOne<Store>;
+  append?: boolean;
+  options?: {
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+    body?: AtLeastOne<Store>;
+    params?: {
+      id?: string | undefined;
     };
-
-export const countActions = prefixedEnum('count/', ['add']);
-export type CountActionTypes = typeof countActions[keyof typeof countActions];
-export type CountActions = {
-  type: typeof countActions.add;
+  };
 };
-
-export type Actions = CountActionTypes | PostActionTypes;
 
 /* c8 ignore stop */
