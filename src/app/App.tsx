@@ -19,8 +19,6 @@ const Route = (_: { key: string }) => {
   const [route, setRoute] = useState<RouteConfig>(render(store));
   const send = useRoute(setRoute);
 
-  if (route.length === 0) return <></>;
-
   return (
     <RouteContext send={send}>
       <div className={styles.app}>
