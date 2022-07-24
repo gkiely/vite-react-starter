@@ -20,15 +20,28 @@ export function assertType<T>(value: unknown): asserts value is T {
   }
 }
 
-export const delay = (ms: number, fn = () => {}) =>
-  new Promise((resolve) => setTimeout(() => resolve(fn()), ms));
+export const delay = (ms: number, signal?: AbortController['signal']) => {
+  if (signal) {
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(resolve, ms);
+      const abort = () => {
+        clearTimeout(timeout);
+        reject();
+        signal.removeEventListener('abort', abort);
+      };
+      signal.addEventListener('abort', abort);
+    });
+  }
 
-export const delayMiddleware = (timeout = 1000) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+export function delayMiddleware(timeout = 1000) {
   return async (_c: Context, next: Next) => {
     await delay(timeout);
     await next();
   };
-};
+}
 
 export const useAsyncEffect = (
   effect: () => Promise<(() => void) | undefined>,
@@ -106,7 +119,7 @@ export const isObject = (value: unknown): value is object => {
   return typeof value === 'object' && !Array.isArray(value) && value !== null;
 };
 
-export const omit = (obj: object, keys: string[]) => {
+export const omit = (obj: object, ...keys: string[]) => {
   const result: { [key: string]: unknown } = {};
   for (const key in obj) {
     if (!keys.includes(key)) {

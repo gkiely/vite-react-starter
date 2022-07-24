@@ -1,93 +1,62 @@
 /* c8 ignore start */
-import { useEffect, useState } from 'react';
-import { Post } from 'server/schemas';
-import { prefixedEnum } from 'utils';
-import { createClientRoute, createReducer, createRenderer, createSend } from 'utils/routing';
+import { Store, storeSchema } from 'server/schemas';
+import { SERVER_HOST } from 'utils/constants';
+import { createRoute, createRenderer } from 'utils/routing';
+import { app, initialState } from 'routes/server';
 
-export type State = {
-  count: number;
-  posts: Post[];
-  error: string;
-};
-
-const initialState: State = {
-  count: 0,
-  posts: [],
-  error: '',
-};
-
-const render = createRenderer<State>((state) => {
-  return {
-    sections: [],
-    components: [
-      {
-        id: 'Header',
-        component: 'Header',
-        title: 'Hello Vite + React!',
-        body: [
-          { text: 'Update ' },
-          { code: 'App.tsx' },
-          { text: ' and save to test HMR updates.' },
-        ],
-        buttons: [
-          {
-            id: 'Button-count-add',
-            text: `count is: ${state.count}`,
-            action: {
-              type: countActions.add,
+export const render = createRenderer<Store>((state) => {
+  return [
+    {
+      id: 'Header',
+      component: 'Header',
+      title: 'Hello Vite + React!',
+      body: [{ text: 'Update ' }, { code: 'App.tsx' }, { text: ' and save to test HMR updates.' }],
+      buttons: [
+        {
+          id: 'Button-count-add',
+          text: `count is: ${state.count}`,
+          action: {
+            path: '/api/count',
+            loading: {
+              loading: 'Adding...',
+            },
+            options: {
+              method: 'POST',
+              body: { count: 2 },
             },
           },
-        ],
-        links: [
-          {
-            id: '/',
-            to: '/',
-            text: 'Home route',
-          },
-        ],
-      },
-      {
-        id: 'List',
-        component: 'List',
-        items: state.posts,
-        error: state.error,
-        loading: '',
-      },
-    ],
-  };
+        },
+      ],
+      links: [
+        {
+          id: '/',
+          to: '/',
+          text: 'Home route',
+        },
+      ],
+    },
+    {
+      id: 'List',
+      component: 'List',
+      items: state.posts,
+      error: state.error,
+      loading: '',
+    },
+  ];
 });
 
-const countActions = prefixedEnum('count/', ['add']);
-export type CountActionTypes = typeof countActions[keyof typeof countActions];
-export type CountActions = {
-  type: typeof countActions.add;
-};
-export const reducer = createReducer<State, CountActions>((state, action) => {
-  switch (action.type) {
-    case countActions.add:
-      return {
-        ...state,
-        count: state.count + 2,
-      };
-    default:
-      return state;
+export const route = createRoute(async () => {
+  try {
+    const response = await app.request(`${SERVER_HOST}/api/store`);
+    const data = await response.json();
+    const store = storeSchema.parse(data);
+    return render(store);
+  } catch (e) {
+    return render({
+      ...initialState,
+      error: 'Could not load posts',
+    });
   }
-}, Object.values(countActions));
-
-export const client = createClientRoute((prevState, prevPath) => {
-  const [state, setState] = useState<State>(initialState);
-  const send = createSend(setState, reducer);
-
-  useEffect(() => {
-    if (prevState?.count) {
-      setState((s) => ({ ...s, count: prevState.count }));
-    }
-    if (prevState?.posts) {
-      setState((s) => ({ ...s, posts: prevState.posts }));
-    }
-  }, [prevState?.count, prevState?.posts]);
-
-  return [render(state), send, state];
 });
 
 /* c8 ignore stop */

@@ -11,7 +11,7 @@
 - [Wrangler](https://github.com/cloudflare/wrangler2) or [Node](https://nodejs.dev)
 - [pre-commit and pre-push](https://github.com/toplenboren/simple-git-hooks) hooks
 - [Elm-style architecture](https://guide.elm-lang.org/architecture/)
-  - Uses `state, render, reducer` in place of `Model, View, Update`
+  - Uses `store, render, request` in place of `Model, View, Update`
   - Uses `send` in place of `messages`
 - SSR via server routes (WIP)
 

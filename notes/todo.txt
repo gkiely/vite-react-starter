@@ -1,7 +1,18 @@
-- Replace effects and reducer with zustand
-- Add a post with an input via the api to the server
-- Store the state for every route
-- Commit
+Then
+- Drive the front end from the backend, you might need to do either server push or something else
+- Get server rendering working
+  - No javascript application
+- Test loading bar
+  loading && { component: 'LoadingBar' }
+  https://github.com/klendi/react-top-loading-bar
+- See if setRoute can be moved to routes.tsx
+- Pending actions
+  - Avoid duplicate requests when interacting
+- Write a request module, that handles communication and requires handling these types:
+https://youtu.be/NLcRzOyrH08?t=758
+
+- Add typing for action payloads
+- Do a document explaining how the client side server/api works
 
 - Create a version that works with a machine: feature/machine
   - Make adding/removing posts go via the api and take 1s
@@ -66,6 +77,7 @@ Then
 
 
 V2
+- Write a client router that behaves the same way as hono, currently it takes .3-.5ms to respond
 - Rewrite types from scratch
 
 

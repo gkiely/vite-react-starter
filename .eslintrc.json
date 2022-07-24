@@ -22,6 +22,7 @@
   ],
   "rules": {
     "no-sequences": "off",
+    "promise/always-return": "off",
     "promise/no-callback-in-promise": "off",
     "promise/catch-or-return": "warn",
     "no-undef-init": "warn",
@@ -104,7 +105,6 @@
     "unicorn/no-zero-fractions": "error",
     "unicorn/no-unsafe-regex": "error",
     "unicorn/no-unreadable-iife": "error",
-    "unicorn/no-nested-ternary": "error",
     "unicorn/no-null": "error",
     "validate-jsx-nesting/no-invalid-jsx-nesting": "error"
   }

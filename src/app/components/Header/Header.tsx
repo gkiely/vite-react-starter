@@ -5,12 +5,12 @@ import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
 import { useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
-import type { CountActions, PostActions } from 'routes/routes';
+import type { APIAction } from 'routes/server';
 
 export type Props = {
   title: string;
   body: Tags;
-  buttons: { id: string; action?: CountActions | PostActions; text: string }[];
+  buttons: { id: string; action?: APIAction; text: string }[];
   links: { id: string; to: string; text: string }[];
 };
 
@@ -25,7 +25,9 @@ const Header = ({ body, title, buttons, links }: Props) => {
         <div style={{ paddingBottom: '.5em' }} key={button.id}>
           <Button
             {...(button.action && {
-              onClick: () => button.action && send(button.action),
+              onClick: () => {
+                button.action && send(button.action);
+              },
             })}
           >
             {button.text}

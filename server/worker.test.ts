@@ -21,13 +21,14 @@ test('GET: 404 /api/post/:id', async () => {
   expect(res.status).toBe(404);
 });
 
-test('POST /api/post/:id', async () => {
-  const res = await app.request('http://localhost/api/post/1', {
+test('POST /api/post', async () => {
+  const res = await app.request('http://localhost/api/post', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
+      id: '1',
       title: 'Good Night',
     }),
   });
@@ -36,8 +37,8 @@ test('POST /api/post/:id', async () => {
   expect(data).toEqual(posts);
 });
 
-test('POST: 400 /api/post/:id', async () => {
-  const res = await app.request('http://localhost/api/post/1', {
+test('POST: 400 /api/post', async () => {
+  const res = await app.request('http://localhost/api/post', {
     method: 'POST',
   });
   expect(res.status).toBe(400);
