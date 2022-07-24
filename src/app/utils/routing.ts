@@ -14,7 +14,7 @@ export type Action<A = string, P = unknown> = {
   payload?: P;
 };
 
-type ComponentConfig = Props[keyof C];
+export type ComponentConfig = Props[keyof C];
 
 export type RouteConfig = ComponentConfig[];
 
@@ -44,4 +44,11 @@ export const combineReducers = <S, A>(...reducers: Reducer<S, A>[]) => {
 };
 
 export type SetState<S> = Dispatch<SetStateAction<S>>;
+
+export const renderIf = <T>(flag: boolean, data: T): [T] | [] => {
+  return flag ? [data] : [];
+};
+
+export const expectType = <T>(data: T): T => data;
+
 /* c8 ignore stop */

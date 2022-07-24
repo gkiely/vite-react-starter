@@ -2,8 +2,10 @@ import { Store, storeSchema } from 'server/schemas';
 
 import { SERVER_HOST } from 'utils/constants';
 import { initialState } from 'routes/server';
-import { createRenderer, createRoute } from 'utils/routing';
+import { createRenderer, createRoute, renderIf } from 'utils/routing';
 import { app } from './server';
+import { Props as HeaderProps } from 'components/Header/Header';
+type Button = HeaderProps['buttons'][number];
 
 export const render = createRenderer<Store>((state) => {
   return [
@@ -17,57 +19,53 @@ export const render = createRenderer<Store>((state) => {
           id: 'Button-count-add',
           text: `count is: ${state.count}`,
           action: {
+            path: '/api/count',
             loading: {
               loading: 'Adding...',
             },
-            path: '/api/count',
             options: {
               method: 'POST',
               body: { count: 1 },
             },
           },
         },
-        // {
-        //   id: 'Button-count-subtract',
-        //   text: `Subtract count`,
-        //   action: {
-        //     path: '/api/count',
-        //     options: {
-        //       method: 'POST',
-        //       body: { count: -1 },
-        //     },
-        //   },
-        // },
-        // {
-        //   id: 'Button-post-add',
-        //   text: 'Add a post',
-        //   action: {
-        //     path: '/api/post',
-        //     options: {
-        //       method: 'POST',
-        //       body: {
-        //         posts: { title: 'New Post' },
-        //       },
-        //     },
-        //   },
-        // },
-        // ...(state.posts.length > 0
-        //   ? [
-        //       {
-        //         id: 'Button-post-remove',
-        //         text: 'Remove a post',
-        //         action: {
-        //           path: '/api/post',
-        //           options: {
-        //             method: 'DELETE',
-        //             body: {
-        //               post: state.posts.slice(-1),
-        //             },
-        //           },
-        //         },
-        //       } as const,
-        //     ]
-        //   : []),
+        {
+          id: 'Button-count-subtract',
+          text: `Subtract count`,
+          action: {
+            path: '/api/count',
+            options: {
+              method: 'POST',
+              body: { count: -1 },
+            },
+          },
+        },
+        {
+          id: 'Button-post-add',
+          text: 'Add a post',
+          action: {
+            path: '/api/post',
+            options: {
+              method: 'POST',
+              body: {
+                title: 'New Post',
+              },
+            },
+          },
+        },
+        ...renderIf<Button>(state.posts.length > 0, {
+          id: 'Button-post-remove',
+          text: 'remove',
+          action: {
+            path: '/api/post',
+            options: {
+              method: 'DELETE',
+              body: {
+                id: state.posts[state.posts.length - 1]?.id ?? '',
+              },
+            },
+          },
+        }),
       ],
       links: [
         {

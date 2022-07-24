@@ -16,7 +16,13 @@ export const storeSchema = z.object({
   loading: z.string(),
 });
 
-export const partialStore = storeSchema.partial().strict();
+export const partialStore = storeSchema.partial();
 
 export type Store = z.infer<typeof storeSchema>;
+
+// Until exact types are supported: https://github.com/microsoft/TypeScript/issues/12936
+// We parse objects sent from the route and throw a runtime error
+export const partialStoreParse = (store: z.infer<typeof partialStore>) => {
+  return partialStore.parse(store);
+};
 /* c8 ignore stop */

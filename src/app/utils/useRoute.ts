@@ -1,18 +1,13 @@
 import { useEffect } from 'react';
-import { partialStore, Store, storeSchema } from 'server/schemas';
+import { partialStoreParse, Store, storeSchema } from 'server/schemas';
 import { assertType, delay, omit } from 'utils';
 import { RouteConfig, SetState } from 'utils/routing';
 import { SERVER_HOST } from 'utils/constants';
 import { useLocation } from 'react-router-dom';
 import routes, { Path, renderers } from 'routes/routes';
-import { app, APIAction } from 'routes/server';
+import { app, APIAction, requestParse } from 'routes/server';
 
 /* c8 ignore start */
-// Until exact types are supported: https://github.com/microsoft/TypeScript/issues/12936
-// We parse objects sent from the route and throw a runtime error
-const partialParse = (store: Partial<Store>) => {
-  return partialStore.parse(store) as Partial<Store>;
-};
 
 const getStore = async () => {
   const response = await app.request(`${SERVER_HOST}/api/store`);
@@ -49,18 +44,18 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
           controller = undefined;
           if (!action.loading) return;
           const store = await getStore();
-          const parsedStore = partialParse(action.loading);
+          const parsedStore = partialStoreParse(action.loading);
 
           setRoute(
             render({
               ...store,
-              ...parsedStore,
+              ...(parsedStore as Partial<Store>),
             })
           );
         }).catch(() => {});
       }
 
-      const parsedBody = action.options?.body ? partialParse(action.options?.body) : undefined;
+      const parsedBody = action.options?.body ? requestParse(action.options?.body) : undefined;
       const body = parsedBody ? JSON.stringify(parsedBody) : undefined;
       const options = {
         headers: {

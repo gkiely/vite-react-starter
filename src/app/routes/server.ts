@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { bodyParse } from 'hono/body-parse';
-import { partialStore, Post, Store } from 'server/schemas';
-import { AtLeastOne } from 'utils/types';
+import { partialStore, Store } from 'server/schemas';
 import { delay } from 'utils';
+import { z } from 'zod';
 
 export const initialState: Store = {
   count: 0,
@@ -11,43 +11,62 @@ export const initialState: Store = {
   loading: '',
 };
 
-// export type APIAction = {
-//   path: '/api/store' | `/api/${keyof Store}`;
-//   loading?: AtLeastOne<Store>;
-//   options?: {
-//     method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-//     body?: AtLeastOne<Store>;
-//     params?: {
-//       id?: string | undefined;
-//     };
-//   };
-// };
+/// TODO: hopefully there's a way to get these types via zod
+// so we can define them inline
+const requestMap = {
+  '/api/count': {
+    POST: z.object({ count: z.number() }),
+  },
+  '/api/post': {
+    POST: z.object({ title: z.string() }),
+    DELETE: z.object({ id: z.string() }),
+  },
+};
 
-export type APIAction =
-  | {
-      path: '/api/count';
-      loading?: AtLeastOne<Store>;
-      options: {
-        method: 'POST';
-        body: { count: number };
-      };
-    }
-  | {
-      path: '/api/post';
-      loading?: AtLeastOne<Store>;
-      options: {
-        method: 'POST';
-        body: { post: Pick<Post, 'title'> };
-      };
-    }
-  | {
-      path: '/api/post';
-      loading?: AtLeastOne<Store>;
-      options: {
-        method: 'DELETE';
-        body: { id: string };
-      };
-    };
+// Used for requestParse
+const requestSchema = z.union([
+  requestMap['/api/count'].POST,
+  requestMap['/api/post'].POST,
+  requestMap['/api/post'].DELETE,
+]);
+
+export const requestParse = (request: z.infer<typeof requestSchema>) =>
+  requestSchema.parse(request);
+
+const actionSchema = z.union([
+  z.object({
+    path: z.literal('/api/count'),
+    loading: partialStore.optional(),
+    options: z
+      .object({
+        method: z.literal('POST'),
+        body: requestMap['/api/count'].POST,
+      })
+      .optional(),
+  }),
+  z.object({
+    path: z.literal('/api/post'),
+    loading: partialStore.optional(),
+    options: z
+      .object({
+        method: z.literal('POST'),
+        body: requestMap['/api/post'].POST,
+      })
+      .optional(),
+  }),
+  z.object({
+    path: z.literal('/api/post'),
+    loading: partialStore.optional(),
+    options: z
+      .object({
+        method: z.literal('DELETE'),
+        body: requestMap['/api/post'].DELETE,
+      })
+      .optional(),
+  }),
+]);
+
+export type APIAction = z.infer<typeof actionSchema>;
 
 export const store: Store = {
   ...initialState,
@@ -60,32 +79,33 @@ export const store: Store = {
 };
 /* c8 ignore start */
 export const app = new Hono();
+type APIPath = keyof typeof requestMap;
 
-app.post('/api/posts', bodyParse(), (c) => {
+app.post<APIPath>('/api/count', bodyParse(), async (c) => {
   const { req } = c;
-  const storeUpdate = partialStore.parse(req.parsedBody) as Partial<Store>;
-  const postsUpdate = storeUpdate.posts ?? [];
-  store.posts = [...store.posts, ...postsUpdate];
-  return c.json(store);
-});
-
-app.delete('/api/posts', bodyParse(), (c) => {
-  const { req } = c;
-  const body = partialStore.parse(req.parsedBody) as Partial<Store>;
-  const postToDelete = (body.posts ?? [])[0];
-  if (!postToDelete) return c.json(store);
-  store.posts = store.posts.filter((post) => post.id !== postToDelete.id);
-  return c.json(store);
-});
-
-app.post('/api/count', bodyParse(), async (c) => {
-  const { req } = c;
-  const storeUpdate = partialStore.parse(req.parsedBody) as Partial<Store>;
+  const storeUpdate = requestSchema.parse(req.parsedBody) as Partial<Store>;
   await delay(0); // Testing
-
   if (storeUpdate.count !== undefined) {
     store.count += storeUpdate.count;
   }
+  return c.json(store);
+});
+
+app.post<APIPath>('/api/post', bodyParse(), (c) => {
+  const { req } = c;
+  const body = requestMap['/api/post'].POST.parse(req.parsedBody);
+  const post = {
+    id: `post-${store.posts.length + 1}`,
+    title: body.title,
+  };
+  store.posts = [...store.posts, post];
+  return c.json(store);
+});
+
+app.delete<APIPath>('/api/post', bodyParse(), (c) => {
+  const { req } = c;
+  const post = requestMap['/api/post'].DELETE.parse(req.parsedBody);
+  store.posts = store.posts.filter((p) => p.id !== post.id);
   return c.json(store);
 });
 

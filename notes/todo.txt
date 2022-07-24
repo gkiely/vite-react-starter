@@ -1,7 +1,3 @@
-TODO:
-- Switch to zod for APIAction
-  - parseRequest instead of partialParse
-
 Then
 - Drive the front end from the backend, you might need to do either server push or something else
 - Get server rendering working
