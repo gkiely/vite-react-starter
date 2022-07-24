@@ -11,7 +11,7 @@ import { Intersect } from 'utils/types';
 import { RouteConfig } from 'utils/routing';
 
 /* c8 ignore start */
-const Route = () => {
+const Route = (_: { key: string }) => {
   const location = useLocation();
   assertType<Path>(location.pathname);
 
