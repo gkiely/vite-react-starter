@@ -1,6 +1,5 @@
 /* c8 ignore start */
 import { Store, storeSchema } from 'server/schemas';
-import { prefixedEnum } from 'utils';
 import { SERVER_HOST } from 'utils/constants';
 import { createRoute, createRenderer } from 'utils/routing';
 import { app, initialState } from 'routes/server';
@@ -46,13 +45,7 @@ export const render = createRenderer<Store>((state) => {
   ];
 });
 
-const countActions = prefixedEnum('count/', ['add']);
-export type CountActionTypes = typeof countActions[keyof typeof countActions];
-export type CountActions = {
-  type: typeof countActions.add;
-};
-
-export const client = createRoute(async () => {
+export const route = createRoute(async () => {
   try {
     const response = await app.request(`${SERVER_HOST}/api/store`);
     const data = await response.json();

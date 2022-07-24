@@ -1,12 +1,12 @@
 import { createRoute } from 'utils/routing';
 
-import { client, render } from './home';
-import { client as secondRouteClient, render as secondRouteRender } from './second-route';
+import * as home from './home';
+import * as second from './second-route';
 
 export type Path = '' | '/' | '/second';
 
 type Renderers = {
-  [k in Path]: typeof render | typeof secondRouteRender;
+  [k in Path]: typeof home.render | typeof second.render;
 };
 
 type Routes = {
@@ -16,15 +16,15 @@ type Routes = {
 /// TODO add array routing support: ['', '/']: client
 // In order to render the initial state based on the route
 export const renderers: Renderers = {
-  '': render,
-  '/': render,
-  '/second': secondRouteRender,
+  '': home.render,
+  '/': home.render,
+  '/second': second.render,
 };
 
 const routes: Routes = {
-  '': client,
-  '/': client,
-  '/second': secondRouteClient,
+  '': home.route,
+  '/': home.route,
+  '/second': second.route,
 };
 
 export default routes;

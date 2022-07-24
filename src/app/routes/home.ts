@@ -85,7 +85,7 @@ export const render = createRenderer<Store>((state) => {
   ];
 });
 
-export const client = createRoute(async () => {
+export const route = createRoute(async () => {
   try {
     const response = await app.request(`${SERVER_HOST}/api/store`);
     const data = await response.json();
