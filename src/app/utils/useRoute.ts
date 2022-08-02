@@ -3,7 +3,7 @@ import { parsePartialStore, Store, storeSchema, parseRequest } from 'server/sche
 import { assertType, delay, omit } from 'utils';
 import { RouteConfig, SetState } from 'utils/routing';
 import { SERVER_HOST } from 'utils/constants';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import routes, { Path, renderers } from 'routes/routes';
 import { app, APIAction } from 'routes/server';
 
@@ -19,10 +19,10 @@ const getStore = async () => {
 const actions: string[] = [];
 
 const useRoute = (setRoute: SetState<RouteConfig>) => {
-  const location = useLocation();
-  assertType<Path>(location.pathname);
-  const path = location.pathname;
-  const render = renderers[location.pathname];
+  const [location] = useLocation();
+  assertType<Path>(location);
+  const path = location;
+  const render = renderers[path];
 
   if (!Object.keys(routes).includes(path)) {
     throw new Error(`No routes found for path: ${path}`);

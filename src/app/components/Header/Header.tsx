@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'wouter';
 import logo from 'img/logo.svg';
 import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
