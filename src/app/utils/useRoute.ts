@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import { partialStoreParse, Store, storeSchema } from 'server/schemas';
+import { parsePartialStore, Store, storeSchema, parseRequest } from 'server/schemas';
 import { assertType, delay, omit } from 'utils';
 import { RouteConfig, SetState } from 'utils/routing';
 import { SERVER_HOST } from 'utils/constants';
 import { useLocation } from 'react-router-dom';
 import routes, { Path, renderers } from 'routes/routes';
-import { app, APIAction, requestParse } from 'routes/server';
+import { app, APIAction } from 'routes/server';
 
 /* c8 ignore start */
 
@@ -44,7 +44,7 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
           controller = undefined;
           if (!action.loading) return;
           const store = await getStore();
-          const parsedStore = partialStoreParse(action.loading);
+          const parsedStore = parsePartialStore(action.loading);
 
           setRoute(
             render({
@@ -55,7 +55,7 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
         }).catch(() => {});
       }
 
-      const parsedBody = action.options?.body ? requestParse(action.options?.body) : undefined;
+      const parsedBody = action.options?.body ? parseRequest(action.options?.body) : undefined;
       const body = parsedBody ? JSON.stringify(parsedBody) : undefined;
       const options = {
         headers: {
