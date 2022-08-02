@@ -1,4 +1,4 @@
-Then
+Next
 - Drive the front end from the backend, you might need to do either server push or something else
 - Get server rendering working
   - No javascript application
