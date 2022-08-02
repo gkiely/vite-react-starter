@@ -11,11 +11,8 @@ import { Intersect } from 'utils/types';
 import { RouteConfig } from 'utils/routing';
 
 /* c8 ignore start */
-const Route = (_: { key: string }) => {
-  const [location] = useLocation();
-  assertType<Path>(location);
-
-  const render = renderers[location];
+const Route = ({ path }: { path: Path }) => {
+  const render = renderers[path];
   const [route, setRoute] = useState<RouteConfig>(render(store));
   const send = useRoute(setRoute);
 
@@ -42,9 +39,10 @@ const Route = (_: { key: string }) => {
 
 function App() {
   const [location] = useLocation();
+  assertType<Path>(location);
 
   // Render the route
-  return <Route key={location} />;
+  return <Route key={location} path={location} />;
 }
 
 export default App;
