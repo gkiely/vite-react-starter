@@ -1,5 +1,5 @@
 import { createElement, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import * as styles from './App.css';
 import useRoute from 'utils/useRoute';
 import { Path, renderers } from 'routes/routes';
@@ -12,10 +12,10 @@ import { RouteConfig } from 'utils/routing';
 
 /* c8 ignore start */
 const Route = (_: { key: string }) => {
-  const location = useLocation();
-  assertType<Path>(location.pathname);
+  const [location] = useLocation();
+  assertType<Path>(location);
 
-  const render = renderers[location.pathname];
+  const render = renderers[location];
   const [route, setRoute] = useState<RouteConfig>(render(store));
   const send = useRoute(setRoute);
 
@@ -41,10 +41,10 @@ const Route = (_: { key: string }) => {
 /* c8 ignore stop */
 
 function App() {
-  const location = useLocation();
+  const [location] = useLocation();
 
   // Render the route
-  return <Route key={location.pathname} />;
+  return <Route key={location} />;
 }
 
 export default App;
