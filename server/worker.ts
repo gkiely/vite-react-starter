@@ -1,9 +1,11 @@
 /* c8 ignore start */
 import { Hono } from 'hono';
 import { prettyJSON } from 'hono/pretty-json';
-import { DEV_SERVER } from 'utils/constants';
+// import routes from 'routes/routes';
 import { Post, postSchema } from './schemas';
-import { delayMiddleware } from 'utils';
+// import { renderToStaticMarkup } from 'react-dom/server';
+// import * as components from '../src/app/components';
+// import { Props as HeaderProps } from '../src/app/components/Header/Header';
 
 const app = new Hono();
 export const posts: Post[] = [
@@ -13,14 +15,15 @@ export const posts: Post[] = [
   { id: '4', title: 'Good Night' },
 ];
 
-// Testing routes
-if (DEV_SERVER) {
-  // eslint-disable-next-line
-  import('./dev-server').then((s) => s.default(app));
-}
+// app.get('/', async (c) => {
+//   const json = await routes['/']();
+//   const html = renderToStaticMarkup(components.Header(json[0] as HeaderProps));
+//   // return c.json(json);
+//   console.log(html);
+//   return c.html(html);
+// });
 
 app.get('/api/posts', prettyJSON(), (c) => c.json(posts));
-// app.get('/api/posts', prettyJSON(), delayMiddleware(2000), (c) => c.json(posts));
 
 app.get('/api/post/:id', async (c) => {
   const id = c.req.param('id');
@@ -41,7 +44,7 @@ app.delete('/api/post/:id', async (c) => {
   return c.json(post);
 });
 
-app.post('/api/post', delayMiddleware(0), async (c) => {
+app.post('/api/post', async (c) => {
   try {
     const { req } = c;
     const post = postSchema.parse(await req.parseBody());

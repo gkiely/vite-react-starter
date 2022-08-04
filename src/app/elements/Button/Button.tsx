@@ -1,4 +1,5 @@
 /* c8 ignore start */
+import { SERVER } from 'utils/constants';
 import * as styles from './Button.css';
 
 interface ButtonProps
@@ -8,7 +9,7 @@ interface ButtonProps
 const Button: React.FC<ButtonProps> = (props) => {
   const { children, ...rest } = props;
   return (
-    <button className={styles.button} {...rest}>
+    <button className={styles.button} {...(SERVER && { type: 'submit' })} {...rest}>
       {children}
     </button>
   );

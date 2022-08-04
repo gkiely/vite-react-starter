@@ -1,7 +1,16 @@
 - Get server rendering working
-  - No js application
-  - All actions are links with query params
-  - State is stored in url
+  - Switch off js x
+  - Server render initial page x
+  - Get img path working
+    - Setup webpack config for worker: https://developers.cloudflare.com/workers/wrangler/cli-wrangler/webpack/
+    - If you can't get it working easily enough, just get it working with node and move on
+  - Get css styles working
+  - Wrap entire UI in a form
+  - All actions are links with query params for actions
+  - State is stored in a form?
+    <form>
+      <button type="submit" value="{ count: 1 }">Click</button>
+    </form>
 
 - Replace client/server in useRoute and all app.request with a generic request function
 
