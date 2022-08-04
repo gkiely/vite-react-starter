@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { delay } from 'utils';
 
 // Runtime error overlay
@@ -29,15 +30,23 @@ const showErrorOverlay = async (err: unknown) => {
   await checkError();
 };
 
+// Show error overlay for react duplicate keys
+const error = console.error;
+console.error = (...args: string[]) => {
+  error(...args);
+  const message = args[0];
+  if (message?.startsWith('Warning:')) {
+    void showErrorOverlay({ message: message.replace('%s', args[1] ?? '').replace('%s', '') });
+  } else {
+    void showErrorOverlay({ message });
+  }
+};
+
 window.addEventListener('error', ({ error }) => {
-  showErrorOverlay(error)
-    .then(() => undefined)
-    .catch(() => {});
+  void showErrorOverlay(error);
 });
 window.addEventListener('unhandledrejection', ({ reason }) => {
-  showErrorOverlay(reason)
-    .then(() => undefined)
-    .catch(() => {});
+  void showErrorOverlay(reason);
 });
 
 // Clear console once error is resolved

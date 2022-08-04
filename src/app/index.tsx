@@ -5,7 +5,7 @@ import { DEV } from 'utils/constants';
 import App from './App';
 import './index.css';
 if (DEV) {
-  import('./utils/runtime-error-overlay');
+  await import('./utils/runtime-error-overlay');
 }
 
 const root = document.getElementById('root');
