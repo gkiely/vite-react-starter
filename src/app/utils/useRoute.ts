@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
-import { parsePartialStore, Store, storeSchema, parseRequest } from 'server/schemas';
+import { parsePartialStore, storeSchema, parseRequest } from 'server/schemas';
 import { assertType, delay, omit } from 'utils';
 import { RouteConfig, SetState } from 'utils/routing';
-import { SERVER_HOST } from 'utils/constants';
+import { CLIENT, SERVER_HOST, TEST } from 'utils/constants';
 import { useLocation } from 'wouter';
 import routes, { Path, renderers } from 'routes/routes';
 import { app, APIAction } from 'routes/server';
 
 /* c8 ignore start */
-
 const getStore = async () => {
   const response = await app.request(`${SERVER_HOST}/api/store`);
   const data = await response.json();
@@ -17,6 +16,12 @@ const getStore = async () => {
 };
 
 const actions: string[] = [];
+
+type Options = {
+  headers: Record<string, string>;
+  body?: string;
+  method?: string;
+};
 
 const useRoute = (setRoute: SetState<RouteConfig>) => {
   const [location] = useLocation();
@@ -49,15 +54,18 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
           setRoute(
             render({
               ...store,
-              ...(parsedStore as Partial<Store>),
+              ...parsedStore,
             })
           );
         }).catch(() => {});
       }
 
+      // delay required for testing
+      if (CLIENT && TEST) await delay(0);
+
       const parsedBody = action.options?.body ? parseRequest(action.options?.body) : undefined;
       const body = parsedBody ? JSON.stringify(parsedBody) : undefined;
-      const options = {
+      const options: Options = {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -65,12 +73,40 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
         ...(action.options ? omit(action.options, 'body') : {}),
         ...(body ? { body } : {}),
       };
-      const response = await app.request(`${SERVER_HOST}${action.path}`, options);
-      controller?.abort();
-      if (!response.ok) throw new Error(response.statusText);
-      const data = await response.json();
-      const store = storeSchema.parse(data);
-      setRoute(render(store));
+
+      // Client routing
+      // Calling the route directly saves 1ms per interaction by avoiding JSON parse/stringify
+      if (CLIENT) {
+        const route = app.router.match(options.method ?? 'GET', `${action.path}`);
+        const result = route?.handlers
+          ? await Promise.all(
+              route.handlers.map((fn) =>
+                fn(
+                  {
+                    json: (o) => o as unknown as Response,
+                    // @ts-expect-error - this should be typed as request
+                    req: {
+                      parseBody: () => parsedBody as unknown as Promise<unknown>,
+                    },
+                  },
+                  () => {}
+                )
+              )
+            )
+          : [];
+        controller?.abort();
+        const data = result.reduce((acc, cur) => ({ ...acc, ...cur }), {});
+        const store = storeSchema.parse(data);
+        setRoute(render(store));
+      } else {
+        // Server routing
+        const response = await app.request(`${SERVER_HOST}${action.path}`, options);
+        controller?.abort();
+        if (!response.ok) throw new Error(response.statusText);
+        const data = await response.json();
+        const store = storeSchema.parse(data);
+        setRoute(render(store));
+      }
     } catch (err) {
       throw new Error(err as string);
     } finally {

@@ -1,3 +1,4 @@
+import { Context } from 'hono';
 import { z } from 'zod';
 
 /* c8 ignore start */
@@ -28,21 +29,30 @@ export const requests = {
     POST: z.object({ title: z.string() }),
     DELETE: z.object({ id: z.string() }),
   },
-};
+} as const;
 
-// Used for requestParse
-export const requestSchema = z.union([
+const requestTuple = [
   requests['/api/count'].POST,
   requests['/api/post'].POST,
   requests['/api/post'].DELETE,
-]);
+] as const;
+
+// Used for requestParse
+export const requestSchema = z.union(requestTuple);
+
+export type Body = string | object | Record<string, string | File>;
 
 export const parseRequest = (request: z.infer<typeof requestSchema>) =>
   requestSchema.parse(request);
 
+export const parseBody = async <T extends typeof requestTuple[number]>(
+  req: Context['req'],
+  schema: T
+) => schema.parse((await req.parseBody()) as Body) as z.infer<T>;
+
 // Until exact types are supported: https://github.com/microsoft/TypeScript/issues/12936
 // We parse objects sent from the route and throw a runtime error
-export const parsePartialStore = (store: z.infer<typeof partialStore>) => {
-  return partialStore.parse(store);
+export const parsePartialStore = (store: z.infer<typeof partialStore>): Partial<Store> => {
+  return partialStore.parse(store) as Partial<Store>;
 };
 /* c8 ignore stop */

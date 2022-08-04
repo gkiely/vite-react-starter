@@ -1,7 +1,16 @@
-Next
-- Drive the front end from the backend, you might need to do either server push or something else
+- Fix page refreshing
+  - Do a git bisect
+  - Not sure if vite 3 or wouter but page is refreshing
+- Hot reload should persist state
+- Add error state, show it in posts when request doesn't load
+
 - Get server rendering working
-  - No javascript application
+  - No js application
+  - All actions are links with query params
+  - State is stored in url
+
+Next
+- Drive the front end using curl requests
 - Test loading bar
   loading && { component: 'LoadingBar' }
   https://github.com/klendi/react-top-loading-bar
@@ -24,7 +33,9 @@ https://youtu.be/NLcRzOyrH08?t=758
   - Send then hits the route
   - Don't worry about loading states, it should just wait
 
-
+- Write your own minimal hono library to allow sub 1ms click update
+  - currently it's 2-3ms, w/o the async call it's .1-.5ms
+- Write your own minimal zod library to avoid the large bloat
 
 - Remove sections and components, just use an array
 - Create a time travel debugger down the bottom

@@ -7,7 +7,7 @@ import { app } from 'routes/server';
 describe('App', () => {
   it('should render', () => {
     render(<App />);
-    expect(screen.getByText('Hello Vite + React!')).toBeInTheDocument();
+    expect(screen.getByText('Home route')).toBeInTheDocument();
   });
 
   it('should count', async () => {
@@ -28,7 +28,7 @@ describe('App', () => {
   it('should fail gracefully if no posts are returned', () => {
     mockRequestOnce('/api/posts');
     render(<App />);
-    expect(screen.getByText('Hello Vite + React!')).toBeInTheDocument();
+    expect(screen.getByText('Home route')).toBeInTheDocument();
   });
 
   it('should show an error if the network request fails', async () => {

@@ -7,12 +7,13 @@ import { app } from './server';
 import { Props as HeaderProps } from 'components/Header/Header';
 type Button = HeaderProps['buttons'][number];
 
+/* c8 ignore start */
 export const render = createRenderer<Store>((state) => {
   return [
     {
       id: 'Header',
       component: 'Header',
-      title: 'Hello Vite + React!',
+      title: 'Home route',
       body: [{ text: 'Update ' }, { code: 'App.tsx' }, { text: ' and save to test HMR updates.' }],
       buttons: [
         {

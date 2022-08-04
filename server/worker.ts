@@ -1,7 +1,6 @@
 /* c8 ignore start */
 import { Hono } from 'hono';
 import { prettyJSON } from 'hono/pretty-json';
-import { bodyParse } from 'hono/body-parse';
 import { DEV_SERVER } from 'utils/constants';
 import { Post, postSchema } from './schemas';
 import { delayMiddleware } from 'utils';
@@ -42,10 +41,10 @@ app.delete('/api/post/:id', async (c) => {
   return c.json(post);
 });
 
-app.post('/api/post', delayMiddleware(0), bodyParse(), (c) => {
+app.post('/api/post', delayMiddleware(0), async (c) => {
   try {
     const { req } = c;
-    const post = postSchema.parse(req.parsedBody);
+    const post = postSchema.parse(await req.parseBody());
     posts.push(post);
     return c.json<Post[]>(posts);
   } catch (err) {

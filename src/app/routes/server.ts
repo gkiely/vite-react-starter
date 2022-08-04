@@ -1,9 +1,9 @@
 import { Hono } from 'hono';
-import { bodyParse } from 'hono/body-parse';
-import { partialStore, requests, requestSchema, Store } from 'server/schemas';
-import { delay } from 'utils';
+import { parseBody, partialStore, requests, Store } from 'server/schemas';
+// import { delay } from 'utils';
 import { z } from 'zod';
 
+/* c8 ignore start */
 export const initialState: Store = {
   count: 0,
   posts: [],
@@ -15,32 +15,26 @@ const actionSchema = z.union([
   z.object({
     path: z.literal('/api/count'),
     loading: partialStore.optional(),
-    options: z
-      .object({
-        method: z.literal('POST'),
-        body: requests['/api/count'].POST,
-      })
-      .optional(),
+    options: z.object({
+      method: z.literal('POST'),
+      body: requests['/api/count'].POST,
+    }),
   }),
   z.object({
     path: z.literal('/api/post'),
     loading: partialStore.optional(),
-    options: z
-      .object({
-        method: z.literal('POST'),
-        body: requests['/api/post'].POST,
-      })
-      .optional(),
+    options: z.object({
+      method: z.literal('POST'),
+      body: requests['/api/post'].POST,
+    }),
   }),
   z.object({
     path: z.literal('/api/post'),
     loading: partialStore.optional(),
-    options: z
-      .object({
-        method: z.literal('DELETE'),
-        body: requests['/api/post'].DELETE,
-      })
-      .optional(),
+    options: z.object({
+      method: z.literal('DELETE'),
+      body: requests['/api/post'].DELETE,
+    }),
   }),
 ]);
 
@@ -59,19 +53,16 @@ export const store: Store = {
 export const app = new Hono();
 type APIPath = keyof typeof requests;
 
-app.post<APIPath>('/api/count', bodyParse(), async (c) => {
+app.post<APIPath>('/api/count', async (c) => {
   const { req } = c;
-  const storeUpdate = requestSchema.parse(req.parsedBody) as Partial<Store>;
-  await delay(0); // Testing
-  if (storeUpdate.count !== undefined) {
-    store.count += storeUpdate.count;
-  }
+  const body = await parseBody(req, requests['/api/count'].POST);
+  store.count += body.count;
   return c.json(store);
 });
 
-app.post<APIPath>('/api/post', bodyParse(), (c) => {
+app.post<APIPath>('/api/post', async (c) => {
   const { req } = c;
-  const body = requests['/api/post'].POST.parse(req.parsedBody);
+  const body = await parseBody(req, requests['/api/post'].POST);
   const post = {
     id: `post-${store.posts.length + 1}`,
     title: body.title,
@@ -80,10 +71,10 @@ app.post<APIPath>('/api/post', bodyParse(), (c) => {
   return c.json(store);
 });
 
-app.delete<APIPath>('/api/post', bodyParse(), (c) => {
+app.delete<APIPath>('/api/post', async (c) => {
   const { req } = c;
-  const post = requests['/api/post'].DELETE.parse(req.parsedBody);
-  store.posts = store.posts.filter((p) => p.id !== post.id);
+  const body = await parseBody(req, requests['/api/post'].DELETE);
+  store.posts = store.posts.filter((p) => p.id !== body.id);
   return c.json(store);
 });
 

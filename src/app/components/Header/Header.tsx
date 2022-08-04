@@ -6,12 +6,13 @@ import Button from 'elements/Button/Button';
 import { useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
 import type { APIAction } from 'routes/server';
+import { Path } from 'routes/routes';
 
 export type Props = {
   title: string;
   body: Tags;
   buttons: { id: string; action?: APIAction; text: string }[];
-  links: { id: string; to: string; text: string }[];
+  links: { id: string; to: Path; text: string }[];
 };
 
 /* c8 ignore start */

@@ -15,7 +15,7 @@ type Params = {
   local: boolean;
 };
 
-const serverFlag = process.argv.findIndex(o => o === '--server');
+const serverFlag = process.argv.findIndex((o) => o === '--server');
 const serverPath = process.argv[serverFlag + 1];
 
 const startServer = ({ port, local, config }: Params) => {
@@ -41,7 +41,7 @@ const startServer = ({ port, local, config }: Params) => {
   );
 
   // Clean up
-  child.on('close', code => {
+  child.on('close', (code) => {
     if (code === 0 && child.killed) return;
     delete global.child;
     process.exit();
@@ -60,12 +60,12 @@ const wranglerPlugin = ({
   let hotUpdatePath = '';
   return {
     name: 'wrangler',
-    configureServer: server => {
+    configureServer: (server) => {
       // It takes wrangler 300ms to restart
       // delay request until server is ready
       server.middlewares.use((req, _res, next) => {
         if (hotUpdatePath.endsWith(path) && req.url.includes(path)) {
-          const p = new Promise(resolve => setTimeout(resolve, 300));
+          const p = new Promise((resolve) => setTimeout(resolve, 300));
           p.then(next).catch(next);
           hotUpdatePath = '';
         } else {

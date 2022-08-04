@@ -9,7 +9,7 @@ export const render = createRenderer<Store>((state) => {
     {
       id: 'Header',
       component: 'Header',
-      title: 'Hello Vite + React!',
+      title: 'Second route',
       body: [{ text: 'Update ' }, { code: 'App.tsx' }, { text: ' and save to test HMR updates.' }],
       buttons: [
         {
