@@ -9,7 +9,7 @@ export const render = createRenderer<Store>((state) => {
     {
       id: 'Header',
       component: 'Header',
-      title: 'Second route',
+      title: 'Third route',
       body: [{ text: 'Update ' }, { code: 'App.tsx' }, { text: ' and save to test HMR updates.' }],
       buttons: [
         {
@@ -22,7 +22,7 @@ export const render = createRenderer<Store>((state) => {
             },
             options: {
               method: 'POST',
-              body: { count: 2 },
+              body: { count: 10 },
             },
           },
         },
@@ -30,22 +30,10 @@ export const render = createRenderer<Store>((state) => {
       links: [
         {
           id: '/',
-          to: '/',
-          text: 'Home route',
-        },
-        {
-          id: '/third',
-          to: '/third',
-          text: 'Third route',
+          to: '/second',
+          text: 'Second route',
         },
       ],
-    },
-    {
-      id: 'List',
-      component: 'List',
-      items: state.posts,
-      error: state.error,
-      loading: '',
     },
   ];
 });

@@ -4,6 +4,7 @@ import { createRoute, createRenderer } from 'utils/routing';
 
 import * as home from './home';
 import * as second from './second-route';
+import * as third from './third-route';
 
 export type Path = '' | '/' | '/second' | '/third';
 
@@ -21,14 +22,14 @@ export const renderers: Renderers = {
   '': home.render,
   '/': home.render,
   '/second': second.render,
-  '/third': second.render,
+  '/third': third.render,
 };
 
 const routes: Routes = {
   '': home.route,
   '/': home.route,
   '/second': second.route,
-  '/third': second.route,
+  '/third': third.route,
 };
 
 /* c8 ignore start */
