@@ -15,6 +15,7 @@ const actionSchema = z.union([
   z.object({
     path: z.literal('/api/count'),
     loading: partialStore.optional(),
+    error: partialStore.optional(),
     options: z.object({
       method: z.literal('POST'),
       body: requests['/api/count'].POST,
@@ -23,6 +24,7 @@ const actionSchema = z.union([
   z.object({
     path: z.literal('/api/post'),
     loading: partialStore.optional(),
+    error: partialStore.optional(),
     options: z.object({
       method: z.literal('POST'),
       body: requests['/api/post'].POST,
@@ -31,6 +33,7 @@ const actionSchema = z.union([
   z.object({
     path: z.literal('/api/post'),
     loading: partialStore.optional(),
+    error: partialStore.optional(),
     options: z.object({
       method: z.literal('DELETE'),
       body: requests['/api/post'].DELETE,
@@ -57,6 +60,9 @@ app.post<APIPath>('/api/count', async (c) => {
   const { req } = c;
   const body = await parseBody(req, requests['/api/count'].POST);
   store.count += body.count;
+
+  // Testing
+  // return c.notFound();
   return c.json(store);
 });
 

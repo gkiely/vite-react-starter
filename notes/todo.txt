@@ -1,13 +1,9 @@
-- Fix page refreshing
-  - Do a git bisect
-  - Not sure if vite 3 or wouter but page is refreshing
-- Hot reload should persist state
-- Add error state, show it in posts when request doesn't load
-
 - Get server rendering working
   - No js application
   - All actions are links with query params
   - State is stored in url
+
+- Replace client/server in useRoute and all app.request with a generic request function
 
 Next
 - Drive the front end using curl requests

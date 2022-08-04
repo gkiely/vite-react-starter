@@ -5,3 +5,4 @@ export const SERVER_HOST = DEV_SERVER ? 'http://localhost:8080' : TEST ? 'http:/
 export const DEV = import.meta.env?.DEV; // Workers don't support for import.meta.env
 export const CLIENT_HOST = TEST ? 'http://localhost' : '';
 export const CLIENT = typeof MINIFLARE === 'undefined';
+export const SERVER = !CLIENT;

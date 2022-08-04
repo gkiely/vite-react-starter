@@ -24,6 +24,9 @@ export const render = createRenderer<Store>((state) => {
             loading: {
               loading: 'Adding...',
             },
+            error: {
+              error: 'Error adding count',
+            },
             options: {
               method: 'POST',
               body: { count: 1 },

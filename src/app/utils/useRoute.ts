@@ -23,6 +23,34 @@ type Options = {
   method?: string;
 };
 
+// Calling the route directly saves 1ms per interaction by avoiding JSON parsing
+const clientRequest = async (path: APIAction['path'], options: APIAction['options']) => {
+  const route = app.router.match(options.method ?? 'GET', path);
+  const result = route?.handlers
+    ? await Promise.all(
+        route.handlers.map((fn) =>
+          fn(
+            {
+              json: (o) => o as unknown as Response,
+              notFound: () => {
+                const err = new Error(`Not found: ${path}`);
+                assertType<Error & { status: number }>(err);
+                err.status = 404;
+                throw err;
+              },
+              req: {
+                // @ts-expect-error - this is expecting type body
+                parseBody: () => options.body,
+              },
+            },
+            () => {}
+          )
+        )
+      )
+    : [];
+  return result.reduce((acc, cur) => ({ ...acc, ...cur }), {});
+};
+
 const useRoute = (setRoute: SetState<RouteConfig>) => {
   const [location] = useLocation();
   assertType<Path>(location);
@@ -40,7 +68,7 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
 
     let controller: AbortController | undefined;
     try {
-      // Early rendering of the loading state
+      // Handle loading state
       if (action.loading) {
         // Show loading state after 10ms to avoid flicker when the response is fast
         controller = new AbortController();
@@ -75,27 +103,9 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
       };
 
       // Client routing
-      // Calling the route directly saves 1ms per interaction by avoiding JSON parse/stringify
       if (CLIENT) {
-        const route = app.router.match(options.method ?? 'GET', `${action.path}`);
-        const result = route?.handlers
-          ? await Promise.all(
-              route.handlers.map((fn) =>
-                fn(
-                  {
-                    json: (o) => o as unknown as Response,
-                    // @ts-expect-error - this should be typed as request
-                    req: {
-                      parseBody: () => parsedBody as unknown as Promise<unknown>,
-                    },
-                  },
-                  () => {}
-                )
-              )
-            )
-          : [];
+        const data = await clientRequest(action.path, action.options);
         controller?.abort();
-        const data = result.reduce((acc, cur) => ({ ...acc, ...cur }), {});
         const store = storeSchema.parse(data);
         setRoute(render(store));
       } else {
@@ -108,7 +118,22 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
         setRoute(render(store));
       }
     } catch (err) {
-      throw new Error(err as string);
+      assertType<Error>(err);
+      if (err.name === 'ZodError') throw new Error(err.message);
+
+      // Handle error state
+      if (action.error) {
+        const store = await getStore();
+        const parsedStore = parsePartialStore(action.error);
+        setRoute(
+          render({
+            ...store,
+            ...parsedStore,
+          })
+        );
+        throw new Error(err.message);
+      }
+      throw new Error(err.message);
     } finally {
       controller?.abort();
       actions.shift();
