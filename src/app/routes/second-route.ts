@@ -45,23 +45,28 @@ export const render = createRenderer<Store>((state) => {
       component: 'List',
       items: state.posts,
       error: state.error,
-      loading: '',
+      loading: state.loading,
     },
   ];
 });
 
-export const route = createRoute(async () => {
-  try {
-    const response = await app.request(`${SERVER_HOST}/api/store`);
-    const data = await response.json();
-    const store = storeSchema.parse(data);
-    return render(store);
-  } catch (e) {
-    return render({
-      ...initialState,
-      error: 'Could not load posts',
-    });
-  }
+export const route = createRoute(() => {
+  return [
+    render({ ...initialState, loading: 'loading...' }),
+    async () => {
+      try {
+        const response = await app.request(`${SERVER_HOST}/api/store`);
+        const data = await response.json();
+        const store = storeSchema.parse(data);
+        return render(store);
+      } catch (e) {
+        return render({
+          ...initialState,
+          error: 'Could not load posts',
+        });
+      }
+    },
+  ];
 });
 
 /* c8 ignore stop */

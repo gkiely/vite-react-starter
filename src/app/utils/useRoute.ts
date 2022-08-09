@@ -146,11 +146,16 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
     () =>
       void Promise.resolve(route).then(async (data) => {
         // Allow rendering the loading state first followed by the actual data
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && Array.isArray(data[0])) {
+          // Prevent flicker between screens when the async response is fast
+          const controller = new AbortController();
+          const p = delay(10, controller.signal);
           const [initial, asyncRoute] = data;
-          setRoute(initial);
+          p.then(() => setRoute(initial)).catch(() => {});
           setRoute(await asyncRoute());
+          controller.abort();
         } else {
+          assertType<RouteConfig>(data);
           setRoute(data);
         }
       }),
