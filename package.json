@@ -45,8 +45,10 @@
     "pre-push": "concurrently -r -g 'tsc' 'prettier src --check' 'npm:lint-check' 'npm:test-all'",
     "pre-commit": "concurrently -r -g 'tsc' 'npm run lint-fix && prettier src --write --loglevel error'"
   },
-  "pre-commit": "pre-commit",
-  "pre-push": "pre-push",
+  "simple-git-hooks": {
+    "pre-commit": "pre-commit",
+    "pre-push": "pre-push"
+  },
   "dependencies": {
     "hono": "^2.0.6",
     "react": "^18.2.0",

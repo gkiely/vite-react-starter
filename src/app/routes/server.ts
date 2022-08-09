@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { parseBody, partialStore, requests, Store } from 'server/schemas';
-// import { delay } from 'utils';
+import { delay } from 'utils';
+import { TEST } from 'utils/constants';
 import { z } from 'zod';
 
 /* c8 ignore start */
@@ -45,12 +46,14 @@ export type APIAction = z.infer<typeof actionSchema>;
 
 export const store: Store = {
   ...initialState,
-  posts: [
-    { id: '1', title: 'Good Morning' },
-    { id: '2', title: 'Good Aternoon' },
-    { id: '3', title: 'Good Evening' },
-    { id: '4', title: 'Good Night' },
-  ],
+  posts: TEST
+    ? [
+        { id: '1', title: 'Good Morning' },
+        { id: '2', title: 'Good Afternoon' },
+        { id: '3', title: 'Good Evening' },
+        { id: '4', title: 'Good Night' },
+      ]
+    : [],
 };
 /* c8 ignore start */
 export const app = new Hono();
@@ -84,6 +87,30 @@ app.delete<APIPath>('/api/post', async (c) => {
   return c.json(store);
 });
 
+const init = async () => {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+  await delay(1000);
+  const posts: Store['posts'] = await res.json();
+  store.posts = store.posts.concat(
+    posts
+      .map((post) => {
+        return {
+          id: String(post.id),
+          title: post.title.slice(0, 20),
+        };
+      })
+      .slice(0, 5)
+  );
+
+  // Unique posts
+  store.posts = [...new Map(store.posts.map((p) => [p.id, p])).values()];
+};
+
 // Keep this route fast as it's queried on every render
-app.get('/api/store', (c) => c.json(store));
+app.get('/api/store', async (c) => {
+  if (store.posts.length === 0 && !TEST) {
+    await init();
+  }
+  return c.json(store);
+});
 /* c8 ignore stop */

@@ -1,10 +1,11 @@
 import { Store, storeSchema } from 'server/schemas';
 
-import { SERVER_HOST } from 'utils/constants';
+import { DEV, SERVER_HOST, TEST } from 'utils/constants';
 import { initialState } from 'routes/server';
 import { createRenderer, createRoute, renderIf } from 'utils/routing';
 import { app } from './server';
 import { Props as HeaderProps } from 'components/Header/Header';
+import { assertType } from 'utils';
 type Button = HeaderProps['buttons'][number];
 
 /* c8 ignore start */
@@ -96,6 +97,10 @@ export const route = createRoute(async () => {
     const store = storeSchema.parse(data);
     return render(store);
   } catch (e) {
+    assertType<Error>(e);
+    if (DEV && !TEST) {
+      throw new Error(e.message);
+    }
     return render({
       ...initialState,
       error: 'Could not load posts',

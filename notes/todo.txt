@@ -3,6 +3,7 @@
   - Server render initial page x
   - Get img path working
     - Setup webpack config for worker: https://developers.cloudflare.com/workers/wrangler/cli-wrangler/webpack/
+    https://developers.cloudflare.com/workers/wrangler/configuration/
     - If you can't get it working easily enough, just get it working with node and move on
   - Get css styles working
   - Wrap entire UI in a form
