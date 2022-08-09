@@ -1,6 +1,5 @@
 import { Store, storeSchema } from 'server/schemas';
-
-import { DEV, SERVER_HOST, TEST } from 'utils/constants';
+import { DEV, SERVER_HOST } from 'utils/constants';
 import { initialState } from 'routes/server';
 import { createRenderer, createRoute, renderIf } from 'utils/routing';
 import { app } from './server';

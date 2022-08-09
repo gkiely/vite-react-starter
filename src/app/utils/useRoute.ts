@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { parsePartialStore, storeSchema, parseRequest } from 'server/schemas';
 import { assertType, delay, omit } from 'utils';
 import { RouteConfig, SetState } from 'utils/routing';
-import { CLIENT, SERVER_HOST, TEST } from 'utils/constants';
+import { CLIENT, SERVER_HOST } from 'utils/constants';
 import { useLocation } from 'wouter';
 import routes, { Path, renderers } from 'routes/routes';
 import { app, APIAction } from 'routes/server';
