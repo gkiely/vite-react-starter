@@ -31,8 +31,8 @@ describe('App', () => {
     expect(screen.getByText('Home route')).toBeInTheDocument();
   });
 
-  it('should show an error if the network request fails', async () => {
-    vi.spyOn(app, 'request').mockImplementationOnce((path) => {
+  it.only('should show an error if the network request fails', async () => {
+    vi.spyOn(app, 'request').mockImplementationOnce((_path) => {
       return Promise.reject(new Error('Network error'));
     });
 

@@ -46,14 +46,12 @@ export type APIAction = z.infer<typeof actionSchema>;
 
 export const store: Store = {
   ...initialState,
-  posts: TEST
-    ? [
-        { id: '1', title: 'Good Morning' },
-        { id: '2', title: 'Good Afternoon' },
-        { id: '3', title: 'Good Evening' },
-        { id: '4', title: 'Good Night' },
-      ]
-    : [],
+  posts: [
+    // { id: '1', title: 'Good Morning' },
+    // { id: '2', title: 'Good Afternoon' },
+    // { id: '3', title: 'Good Evening' },
+    // { id: '4', title: 'Good Night' },
+  ],
 };
 /* c8 ignore start */
 export const app = new Hono();
@@ -108,7 +106,8 @@ const init = async () => {
 
 // Keep this route fast as it's queried on every render
 app.get('/api/store', async (c) => {
-  if (store.posts.length === 0 && !TEST) {
+  if (TEST) return c.json(store);
+  if (store.posts.length === 0) {
     await init();
   }
   return c.json(store);

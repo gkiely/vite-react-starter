@@ -88,9 +88,6 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
         }).catch(() => {});
       }
 
-      // delay required for testing
-      if (CLIENT && TEST) await delay(0);
-
       const parsedBody = action.options?.body ? parseRequest(action.options?.body) : undefined;
       const body = parsedBody ? JSON.stringify(parsedBody) : undefined;
       const options: Options = {
@@ -140,10 +137,23 @@ const useRoute = (setRoute: SetState<RouteConfig>) => {
     }
   };
 
-  // Re-render after initial loading is complete
+  // Initial route render
   const route = routes[path]();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => void Promise.resolve(route).then(setRoute), [setRoute]);
+  useEffect(
+    () =>
+      void Promise.resolve(route).then(async (data) => {
+        // Allow rendering the loading state first followed by the actual data
+        if (Array.isArray(data)) {
+          const [initial, asyncRoute] = data;
+          setRoute(initial);
+          setRoute(await asyncRoute());
+        } else {
+          setRoute(data);
+        }
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [setRoute]
+  );
 
   return send;
 };

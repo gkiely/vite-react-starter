@@ -34,7 +34,13 @@ export const createReducer = <S, A extends Action>(
   };
 };
 
-export const createRoute = (fn: () => RouteConfig | Promise<RouteConfig>) => fn;
+export const createRoute = (
+  fn: () =>
+    | RouteConfig
+    | Promise<RouteConfig>
+    | [RouteConfig, () => Promise<RouteConfig>]
+    | Promise<[RouteConfig, () => Promise<RouteConfig>]>
+) => fn;
 
 type Reducer<S, A> = (state: Readonly<S>, action: Readonly<Action<A, unknown>>) => S;
 export const combineReducers = <S, A>(...reducers: Reducer<S, A>[]) => {
