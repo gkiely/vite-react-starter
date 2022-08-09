@@ -2,7 +2,7 @@
 import { Store, storeSchema } from 'server/schemas';
 import { SERVER_HOST } from 'utils/constants';
 import { createRoute, createRenderer } from 'utils/routing';
-import { app, initialState } from 'routes/server';
+import { app, store } from 'routes/server';
 
 export const render = createRenderer<Store>((state) => {
   return [
@@ -46,7 +46,7 @@ export const route = createRoute(async () => {
     return render(store);
   } catch (e) {
     return render({
-      ...initialState,
+      ...store,
       error: 'Could not load posts',
     });
   }

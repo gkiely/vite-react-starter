@@ -1,6 +1,6 @@
 import { Store, storeSchema } from 'server/schemas';
 import { DEV, SERVER_HOST } from 'utils/constants';
-import { initialState } from 'routes/server';
+import { initialState, store } from 'routes/server';
 import { createRenderer, createRoute, renderIf } from 'utils/routing';
 import { app } from './server';
 import { Props as HeaderProps } from 'components/Header/Header';
@@ -92,7 +92,7 @@ export const render = createRenderer<Store>((state) => {
 export const route = createRoute(() => {
   return [
     render({
-      ...initialState,
+      ...store,
       loading: 'Loading posts...',
     }),
     async () => {

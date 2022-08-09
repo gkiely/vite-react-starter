@@ -80,3 +80,11 @@ machine.on({
 //     </State>
 //   </>
 // );
+
+
+
+// Route escalates in complexity as it's needed
+// return () => render -> Simple sync route
+// return async () => render -> Async route
+// return () => [render, async () => render] -> Sync and async route
+

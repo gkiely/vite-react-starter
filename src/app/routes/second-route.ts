@@ -2,7 +2,7 @@
 import { Store, storeSchema } from 'server/schemas';
 import { SERVER_HOST } from 'utils/constants';
 import { createRoute, createRenderer } from 'utils/routing';
-import { app, initialState } from 'routes/server';
+import { app, store } from 'routes/server';
 
 export const render = createRenderer<Store>((state) => {
   return [
@@ -50,23 +50,18 @@ export const render = createRenderer<Store>((state) => {
   ];
 });
 
-export const route = createRoute(() => {
-  return [
-    render({ ...initialState, loading: 'loading...' }),
-    async () => {
-      try {
-        const response = await app.request(`${SERVER_HOST}/api/store`);
-        const data = await response.json();
-        const store = storeSchema.parse(data);
-        return render(store);
-      } catch (e) {
-        return render({
-          ...initialState,
-          error: 'Could not load posts',
-        });
-      }
-    },
-  ];
+export const route = createRoute(async () => {
+  try {
+    const response = await app.request(`${SERVER_HOST}/api/store`);
+    const data = await response.json();
+    const store = storeSchema.parse(data);
+    return render(store);
+  } catch (e) {
+    return render({
+      ...store,
+      error: 'Could not load posts',
+    });
+  }
 });
 
 /* c8 ignore stop */

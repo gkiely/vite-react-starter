@@ -88,6 +88,8 @@ app.delete<APIPath>('/api/post', async (c) => {
 });
 
 const init = async () => {
+  await delay(0); // Without delay, React will incorrectly show sync store updates in strict mode
+  store.loading = 'Loading posts...';
   const res = await fetch('https://jsonplaceholder.typicode.com/posts');
   await delay(1000);
   const posts: Store['posts'] = await res.json();
@@ -104,6 +106,7 @@ const init = async () => {
 
   // Unique posts
   store.posts = [...new Map(store.posts.map((p) => [p.id, p])).values()];
+  store.loading = '';
 };
 
 // Keep this route fast as it's queried on every render
