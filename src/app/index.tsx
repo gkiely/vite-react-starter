@@ -1,10 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { DEV } from 'utils/constants';
-
 import App from './App';
 import './index.css';
-if (DEV) {
+
+if (import.meta.env.DEV) {
   await import('./utils/runtime-error-overlay');
 }
 
