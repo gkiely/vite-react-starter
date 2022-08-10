@@ -40,15 +40,13 @@ const requestTuple = [
 // Used for requestParse
 export const requestSchema = z.union(requestTuple);
 
-export type Body = string | object | Record<string, string | File>;
-
 export const parseRequest = (request: z.infer<typeof requestSchema>) =>
   requestSchema.parse(request);
 
 export const parseBody = async <T extends typeof requestTuple[number]>(
   req: Context['req'],
   schema: T
-) => schema.parse((await req.parseBody()) as Body) as z.infer<T>;
+) => schema.parse(await req.parseBody()) as z.infer<T>;
 
 // Until exact types are supported: https://github.com/microsoft/TypeScript/issues/12936
 // We parse objects sent from the route and throw a runtime error
