@@ -1,3 +1,4 @@
+Next
 - Get server rendering working
   - Switch off js x
   - Server render initial page x
@@ -15,7 +16,6 @@
 
 - Replace client/server in useRoute and all app.request with a generic request function
 
-Next
 - Drive the front end using curl requests
 - Test loading bar
   loading && { component: 'LoadingBar' }

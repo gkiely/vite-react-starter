@@ -1,7 +1,7 @@
 /* c8 ignore start */
 import { Hono } from 'hono';
 import { prettyJSON } from 'hono/pretty-json';
-// import routes from 'routes/routes';
+import routes from 'routes/routes';
 import { Post, postSchema } from './schemas';
 // import { renderToStaticMarkup } from 'react-dom/server';
 // import * as components from '../src/app/components';
@@ -15,13 +15,16 @@ export const posts: Post[] = [
   { id: '4', title: 'Good Night' },
 ];
 
-// app.get('/', async (c) => {
-//   const json = await routes['/']();
-//   const html = renderToStaticMarkup(components.Header(json[0] as HeaderProps));
-//   // return c.json(json);
-//   console.log(html);
-//   return c.html(html);
-// });
+app.get('/', async (c) => {
+  const json = await routes['/']();
+  if (Array.isArray(json[0])) {
+    return c.json(json[0]);
+  }
+  // const html = renderToStaticMarkup(components.Header(json[0] as HeaderProps));
+  return c.json(json);
+  // console.log(html);
+  // return c.html(html);
+});
 
 app.get('/api/posts', prettyJSON(), (c) => c.json(posts));
 

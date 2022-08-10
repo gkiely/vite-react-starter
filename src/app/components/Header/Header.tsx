@@ -10,7 +10,7 @@ import { Path } from 'routes/routes';
 
 export type Props = {
   title: string;
-  body: Tags;
+  body?: Tags;
   buttons: { id: string; action?: APIAction; text: string }[];
   links: { id: string; to: Path; text: string }[];
 };
@@ -35,7 +35,7 @@ const Header = ({ body, title, buttons, links }: Props) => {
           </Button>
         </div>
       ))}
-      <p>{renderTags(body)}</p>
+      {body && <p>{renderTags(body)}</p>}
       <p>
         {links.map((link, i) => (
           <Fragment key={link.id}>
