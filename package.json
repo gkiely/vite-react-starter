@@ -43,7 +43,8 @@
     "lint-fix": "eslint -c .eslintrc.dev.json --cache --fix --ext ts,tsx src",
     "get-latest": "vite-node ./scripts/get-latest.ts",
     "pre-push": "concurrently -r -g 'tsc' 'prettier src --check' 'npm:lint-check' 'npm:test-all'",
-    "pre-commit": "concurrently -r -g 'tsc' 'npm run lint-fix && prettier src --write --loglevel error'"
+    "pre-commit": "concurrently -r -g 'tsc' 'npm run lint-fix && prettier src --write --loglevel error'",
+    "postinstall": "echo 'npm run pre-commit' > .git/hooks/pre-commit & echo 'npm run pre-push' > .git/hooks/pre-push"
   },
   "simple-git-hooks": {
     "pre-commit": "pre-commit",
