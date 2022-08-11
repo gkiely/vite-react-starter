@@ -22,18 +22,6 @@ export const useSend = () => useContext(RouteContext).send;
 
 export const createRenderer = <S>(fn: (state: S) => RouteConfig) => fn;
 
-export const createReducer = <S, A extends Action>(
-  fn: (state: Readonly<S>, action: Readonly<A>) => S,
-  actions?: A['type'][]
-) => {
-  return (state: Readonly<S>, action: Readonly<A>) => {
-    if (!actions || actions.length === 0 || actions.includes(action.type)) {
-      return fn(state, action);
-    }
-    return state;
-  };
-};
-
 export const createRoute = (
   fn: () =>
     | RouteConfig
@@ -42,16 +30,7 @@ export const createRoute = (
     | Promise<[RouteConfig, () => Promise<RouteConfig>]>
 ) => fn;
 
-type Reducer<S, A> = (state: Readonly<S>, action: Readonly<Action<A, unknown>>) => S;
-export const combineReducers = <S, A>(...reducers: Reducer<S, A>[]) => {
-  return (state: S, action: Action<A>) => {
-    return reducers.reduce((curr, acc) => acc(curr, action), state);
-  };
-};
-
 export type SetState<S> = Dispatch<SetStateAction<S>>;
-
-// export const component = (config: ComponentConfig) => config;
 
 export const renderIf = <T>(flag: boolean, data: T): [T] | [] => {
   return flag ? [data] : [];
