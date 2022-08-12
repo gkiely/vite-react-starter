@@ -1,8 +1,8 @@
 Next
 - Fix eslint type errors after upgrading
+- Experiment with using xstate instead of server
 
-- Get typescript-eslint building locally
-- Get it working with peerDependencies
+
 - Get server rendering working
   - Switch off js x
   - Server render initial page x
