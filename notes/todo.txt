@@ -1,5 +1,4 @@
 Next
-- Fix eslint type errors after upgrading
 - Experiment with using xstate instead of server
 
 
