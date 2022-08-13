@@ -2,6 +2,7 @@
 
 - [Typescript](https://github.com/microsoft/TypeScript) and [React](https://github.com/facebook/react)
 - Strict typescript config
+- [Xstate](https://xstate.js.org/docs/)
 - [Vanilla extract](https://vanilla-extract.style)
 - [ESLint](https://github.com/eslint/eslint) and [Prettier](https://github.com/prettier/prettier)
 - [Vitest](https://vitest.dev)
@@ -11,9 +12,6 @@
 - [Wrangler](https://github.com/cloudflare/wrangler2) or [Node](https://nodejs.dev)
 - [pre-commit and pre-push](https://github.com/toplenboren/simple-git-hooks) hooks
 - [Elm-style architecture](https://guide.elm-lang.org/architecture/)
-  - Uses `store, render, request` in place of `Model, View, Update`
-  - Uses `send` in place of `messages`
-- SSR via server routes (WIP)
 
 ### Scripts
 

@@ -1,6 +1,7 @@
 Next
-- Experiment with using xstate instead of server
-
+- Replace worker.ts with xstate and see how it goes
+  - Get fetch posts example working
+  - Get tests working
 
 - Get server rendering working
   - Switch off js x

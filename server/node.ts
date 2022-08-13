@@ -1,5 +1,11 @@
 import http from 'node:http';
-import { posts } from './worker';
+import { Post } from './schemas';
+export const posts: Post[] = [
+  { id: '1', title: 'Good Morning' },
+  { id: '2', title: 'Good Aternoon' },
+  { id: '3', title: 'Good Evening' },
+  { id: '4', title: 'Good Night' },
+];
 
 http
   .createServer((req, res) => {

@@ -51,10 +51,13 @@
     "pre-push": "pre-push"
   },
   "dependencies": {
+    "@xstate/fsm": "^2.0.0",
+    "@xstate/react": "^3.0.1",
     "hono": "^2.0.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "wouter": "^2.8.0-alpha.2",
+    "xstate": "^4.33.1",
     "zod": "^3.18.0"
   },
   "browserslist": {
