@@ -1,7 +1,6 @@
-Next
-- Replace worker.ts with xstate and see how it goes
-  - Get tests working
+- Get a sidebar and preview working
 
+Next
 - Get server rendering working
   - Switch off js x
   - Server render initial page x

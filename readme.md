@@ -2,7 +2,7 @@
 
 - [Typescript](https://github.com/microsoft/TypeScript) and [React](https://github.com/facebook/react)
 - Strict typescript config
-- [Xstate](https://xstate.js.org/docs/)
+- [XState](https://xstate.js.org/docs/)
 - [Vanilla extract](https://vanilla-extract.style)
 - [ESLint](https://github.com/eslint/eslint) and [Prettier](https://github.com/prettier/prettier)
 - [Vitest](https://vitest.dev)
