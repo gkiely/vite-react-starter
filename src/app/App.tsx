@@ -43,6 +43,10 @@ function App() {
   const [location] = useLocation();
   assertType<Path>(location);
 
+  if (!service.initialized) {
+    service.start();
+  }
+
   // Render the route
   return <Route key={location} path={location} />;
 }

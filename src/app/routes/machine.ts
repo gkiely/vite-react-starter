@@ -107,7 +107,6 @@ export const machine =
   });
 
 const service = interpret(machine);
-service.start();
 
 if (CLIENT) {
   // @ts-expect-error - debugging

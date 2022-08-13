@@ -1,13 +1,20 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import service from 'routes/machine';
 import { Post } from 'server/schemas';
 import App from './App';
-import { mockRequestOnce } from './utils/test-utils';
+
 export const posts: Post[] = [
   { id: '1', title: 'Good Morning' },
   { id: '2', title: 'Good Aternoon' },
   { id: '3', title: 'Good Evening' },
   { id: '4', title: 'Good Night' },
 ];
+
+afterEach(() => {
+  if (service.initialized) {
+    service.stop();
+  }
+});
 
 describe('App', () => {
   it('should render', () => {
@@ -23,26 +30,24 @@ describe('App', () => {
     expect(screen.getByText('count is: 1')).toBeInTheDocument();
   });
 
-  it.todo('should render posts', async () => {
-    mockRequestOnce('/api/posts', posts);
+  it('should render posts', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+      json: () => Promise.resolve(posts),
+    } as Response);
     render(<App />);
     await screen.findByText('Good Morning');
     expect(screen.getByText('Good Morning')).toBeInTheDocument();
   });
 
   it('should fail gracefully if no posts are returned', () => {
-    mockRequestOnce('/api/posts');
     render(<App />);
     expect(screen.getByText('Home route')).toBeInTheDocument();
   });
 
-  it.todo('should show an error if the network request fails', async () => {
-    // vi.spyOn(app, 'request').mockImplementationOnce((_path) => {
-    //   return Promise.reject(new Error('Network error'));
-    // });
-
+  it('should show an error if the network request fails', async () => {
+    vi.spyOn(global, 'fetch').mockRejectedValueOnce(new Error('Network error'));
     render(<App />);
-    await screen.findByText('Could not load posts');
-    expect(screen.getByText('Could not load posts')).toBeInTheDocument();
+    await screen.findByText('Error loading posts');
+    expect(screen.getByText('Error loading posts')).toBeInTheDocument();
   });
 });
