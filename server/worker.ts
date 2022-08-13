@@ -5,7 +5,7 @@ import { renderers } from 'routes/routes';
 
 const app = new Hono();
 
-app.get('/', async (c) => {
+app.get('/', (c) => {
   const json = renderers['/'](service.state.context);
   return c.json(json);
 });
