@@ -1,7 +1,7 @@
 import { createMachine, assign, interpret, DoneInvokeEvent } from 'xstate';
-import { Post } from 'server/schemas';
+import { Post, postsSchema } from 'server/schemas';
 import { CLIENT } from 'utils/constants';
-import { assertType, delay } from 'utils';
+import { delay } from 'utils';
 
 type Context = {
   error: string;
@@ -22,24 +22,22 @@ export type Event =
   | {
       type: 'post.delete';
       payload: { id: string };
-    }
-  | {
-      type: 'error';
-    }
-  | {
-      type: 'success';
-    }
-  | {
-      type: 'clear';
     };
 
 /* c8 ignore start */
 const fetchPosts = async () => {
   const res = await fetch('https://jsonplaceholder.typicode.com/posts');
-  const json = await res.json();
-  assertType<Post[]>(json);
+  const json = await res.json<{ id: number; title: string }[]>();
+  const posts = postsSchema.parse(
+    json
+      .map((post) => ({
+        id: `${post.id}`,
+        title: post.title,
+      }))
+      .slice(0, 5)
+  );
   await delay(300);
-  return json.slice(0, 5);
+  return posts;
 };
 
 // https://stately.ai/registry/editor/e258b6ae-322e-4669-b369-257314f2e17e
@@ -106,17 +104,6 @@ export const machine = createMachine<Context, Event>({
             error: 'Error loading posts',
           }),
         },
-      },
-    },
-    loading: {
-      on: {
-        error: 'error',
-        success: 'idle',
-      },
-    },
-    error: {
-      on: {
-        clear: 'idle',
       },
     },
   },
