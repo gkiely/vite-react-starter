@@ -42,6 +42,7 @@ const fetchPosts = async () => {
   return json.slice(0, 5);
 };
 
+// https://stately.ai/registry/editor/e258b6ae-322e-4669-b369-257314f2e17e
 export const machine = createMachine<Context, Event>({
   initial: 'setup',
   predictableActionArguments: true,
