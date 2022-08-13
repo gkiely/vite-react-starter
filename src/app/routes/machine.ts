@@ -40,74 +40,71 @@ const fetchPosts = async () => {
   return posts;
 };
 
-// https://stately.ai/registry/editor/e258b6ae-322e-4669-b369-257314f2e17e
-export const machine = createMachine<Context, Event>({
-  initial: 'setup',
-  predictableActionArguments: true,
-  context: {
-    error: '',
-    loading: '',
-    count: 0,
-    posts: [],
-  },
-  on: {
-    'count.update': {
-      actions: assign({
-        count: (context, event) => context.count + event.payload.count,
-      }),
-    },
-  },
-  states: {
-    idle: {
-      on: {
-        'post.create': {
-          actions: assign({
-            posts: (context, event) => [
-              ...context.posts,
-              {
-                id: `${context.posts.length + 1}`,
-                title: event.payload.title,
-              },
-            ],
-          }),
-        },
-        'post.delete': {
-          actions: assign({
-            posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
-          }),
-        },
+export const machine =
+  /** @xstate-layout N4IgpgJg5mDOIC5QEEAOqAEBbAhgYwAsBLAOzADoiIAbMAYlQHtYAXcvAJzBxbEVCawiLIoxL8QAD0QAWAOwA2cgAYAjHIAcAZh0BODYtW6ANCACeiVTJnl9MhQFYFCubuUKATOoC+302kxcQlIKKloGZjYIMFpeCUFhUXEkKVk5B1sHBy15Lw1lGQ8nUwsEAFotZXIHeVVs5V10rTkrX390bHxiMnJYMBYAV1Q6CDFQkgA3RgBrCgAzfsIABUj4FISRMQlpBC11cg99OsVGjV0FGRLEDwUq5XvFQsaPBt02kADO4J6+weGwDgcRgccioag8ObArDkBYsZareLMRJbFI7C7kZzKLIOF4tVRac5XBC6VQYjwyLQaVR5HQaazvT5Bbr0PCMAYkNhDCA8PjrJGbZKgHYeEUHGQFEkU3Q4ikKIllIpyA51fKqDQaFy6ckKXx+EAkRjRNYoDpMkKUGi8gT8pLbRBaUUOM7KAn4uSVZxy8yWLHkamy926NwOTQM01dc2-IaIoQCu0IeREjxyKpB-QKLQOAqqe72MOBCNkGPIwWpBAeLTynMeaq1TMVzPqxq67xAA */
+  createMachine<Context, Event>({
+    context: { error: '', loading: '', count: 0, posts: [] },
+    predictableActionArguments: true,
+    id: 'App machine',
+    initial: 'setup',
+    on: {
+      'count.update': {
+        actions: assign({
+          count: (context, event) => context.count + event.payload.count,
+        }),
       },
     },
-    setup: {
-      entry: [
-        assign({
+    states: {
+      idle: {
+        on: {
+          'post.create': {
+            actions: assign({
+              posts: (context, event) => [
+                ...context.posts,
+                {
+                  id: `${context.posts.length + 1}`,
+                  title: event.payload.title,
+                },
+              ],
+            }),
+          },
+          'post.delete': {
+            actions: assign({
+              posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
+            }),
+          },
+        },
+      },
+      setup: {
+        entry: assign({
           loading: 'Loading posts...',
         }),
-      ],
-      exit: [
-        assign({
+        exit: assign({
           loading: '',
         }),
-      ],
-      invoke: {
-        id: 'fetchPosts',
-        src: fetchPosts,
-        onDone: {
-          target: 'idle',
-          actions: assign<Context, DoneInvokeEvent<Post[]>>({
-            posts: (context, event) => [...context.posts, ...event.data],
-          }),
-        },
-        onError: {
-          target: 'idle',
-          actions: assign<Context, DoneInvokeEvent<Post[]>>({
-            error: 'Error loading posts',
-          }),
+        invoke: {
+          src: () => fetchPosts(),
+          id: 'fetchPosts',
+          onDone: [
+            {
+              actions: assign<Context, DoneInvokeEvent<Post[]>>({
+                posts: (context, event) => [...context.posts, ...event.data],
+              }),
+              target: 'idle',
+            },
+          ],
+          onError: [
+            {
+              actions: assign<Context, DoneInvokeEvent<Post[]>>({
+                error: 'Error loading posts',
+              }),
+              target: 'idle',
+            },
+          ],
         },
       },
     },
-  },
-});
+  });
 
 const service = interpret(machine);
 service.start();
