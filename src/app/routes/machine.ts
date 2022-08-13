@@ -1,6 +1,7 @@
-import { createMachine, assign, interpret } from 'xstate';
+import { createMachine, assign, interpret, DoneInvokeEvent } from 'xstate';
 import { Post } from 'server/schemas';
 import { CLIENT } from 'utils/constants';
+import { assertType, delay } from 'utils';
 
 type Context = {
   error: string;
@@ -31,9 +32,18 @@ export type Event =
   | {
       type: 'clear';
     };
+
+const fetchPosts = async () => {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+  const json = await res.json();
+  assertType<Post[]>(json);
+  await delay(300);
+  return json.slice(0, 5);
+};
+
 /* c8 ignore start */
 export const machine = createMachine<Context, Event>({
-  initial: 'idle',
+  initial: 'setup',
   predictableActionArguments: true,
   context: {
     error: '',
@@ -41,17 +51,17 @@ export const machine = createMachine<Context, Event>({
     count: 0,
     posts: [],
   },
+  on: {
+    'count.update': {
+      actions: assign({
+        count: (context, event) => context.count + event.payload.count,
+      }),
+    },
+  },
   states: {
     idle: {
       on: {
-        'count.update': {
-          target: 'idle',
-          actions: assign({
-            count: (context, event) => context.count + event.payload.count,
-          }),
-        },
         'post.create': {
-          target: 'idle',
           actions: assign({
             posts: (context, event) => [
               ...context.posts,
@@ -63,9 +73,36 @@ export const machine = createMachine<Context, Event>({
           }),
         },
         'post.delete': {
-          target: 'idle',
           actions: assign({
             posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
+          }),
+        },
+      },
+    },
+    setup: {
+      entry: [
+        assign({
+          loading: 'Loading posts...',
+        }),
+      ],
+      exit: [
+        assign({
+          loading: '',
+        }),
+      ],
+      invoke: {
+        id: 'fetchPosts',
+        src: fetchPosts,
+        onDone: {
+          target: 'idle',
+          actions: assign<Context, DoneInvokeEvent<Post[]>>({
+            posts: (context, event) => [...context.posts, ...event.data],
+          }),
+        },
+        onError: {
+          target: 'idle',
+          actions: assign<Context, DoneInvokeEvent<Post[]>>({
+            error: 'Error loading posts',
           }),
         },
       },
