@@ -15,10 +15,14 @@
     "url": "https://github.com/gkiely/vite-react-starter/issues"
   },
   "keywords": [
+    "hono",
     "vite",
-    "starter",
+    "react",
     "react testing library",
-    "typescript"
+    "starter",
+    "typescript",
+    "xstate",
+    "zod"
   ],
   "scripts": {
     "start": "npm run fast-install && npm run dev",
@@ -55,6 +59,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "wouter": "^2.8.0-alpha.2",
+    "xstate": "^4.33.1",
     "zod": "^3.18.0"
   },
   "browserslist": {

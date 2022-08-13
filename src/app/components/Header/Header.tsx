@@ -5,13 +5,13 @@ import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
 import { useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
-import type { APIAction } from 'routes/server';
-import { Path } from 'routes/routes';
+import type { Path } from 'routes/routes';
+import type { Event } from 'routes/machine';
 
 export type Props = {
   title: string;
   body?: Tags;
-  buttons: { id: string; action?: APIAction; text: string }[];
+  buttons: { id: string; action?: Event; text: string }[];
   links: { id: string; to: Path; text: string }[];
 };
 

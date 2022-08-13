@@ -1,7 +1,6 @@
+- Get a sidebar and preview working
+
 Next
-- Experiment with using xstate instead of server
-
-
 - Get server rendering working
   - Switch off js x
   - Server render initial page x
