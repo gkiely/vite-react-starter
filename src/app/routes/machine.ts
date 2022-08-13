@@ -33,6 +33,7 @@ export type Event =
       type: 'clear';
     };
 
+/* c8 ignore start */
 const fetchPosts = async () => {
   const res = await fetch('https://jsonplaceholder.typicode.com/posts');
   const json = await res.json();
@@ -41,7 +42,6 @@ const fetchPosts = async () => {
   return json.slice(0, 5);
 };
 
-/* c8 ignore start */
 export const machine = createMachine<Context, Event>({
   initial: 'setup',
   predictableActionArguments: true,
