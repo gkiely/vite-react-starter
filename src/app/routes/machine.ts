@@ -31,7 +31,7 @@ export type Event =
   | {
       type: 'clear';
     };
-
+/* c8 ignore start */
 export const machine = createMachine<Context, Event>({
   initial: 'idle',
   predictableActionArguments: true,
@@ -93,3 +93,4 @@ if (CLIENT) {
 }
 
 export default service;
+/* c8 ignore stop */

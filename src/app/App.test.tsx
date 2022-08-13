@@ -1,7 +1,13 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { Post } from 'server/schemas';
 import App from './App';
-import { posts } from 'server/node';
 import { mockRequestOnce } from './utils/test-utils';
+export const posts: Post[] = [
+  { id: '1', title: 'Good Morning' },
+  { id: '2', title: 'Good Aternoon' },
+  { id: '3', title: 'Good Evening' },
+  { id: '4', title: 'Good Night' },
+];
 
 describe('App', () => {
   it('should render', () => {
@@ -17,7 +23,7 @@ describe('App', () => {
     expect(screen.getByText('count is: 1')).toBeInTheDocument();
   });
 
-  it('should render posts', async () => {
+  it.todo('should render posts', async () => {
     mockRequestOnce('/api/posts', posts);
     render(<App />);
     await screen.findByText('Good Morning');
@@ -30,7 +36,7 @@ describe('App', () => {
     expect(screen.getByText('Home route')).toBeInTheDocument();
   });
 
-  xit('should show an error if the network request fails', async () => {
+  it.todo('should show an error if the network request fails', async () => {
     // vi.spyOn(app, 'request').mockImplementationOnce((_path) => {
     //   return Promise.reject(new Error('Network error'));
     // });
