@@ -1,4 +1,6 @@
-- Get a sidebar and preview working
+- Get a sidebar and content working
+  - Nested content
+  - { section: 'Row', id: 'section-content' }
 
 Next
 - Get server rendering working

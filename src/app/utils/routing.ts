@@ -2,8 +2,10 @@
 import { Dispatch, SetStateAction } from 'react';
 import service from 'routes/machine';
 import type * as Components from '../components';
+import type * as Sections from '../sections';
 
 type C = typeof Components;
+type S = typeof Sections;
 
 type Props = {
   [K in keyof C]: { component: K; id: string } & Parameters<C[K]>[number];
@@ -11,7 +13,17 @@ type Props = {
 
 export type ComponentConfig = Props[keyof C];
 
-export type RouteConfig = Readonly<ComponentConfig[]>;
+export type LayoutConfig = {
+  section: keyof S;
+  children: ({ component: string } | LayoutConfig)[];
+};
+
+export type RouteConfig =
+  | Readonly<ComponentConfig[]>
+  | {
+      layout: LayoutConfig[];
+      components: Readonly<ComponentConfig[]>;
+    };
 
 export const useSend = () => service.send;
 

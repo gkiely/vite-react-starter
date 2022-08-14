@@ -3,31 +3,30 @@ import { Store } from 'server/schemas';
 import { createRenderer } from 'utils/routing';
 
 export const render = createRenderer<Store>((state) => {
-  return [
-    {
-      id: 'Header',
-      component: 'Header',
-      title: 'Third route',
-      body: [{ text: 'Update ' }, { code: 'App.tsx' }, { text: ' and save to test HMR updates.' }],
-      buttons: [
-        {
-          id: 'Button-count-add',
-          text: `count is: ${state.count}`,
-          action: {
-            type: 'count.update',
-            payload: { count: 10 },
+  return {
+    layout: [
+      {
+        section: 'Row',
+        children: [
+          { component: 'sidebar' },
+          {
+            section: 'Row',
+            children: [{ component: 'header' }, { component: 'content' }],
           },
-        },
-      ],
-      links: [
-        {
-          id: '/',
-          to: '/second',
-          text: 'Second route',
-        },
-      ],
-    },
-  ];
+        ],
+      },
+    ],
+    components: [
+      {
+        id: 'sidebar',
+        component: 'Sidebar',
+      },
+      {
+        id: 'content',
+        component: 'Content',
+      },
+    ],
+  };
 });
 
 /* c8 ignore stop */
