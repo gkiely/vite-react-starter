@@ -1,8 +1,10 @@
 /* c8 ignore start */
-import { Dispatch, SetStateAction } from 'react';
+import { createElement, Dispatch, ReactNode, SetStateAction } from 'react';
 import service from 'routes/machine';
-import type * as Components from '../components';
-import type * as Sections from '../sections';
+import * as Components from '../components';
+import * as Sections from '../sections';
+import { assertType } from 'utils';
+import { Intersect } from 'utils/types';
 
 type C = typeof Components;
 type S = typeof Sections;
@@ -14,14 +16,15 @@ type Props = {
 export type ComponentConfig = Props[keyof C];
 
 export type LayoutConfig = {
+  id: string;
   section: keyof S;
-  children: ({ component: string } | LayoutConfig)[];
+  children: ({ componentId: string } | LayoutConfig)[];
 };
 
 export type RouteConfig =
   | Readonly<ComponentConfig[]>
   | {
-      layout: LayoutConfig[];
+      sections: LayoutConfig[];
       components: Readonly<ComponentConfig[]>;
     };
 
@@ -36,5 +39,80 @@ export const renderIf = <T>(flag: boolean, data: T): [T] | [] => {
 };
 
 export const expectType = <T>(data: T): T => data;
+
+export type ComponentProps = Props[keyof C];
+export const renderComponent = (props: ComponentProps) => {
+  const Component = Components[props.component];
+  if (props.id) {
+    assertType<{ key: string }>(props);
+    props.key = props.id;
+  }
+
+  // Convert union to intersection type for dynamic components
+  assertType<Intersect<typeof props>>(props);
+  assertType<Intersect<typeof Component>>(Component);
+  return createElement(Component, props);
+};
+
+/*** Layout rendering */
+export const renderSection = (
+  layout: LayoutConfig,
+  components: readonly ComponentConfig[]
+): ReactNode => {
+  const Section = Sections[layout.section];
+  return createElement(
+    Section,
+    {
+      key: layout.id,
+    },
+    layout.children.map((layoutProps) => {
+      if ('componentId' in layoutProps) {
+        const props = components.find((c) => c.id === layoutProps.componentId);
+        return props ? renderComponent(props) : undefined;
+      }
+      if ('children' in layoutProps) {
+        return renderSection(layoutProps, components);
+      }
+      return undefined;
+    })
+  );
+};
+
+export const getRenderedComponents = (
+  layout: LayoutConfig,
+  components: readonly ComponentConfig[]
+) => {
+  const ids: string[] = layout.children
+    .map((c) => {
+      if ('componentId' in c) {
+        return c.componentId;
+      } else if ('children' in c) {
+        return getRenderedComponents(c, components);
+      }
+      return '';
+    })
+    .filter((s) => s)
+    .flat();
+
+  return ids;
+};
+
+// Iterate through components and render either a section or a component
+export const renderLayout = (layouts: LayoutConfig[], components: readonly ComponentConfig[]) => {
+  const sectionIdArray = layouts.map((l) => getRenderedComponents(l, components));
+  const componentIds = sectionIdArray.flat();
+  const sections = layouts.map((layout) => renderSection(layout, components));
+  return components.reduce((acc, component) => {
+    if (componentIds.includes(component.id)) {
+      const section = sections[sectionIdArray.findIndex((ids) => ids.includes(component.id))];
+      assertType<(ReactNode & { key: string })[]>(acc);
+      assertType<ReactNode & { key: string }>(section);
+      const keys = acc.map((p) => p.key);
+      return keys.includes(section.key) ? acc : [...acc, section];
+    }
+    return [...acc, renderComponent(component)];
+  }, [] as ReactNode[]);
+};
+/*** end of Layout rendering */
 
 /* c8 ignore stop */

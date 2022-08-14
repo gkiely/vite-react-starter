@@ -1,6 +1,5 @@
-- Get a sidebar and content working
-  - Nested content
-  - { section: 'Row', id: 'section-content' }
+- Get ordered component and section rendering working
+
 
 Next
 - Get server rendering working

@@ -6,7 +6,7 @@ export type Props = unknown;
 /* c8 ignore start */
 const SideBar = (props: Props) => {
   const send = useSend();
-  return <div className={styles.sidebar}>Content</div>;
+  return <div className={styles.sidebar}>Sidebar</div>;
 };
 /* c8 ignore stop */
 

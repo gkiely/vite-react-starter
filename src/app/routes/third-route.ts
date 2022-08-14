@@ -4,16 +4,23 @@ import { createRenderer } from 'utils/routing';
 
 export const render = createRenderer<Store>((state) => {
   return {
-    layout: [
+    sections: [
       {
+        id: 'section-main',
         section: 'Row',
         children: [
-          { component: 'sidebar' },
+          { componentId: 'sidebar' },
           {
-            section: 'Row',
-            children: [{ component: 'header' }, { component: 'content' }],
+            id: 'section-content',
+            section: 'Column',
+            children: [{ componentId: 'content-header' }, { componentId: 'content' }],
           },
         ],
+      },
+      {
+        id: 'section-second',
+        section: 'Row',
+        children: [{ componentId: 'content-second' }],
       },
     ],
     components: [
@@ -22,8 +29,19 @@ export const render = createRenderer<Store>((state) => {
         component: 'Sidebar',
       },
       {
+        id: 'content-header',
+        component: 'Content',
+        text: 'Content header',
+      },
+      {
         id: 'content',
         component: 'Content',
+        text: 'Content body',
+      },
+      {
+        id: 'content-second',
+        component: 'Content',
+        text: 'Content second',
       },
     ],
   };
