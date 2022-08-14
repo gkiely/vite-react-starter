@@ -1,5 +1,3 @@
-- Get a sidebar and preview working
-
 Next
 - Get server rendering working
   - Switch off js x
