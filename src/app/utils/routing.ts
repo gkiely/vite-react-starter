@@ -68,12 +68,12 @@ export const renderSection = (
     layout.children.map((layoutProps) => {
       if ('componentId' in layoutProps) {
         const props = components.find((c) => c.id === layoutProps.componentId);
-        return props ? renderComponent(props) : undefined;
+        if (!props) {
+          throw new Error(`Component id not found: ${layoutProps.componentId}`);
+        }
+        return renderComponent(props);
       }
-      if ('children' in layoutProps) {
-        return renderSection(layoutProps, components);
-      }
-      return undefined;
+      return renderSection(layoutProps, components);
     })
   );
 };
@@ -81,28 +81,18 @@ export const renderSection = (
 export const getRenderedComponents = (
   layout: LayoutConfig,
   components: readonly ComponentConfig[]
-) => {
-  const ids: string[] = layout.children
-    .map((c) => {
-      if ('componentId' in c) {
-        return c.componentId;
-      } else if ('children' in c) {
-        return getRenderedComponents(c, components);
-      }
-      return '';
-    })
+): string[] =>
+  layout.children
+    .map((c) => ('componentId' in c ? c.componentId : getRenderedComponents(c, components)))
     .filter((s) => s)
     .flat();
-
-  return ids;
-};
 
 // Iterate through components and render either a section or a component
 export const renderLayout = (layouts: LayoutConfig[], components: readonly ComponentConfig[]) => {
   const sectionIdArray = layouts.map((l) => getRenderedComponents(l, components));
   const componentIds = sectionIdArray.flat();
   const sections = layouts.map((layout) => renderSection(layout, components));
-  return components.reduce((acc, component) => {
+  return components.reduce<ReactNode[]>((acc, component) => {
     if (componentIds.includes(component.id)) {
       const section = sections[sectionIdArray.findIndex((ids) => ids.includes(component.id))];
       assertType<(ReactNode & { key: string })[]>(acc);
@@ -111,7 +101,7 @@ export const renderLayout = (layouts: LayoutConfig[], components: readonly Compo
       return keys.includes(section.key) ? acc : [...acc, section];
     }
     return [...acc, renderComponent(component)];
-  }, [] as ReactNode[]);
+  }, []);
 };
 /*** end of Layout rendering */
 

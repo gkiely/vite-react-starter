@@ -11,6 +11,9 @@ const Route = ({ path }: { path: Path }) => {
   const render = renderers[path];
   const [route, setRoute] = useState<RouteConfig>(render(service.state.context));
 
+  // Debugging
+  // console.log(route, service.state.context, service.state.value);
+
   useEffect(() => {
     const sub = service.subscribe((state) => {
       setRoute(render(state.context));
