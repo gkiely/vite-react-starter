@@ -15,6 +15,10 @@ const Route = ({ path }: { path: Path }) => {
   // console.log(route, service.state.context, service.state.value);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [path]);
+
+  useEffect(() => {
     const sub = service.subscribe((state) => {
       setRoute(render(state.context));
     });
