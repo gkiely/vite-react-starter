@@ -11,7 +11,10 @@
 - [Hono](https://github.com/honojs/hono)
 - [Wrangler](https://github.com/cloudflare/wrangler2) or [Node](https://nodejs.dev)
 - [pre-commit and pre-push](https://github.com/toplenboren/simple-git-hooks) hooks
-- [Elm-style architecture](https://guide.elm-lang.org/architecture/)
+- Deterministic architecture
+  - Routes: JSON powered routes that drive the UI
+  - Components: Dumb components that have all the props necessary for rendering
+  - State machine: XState for updating the store and managing side effects
 
 ### Scripts
 
