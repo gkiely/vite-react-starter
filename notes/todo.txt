@@ -1,7 +1,3 @@
-- Setup routeMachine
-  - render number of posts based on path, only for home
-  - /3
-
 - Add support for title
 {
   title: 'Home',

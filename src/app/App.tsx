@@ -5,18 +5,21 @@ import { Path, renderers } from 'routes/routes';
 import { assertType } from 'utils';
 import { renderComponent, renderLayout, RouteConfig } from 'utils/routing';
 import service from 'routes/machine';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
   const render = renderers[path];
   const [route, setRoute] = useState<RouteConfig>(render(service.state.context));
 
-  // Debugging
-  // console.log(route, service.state.context, service.state.value);
+  if (import.meta.env.DEV && window.location.search.includes('debug')) {
+    // eslint-disable-next-line no-console
+    console.log(route, service.state.context, service.state.value);
+  }
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    service.send('route', { payload: { path } });
+    service.send('render', { payload: { path } });
   }, [path]);
 
   useEffect(() => {
@@ -27,11 +30,16 @@ const Route = ({ path }: { path: Path }) => {
   }, [render]);
 
   return (
-    <div className={styles.app}>
-      {'sections' in route
-        ? renderLayout(route.sections, route.components)
-        : route.map((props) => renderComponent(props))}
-    </div>
+    <>
+      <Helmet>
+        <title>{route.title}</title>
+      </Helmet>
+      <div className={styles.app}>
+        {'sections' in route
+          ? renderLayout(route.sections, route.components)
+          : route.components.map((props) => renderComponent(props))}
+      </div>
+    </>
   );
 };
 /* c8 ignore stop */
@@ -45,7 +53,11 @@ function App() {
   }
 
   // Render the route
-  return <Route key={location} path={location} />;
+  return (
+    <HelmetProvider>
+      <Route key={location} path={location} />
+    </HelmetProvider>
+  );
 }
 
 export default App;

@@ -25,7 +25,7 @@ export type Event =
       payload: { id: string };
     }
   | {
-      type: 'route';
+      type: 'render';
       payload: { path: Path };
     };
 
@@ -81,21 +81,12 @@ export const storeMachine =
               posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
             }),
           },
-          route: {
-            target: 'route',
+          render: {
+            target: 'rendering',
           },
         },
       },
-      // route: {
-      //   states: {
-      //     '/:number': {
-      //       // Invoke fetch with number of posts
-      //       // req.params.number
-      //       // invoke: { src: () => fetchPosts(req.params.number) }
-      //     },
-      //   }
-      // },
-      route: {
+      rendering: {
         always: {
           target: 'idle',
           cond: (context) => context.posts.length > 0,
@@ -108,7 +99,7 @@ export const storeMachine =
         }),
         invoke: {
           src: (context, event) => {
-            assertEventType(event, 'route');
+            assertEventType(event, 'render');
             return context.posts.length > 0
               ? Promise.resolve(context.posts)
               : fetchPosts(event.payload.path);

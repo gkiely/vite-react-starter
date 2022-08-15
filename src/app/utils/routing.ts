@@ -22,8 +22,12 @@ export type LayoutConfig = {
 };
 
 export type RouteConfig =
-  | Readonly<ComponentConfig[]>
   | {
+      title: string;
+      components: Readonly<ComponentConfig[]>;
+    }
+  | {
+      title: string;
       sections: LayoutConfig[];
       components: Readonly<ComponentConfig[]>;
     };

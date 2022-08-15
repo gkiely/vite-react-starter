@@ -2,8 +2,9 @@
 import { Store } from 'server/schemas';
 import { createRenderer } from 'utils/routing';
 
-export const render = createRenderer<Store>((state) => {
+export const render = createRenderer<Store>(() => {
   return {
+    title: 'Third Route',
     sections: [
       {
         id: 'section-main',
@@ -32,6 +33,10 @@ export const render = createRenderer<Store>((state) => {
         id: 'content-header',
         component: 'Content',
         text: 'Content header',
+        link: {
+          text: 'Second route',
+          to: '/second',
+        },
       },
       {
         id: 'content',
