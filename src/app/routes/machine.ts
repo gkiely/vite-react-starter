@@ -1,7 +1,7 @@
 import { createMachine, assign, interpret, DoneInvokeEvent, EventObject } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT } from 'utils/constants';
-import { assertType, delay } from 'utils';
+import { delay } from 'utils';
 import { Path } from './routes';
 
 type Context = {
