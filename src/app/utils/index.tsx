@@ -1,9 +1,19 @@
 import { Context, Next } from 'hono';
+import type { EventObject } from 'xstate';
 
 /* c8 ignore start */
 export function assertType<T>(value: unknown): asserts value is T {
   if (value === undefined) {
     throw new Error('value must be defined');
+  }
+}
+
+export function assertEventType<TE extends EventObject, TType extends TE['type']>(
+  event: TE,
+  eventType: TType
+): asserts event is TE & { type: TType } {
+  if (event.type !== eventType) {
+    throw new Error(`Invalid event: expected "${eventType}", got "${event.type}"`);
   }
 }
 

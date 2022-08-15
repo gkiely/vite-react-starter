@@ -1,7 +1,7 @@
-import { createMachine, assign, interpret, DoneInvokeEvent, EventObject } from 'xstate';
+import { createMachine, assign, interpret, DoneInvokeEvent } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT } from 'utils/constants';
-import { delay } from 'utils';
+import { assertEventType, delay } from 'utils';
 import { Path } from './routes';
 
 type Context = {
@@ -28,15 +28,6 @@ export type Event =
       type: 'route';
       payload: { path: Path };
     };
-
-function assertEventType<TE extends EventObject, TType extends TE['type']>(
-  event: TE,
-  eventType: TType
-): asserts event is TE & { type: TType } {
-  if (event.type !== eventType) {
-    throw new Error(`Invalid event: expected "${eventType}", got "${event.type}"`);
-  }
-}
 
 /* c8 ignore start */
 const fetchPosts = async (path: Path) => {
