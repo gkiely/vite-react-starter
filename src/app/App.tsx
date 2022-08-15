@@ -16,6 +16,7 @@ const Route = ({ path }: { path: Path }) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    service.send('route', { payload: { path } });
   }, [path]);
 
   useEffect(() => {
