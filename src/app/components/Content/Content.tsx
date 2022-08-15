@@ -1,5 +1,6 @@
 import { Link } from 'wouter';
 import * as styles from './Content.css';
+import Button from '@mui/material/Button';
 
 export type Props = {
   text: string;
@@ -18,6 +19,12 @@ const Content = ({ text, link }: Props) => {
         <small>
           <Link to={link.to}>{link.text}</Link>
         </small>
+      )}
+      <br />
+      {link && (
+        <Button variant="contained" color="primary">
+          Hello world
+        </Button>
       )}
     </div>
   );
