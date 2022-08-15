@@ -1,6 +1,6 @@
 import { createMachine, assign, interpret, DoneInvokeEvent } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
-import { CLIENT } from 'utils/constants';
+import { CLIENT, DEV } from 'utils/constants';
 import { assertEventType, delay } from 'utils';
 import { Path } from './routes';
 
@@ -41,7 +41,10 @@ const fetchPosts = async (path: Path) => {
       }))
       .slice(0, 5)
   );
-  await delay(300);
+  if (DEV) {
+    await delay(300);
+  }
+
   return posts;
 };
 
