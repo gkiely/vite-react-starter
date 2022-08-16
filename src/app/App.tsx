@@ -10,9 +10,10 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
   const render = renderers[path];
-  const [route, setRoute] = useState<RouteConfig>(render(service.state.context));
+  const [route, setRoute] = useState<RouteConfig>(render(service.state.context, service.state));
 
-  if (import.meta.env.DEV && window.location.search.includes('debug')) {
+  if (import.meta.env.DEV) {
+    // Debugging
     // eslint-disable-next-line no-console
     console.log(route, service.state.context, service.state.value);
   }
@@ -24,7 +25,7 @@ const Route = ({ path }: { path: Path }) => {
 
   useEffect(() => {
     const sub = service.subscribe((state) => {
-      setRoute(render(state.context));
+      setRoute(render(state.context, service.state));
     });
     return () => sub.unsubscribe();
   }, [render]);

@@ -1,8 +1,5 @@
-- Add support for title
-{
-  title: 'Home',
-  components: [],
-}
+- Add a sub machine for postLoader
+  - It tracks: loading, error, success
 
 - Push to cloudflare pages
 

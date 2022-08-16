@@ -1,12 +1,11 @@
 import { createMachine, assign, interpret, DoneInvokeEvent } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
-import { assertEventType, delay } from 'utils';
+import { delay } from 'utils';
 import { Path } from './routes';
 
 type Context = {
   error: string;
-  loading: string;
   count: number;
   posts: Post[];
 };
@@ -30,7 +29,7 @@ export type Event =
     };
 
 /* c8 ignore start */
-const fetchPosts = async (path: Path) => {
+const fetchPosts = async () => {
   const res = await fetch('https://jsonplaceholder.typicode.com/posts');
   const json = await res.json<{ id: number; title: string }[]>();
   const posts = postsSchema.parse(
@@ -48,13 +47,13 @@ const fetchPosts = async (path: Path) => {
   return posts;
 };
 
-export const storeMachine =
+export const machine =
   /** @xstate-layout N4IgpgJg5mDOIC5QEEAOqAEBbAhgYwAsBLAOzADoiIAbMAYlQHtYAXcvAJzBxbEVCawiLIoxL8QAD0QAWAOwA2cgAYAjHIAcAZh0BODYtW6ANCACeiVTJnl9MhQFYFCubuUKATOoC+302kxcQlIKKloGZjYIMFpeCUFhUXEkKVk5B1sHBy15Lw1lGQ8nUwsEAFotZXIHeVVs5V10rTkrX390bHxiMnJYMBYAV1Q6CDFQkgA3RgBrCgAzfsIABUj4FISRMQlpBC11cg99OsVGjV0FGRLEDwUq5XvFQsaPBt02kADO4J6+weGwDgcRgccioag8ObArDkBYsZareLMRJbFI7C7kZzKLIOF4tVRac5XBC6VQYjwyLQaVR5HQaazvT5Bbr0PCMAYkNhDCA8PjrJGbZKgHYeEUHGQFEkU3Q4ikKIllIpyA51fKqDQaFy6ckKXx+EAkRjRNYoDpMkKUGi8gT8pLbRBaUUOM7KAn4uSVZxy8yWLHkamy926NwOTQM01dc2-IaIoQCu0IeREjxyKpB-QKLQOAqqe72MOBCNkGPIwWpBAeLTynMeaq1TMVzPqxq67xAA */
   createMachine<Context, Event>({
-    context: { error: '', loading: '', count: 0, posts: [] },
-    predictableActionArguments: true,
     id: 'store',
-    initial: 'idle',
+    initial: 'loading',
+    context: { error: '', count: 0, posts: [] },
+    predictableActionArguments: true,
     on: {
       'count.update': {
         actions: assign({
@@ -86,24 +85,21 @@ export const storeMachine =
           },
         },
       },
-      rendering: {
-        always: {
-          target: 'idle',
-          cond: (context) => context.posts.length > 0,
-        },
-        entry: assign({
-          loading: 'Loading posts...',
-        }),
-        exit: assign({
-          loading: '',
-        }),
-        invoke: {
-          src: (context, event) => {
-            assertEventType(event, 'render');
-            return context.posts.length > 0
-              ? Promise.resolve(context.posts)
-              : fetchPosts(event.payload.path);
+      loading: {
+        always: [
+          {
+            target: 'idle',
+            cond: (context) => context.posts.length > 0,
           },
+          {
+            target: 'loadingPosts',
+            cond: (context) => context.posts.length === 0,
+          },
+        ],
+      },
+      loadingPosts: {
+        invoke: {
+          src: () => fetchPosts(),
           id: 'fetchPosts',
           onDone: [
             {
@@ -123,10 +119,15 @@ export const storeMachine =
           ],
         },
       },
+      rendering: {
+        always: {
+          target: 'idle',
+        },
+      },
     },
   });
 
-const service = interpret(storeMachine);
+const service = interpret(machine);
 
 if (CLIENT) {
   // @ts-expect-error - debugging

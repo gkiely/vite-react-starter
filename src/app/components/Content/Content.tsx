@@ -1,6 +1,6 @@
 import { Link } from 'wouter';
 import * as styles from './Content.css';
-import Button from '@mui/material/Button';
+import { Button } from '@mui/material';
 
 export type Props = {
   text: string;

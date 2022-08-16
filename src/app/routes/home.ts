@@ -4,7 +4,7 @@ import { Props as HeaderProps } from 'components/Header/Header';
 type Button = HeaderProps['buttons'][number];
 
 /* c8 ignore start */
-export const render = createRenderer<Store>((state) => {
+export const render = createRenderer<Store>((store, state) => {
   return {
     title: 'Home route',
     components: [
@@ -20,7 +20,7 @@ export const render = createRenderer<Store>((state) => {
         buttons: [
           {
             id: 'Button-count-add',
-            text: `count is: ${state.count}`,
+            text: `count is: ${store.count}`,
             action: {
               type: 'count.update',
               payload: { count: 1 },
@@ -42,12 +42,12 @@ export const render = createRenderer<Store>((state) => {
               payload: { title: 'New post' },
             },
           },
-          ...renderIf<Button>(state.posts.length > 0, {
+          ...renderIf<Button>(store.posts.length > 0, {
             id: 'Button-post-remove',
             text: 'remove',
             action: {
               type: 'post.delete',
-              payload: { id: state.posts[state.posts.length - 1]?.id ?? '' },
+              payload: { id: store.posts[store.posts.length - 1]?.id ?? '' },
             },
           }),
         ],
@@ -62,9 +62,9 @@ export const render = createRenderer<Store>((state) => {
       {
         id: 'List',
         component: 'List',
-        items: state.posts,
-        error: state.error,
-        loading: state.loading,
+        items: store.posts,
+        error: store.error,
+        loading: state.matches('loadingPosts') ? 'Loading posts...' : '',
       },
     ],
   };

@@ -14,7 +14,6 @@ export const storeSchema = z.object({
   count: z.number(),
   posts: postsSchema,
   error: z.string(),
-  loading: z.string(),
 });
 
 export const partialStore = storeSchema.partial();
