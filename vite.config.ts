@@ -6,7 +6,9 @@ import wranglerPlugin from './scripts/vite-plugin-wrangler';
 import clearVitest from './scripts/vite-plugin-clear-vitest';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import path from 'node:path';
-const DEV_TEST = process.env.NODE_ENV === 'test' && process.env.npm_lifecycle_event === 'test';
+const TEST = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
+const DEV = !TEST;
+const WATCH_TEST = TEST && process.env.npm_lifecycle_event === 'test';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
@@ -43,17 +45,18 @@ export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     process.argv.includes('--server') ? wranglerPlugin() : undefined,
-    checker({
-      typescript: true,
-      eslint: {
-        lintCommand: 'eslint -c .eslintrc.json --cache --fix --ext ts,tsx src',
-        dev: {
-          logLevel: ['error'],
+    DEV &&
+      (checker({
+        typescript: true,
+        eslint: {
+          lintCommand: 'eslint -c .eslintrc.json --cache --fix --ext ts,tsx src',
+          dev: {
+            logLevel: ['error'],
+          },
         },
-      },
-    }) as Plugin,
+      }) as Plugin),
     // Clear terminal plugin for vitest
-    DEV_TEST ? clearVitest() : undefined,
+    WATCH_TEST && clearVitest(),
     vanillaExtractPlugin({
       identifiers: command === 'serve' ? 'debug' : 'short',
     }),
