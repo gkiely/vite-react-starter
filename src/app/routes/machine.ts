@@ -1,4 +1,4 @@
-import { createMachine, assign, interpret, DoneInvokeEvent } from 'xstate';
+import { createMachine, assign, interpret, DoneInvokeEvent, StateNodeConfig } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
 import { delay } from 'utils';
@@ -45,10 +45,39 @@ const fetchPosts = async () => {
   return posts;
 };
 
-const postsNode = {
+type States = {
+  states: {
+    idle: object;
+    loading: object;
+    success: object;
+    error: object;
+  };
+};
+
+const postsNode: StateNodeConfig<Context, States, Event> = {
   id: 'posts',
   initial: 'loading',
   states: {
+    idle: {
+      on: {
+        'post.create': {
+          actions: assign({
+            posts: (context, event) => [
+              ...context.posts,
+              {
+                id: `${context.posts.length + 1}`,
+                title: event.payload.title,
+              },
+            ],
+          }),
+        },
+        'post.delete': {
+          actions: assign({
+            posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
+          }),
+        },
+      },
+    },
     loading: {
       invoke: {
         src: () => fetchPosts(),
@@ -57,13 +86,13 @@ const postsNode = {
             actions: assign<Context, DoneInvokeEvent<Post[]>>({
               posts: (context, event) => [...context.posts, ...event.data],
             }),
-            target: 'success',
+            target: 'idle',
           },
         ],
         onError: 'error',
       },
     },
-    success: {},
+    success: { always: 'idle' },
     error: {},
   },
 };
@@ -80,22 +109,6 @@ export const machine =
       'count.update': {
         actions: assign({
           count: (context, event) => context.count + event.payload.count,
-        }),
-      },
-      'post.create': {
-        actions: assign({
-          posts: (context, event) => [
-            ...context.posts,
-            {
-              id: `${context.posts.length + 1}`,
-              title: event.payload.title,
-            },
-          ],
-        }),
-      },
-      'post.delete': {
-        actions: assign({
-          posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
         }),
       },
     },

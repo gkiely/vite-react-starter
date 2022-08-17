@@ -2,3 +2,64 @@ https://github.com/statelyai/xstate/discussions/1807#discussioncomment-257842
 https://codesandbox.io/s/xstate-todomvc-33wr94qv1?file=/todosMachine.js
 
 https://gist.github.com/davidkpiano/0065abc99097759af736986d24368d33
+
+
+
+
+// type PostsLoaderContext = {
+//   posts: Post[];
+// };
+
+// const postsLoaderMachine = createMachine<Pick<Context, 'posts'>>({
+//   id: 'posts',
+//   initial: 'loading',
+//   context: {
+//     posts: [],
+//   },
+//   states: {
+//     loading: {
+//       invoke: {
+//         src: () => fetchPosts,
+//         onDone: [
+//           {
+//             target: 'success',
+//             actions: assign({
+//               posts: (_, event) => event.data as Post[],
+//             }),
+//           },
+//         ],
+//         onError: 'error',
+//       },
+//     },
+//     success: {
+//       type: 'final',
+//       data: {
+//         posts: (context: Context) => context.posts,
+//       },
+//     },
+//     error: {
+//       type: 'final',
+//     },
+//   },
+// });
+
+
+// posts: {
+//   initial: 'loading',
+//   states: {
+//     loading: {
+//       invoke: {
+//         src: postsLoaderMachine,
+//         onDone: {
+//           target: 'success',
+//           actions: assign<Context, DoneInvokeEvent<{ posts: Post[] }>>({
+//             posts: (_, event) => event.data.posts,
+//           }),
+//         },
+//         onError: 'error',
+//       },
+//     },
+//     success: {},
+//     error: {},
+//   },
+// },
