@@ -42,8 +42,8 @@ export const render = createRenderer<Store>((store, state) => {
         id: 'List',
         component: 'List',
         items: store.posts,
-        error: store.error,
-        loading: state.matches('loadingPosts') ? 'Loading posts...' : '',
+        error: state.matches('posts.error') ? 'Error loading posts' : '',
+        loading: state.matches('posts.loading') ? 'Loading posts...' : '',
       },
     ],
   };

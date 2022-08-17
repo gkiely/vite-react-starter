@@ -1,0 +1,4 @@
+https://github.com/statelyai/xstate/discussions/1807#discussioncomment-257842
+https://codesandbox.io/s/xstate-todomvc-33wr94qv1?file=/todosMachine.js
+
+https://gist.github.com/davidkpiano/0065abc99097759af736986d24368d33

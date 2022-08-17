@@ -13,7 +13,6 @@ export const postsSchema = z.array(postSchema);
 export const storeSchema = z.object({
   count: z.number(),
   posts: postsSchema,
-  error: z.string(),
 });
 
 export const partialStore = storeSchema.partial();

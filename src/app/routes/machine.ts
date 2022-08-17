@@ -4,8 +4,7 @@ import { CLIENT, DEV } from 'utils/constants';
 import { delay } from 'utils';
 import { Path } from './routes';
 
-type Context = {
-  error: string;
+export type Context = {
   count: number;
   posts: Post[];
 };
@@ -43,87 +42,66 @@ const fetchPosts = async () => {
   if (DEV) {
     await delay(300);
   }
-
   return posts;
 };
 
+const postsNode = {
+  id: 'posts',
+  initial: 'loading',
+  states: {
+    loading: {
+      invoke: {
+        src: () => fetchPosts(),
+        onDone: [
+          {
+            actions: assign<Context, DoneInvokeEvent<Post[]>>({
+              posts: (context, event) => [...context.posts, ...event.data],
+            }),
+            target: 'success',
+          },
+        ],
+        onError: 'error',
+      },
+    },
+    success: {},
+    error: {},
+  },
+};
+
 export const machine =
-  /** @xstate-layout N4IgpgJg5mDOIC5QEEAOqAEBbAhgYwAsBLAOzADoiIAbMAYlQHtYAXcvAJzBxbEVCawiLIoxL8QAD0QAWAOwA2cgAYAjHIAcAZh0BODYtW6ANCACeiVTJnl9MhQFYFCubuUKATOoC+302kxcQlIKKloGZjYIMFpeCUFhUXEkKVk5B1sHBy15Lw1lGQ8nUwsEAFotZXIHeVVs5V10rTkrX390bHxiMnJYMBYAV1Q6CDFQkgA3RgBrCgAzfsIABUj4FISRMQlpBC11cg99OsVGjV0FGRLEDwUq5XvFQsaPBt02kADO4J6+weGwDgcRgccioag8ObArDkBYsZareLMRJbFI7C7kZzKLIOF4tVRac5XBC6VQYjwyLQaVR5HQaazvT5Bbr0PCMAYkNhDCA8PjrJGbZKgHYeEUHGQFEkU3Q4ikKIllIpyA51fKqDQaFy6ckKXx+EAkRjRNYoDpMkKUGi8gT8pLbRBaUUOM7KAn4uSVZxy8yWLHkamy926NwOTQM01dc2-IaIoQCu0IeREjxyKpB-QKLQOAqqe72MOBCNkGPIwWpBAeLTynMeaq1TMVzPqxq67xAA */
+  /** @xstate-layout N4IgpgJg5mDOIC5SwC4HsBOYB0AHNqs2ANmgIYQCWAdlAMQRrU40BuaA1jqpjvoSXJVaCNmgDGZFJSYBtAAwBdRKH6VpTFSAAeiAEx6AnNj3yArAEYAzHoAch+fMOmzAGhABPRIYBsAXz93Hiw8AhQiUgoaejAMDEw8YikAM0wAW2xgvjCIoWjRanZJDWoFZSQQNRKtXQQ9K3lsABZbHytbawMzAHYfdy8EC0MLZp8zMz0mye6HM1s9AKD0EP5w7Fj4jDotKplqGsQ2puxDJotTH0MZib1+-QtG33Gmtvt5bscrRZAsunE0ACu1BQ2ABuAgUjAOwI6j2BwQVjOzQePiaVnGFnGejcnkQAFo9KjsFZzvZLt1EVZDIYvoEfsswHRVthxFhIdDYLDNBVanoHidutYfHYzFYSR07ggCUSSXZfFdKdTaUteEywtgIGBiGAUFCKrtuaBat1jj4fPILD4PoSrXpurZJdLjrKyQq0UqAnTqGhNfAKllsJQINqOVz9jz9E1Jed5N8A6tclFaKHqhGEPJJb44wzQgJYADxOI4H7VDDU0bEE1DLZsBbWmYrhYHt1xtGnM1qdWPlbqdjbNneLm1htMCm4WmzO2bmZhfIpiKrH1cXU5ycxqK5vJbGKzf26fGcmPDTp8ZNJZNa44LWL6rZWmizAOsEfwxWpS1HU1uidOxT0QY7WsT0-CAA */
   createMachine<Context, Event>({
-    id: 'store',
-    initial: 'loading',
-    context: { error: '', count: 0, posts: [] },
+    context: { count: 0, posts: [] },
     predictableActionArguments: true,
+    id: 'store',
+    initial: 'posts',
+    type: 'parallel',
     on: {
       'count.update': {
         actions: assign({
           count: (context, event) => context.count + event.payload.count,
         }),
       },
+      'post.create': {
+        actions: assign({
+          posts: (context, event) => [
+            ...context.posts,
+            {
+              id: `${context.posts.length + 1}`,
+              title: event.payload.title,
+            },
+          ],
+        }),
+      },
+      'post.delete': {
+        actions: assign({
+          posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
+        }),
+      },
     },
     states: {
-      idle: {
-        on: {
-          'post.create': {
-            actions: assign({
-              posts: (context, event) => [
-                ...context.posts,
-                {
-                  id: `${context.posts.length + 1}`,
-                  title: event.payload.title,
-                },
-              ],
-            }),
-          },
-          'post.delete': {
-            actions: assign({
-              posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
-            }),
-          },
-          render: {
-            target: 'rendering',
-          },
-        },
-      },
-      loading: {
-        always: [
-          {
-            target: 'idle',
-            cond: (context) => context.posts.length > 0,
-          },
-          {
-            target: 'loadingPosts',
-            cond: (context) => context.posts.length === 0,
-          },
-        ],
-      },
-      loadingPosts: {
-        invoke: {
-          src: () => fetchPosts(),
-          id: 'fetchPosts',
-          onDone: [
-            {
-              actions: assign<Context, DoneInvokeEvent<Post[]>>({
-                posts: (context, event) => [...context.posts, ...event.data],
-              }),
-              target: 'idle',
-            },
-          ],
-          onError: [
-            {
-              actions: assign<Context, DoneInvokeEvent<Post[]>>({
-                error: 'Error loading posts',
-              }),
-              target: 'idle',
-            },
-          ],
-        },
-      },
-      rendering: {
-        always: {
-          target: 'idle',
-        },
-      },
+      idle: {},
+      posts: postsNode,
     },
   });
 

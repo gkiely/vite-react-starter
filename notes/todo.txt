@@ -1,5 +1,4 @@
-- Add a sub machine for postLoader
-  - It tracks: loading, error, success
+- Get typegen working with state.matches
 
 - Push to cloudflare pages
 
