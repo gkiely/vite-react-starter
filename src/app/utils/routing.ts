@@ -34,7 +34,7 @@ export type RouteConfig =
 
 export const useSend = () => service.send;
 
-export const createRenderer = <S>(fn: (state: S) => RouteConfig) => fn;
+export const createRenderer = <S>(fn: (store: S, state: typeof service.state) => RouteConfig) => fn;
 
 export type SetState<S> = Dispatch<SetStateAction<S>>;
 

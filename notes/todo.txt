@@ -1,8 +1,4 @@
-- Add support for title
-{
-  title: 'Home',
-  components: [],
-}
+- Get typegen working with state.matches
 
 - Push to cloudflare pages
 

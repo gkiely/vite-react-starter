@@ -6,25 +6,26 @@ import { assertType } from 'utils';
 import { renderComponent, renderLayout, RouteConfig } from 'utils/routing';
 import service from 'routes/machine';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { DEV } from 'utils/constants';
 
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
   const render = renderers[path];
-  const [route, setRoute] = useState<RouteConfig>(render(service.state.context));
+  const [route, setRoute] = useState<RouteConfig>(render(service.state.context, service.state));
 
-  if (import.meta.env.DEV && window.location.search.includes('debug')) {
+  if (DEV) {
+    // Debugging
     // eslint-disable-next-line no-console
     console.log(route, service.state.context, service.state.value);
   }
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    service.send('render', { payload: { path } });
   }, [path]);
 
   useEffect(() => {
     const sub = service.subscribe((state) => {
-      setRoute(render(state.context));
+      setRoute(render(state.context, service.state));
     });
     return () => sub.unsubscribe();
   }, [render]);

@@ -2,7 +2,7 @@
 import { Store } from 'server/schemas';
 import { createRenderer } from 'utils/routing';
 
-export const render = createRenderer<Store>((state) => {
+export const render = createRenderer<Store>((store, state) => {
   return {
     title: 'Second route',
     components: [
@@ -18,7 +18,7 @@ export const render = createRenderer<Store>((state) => {
         buttons: [
           {
             id: 'Button-count-add',
-            text: `count is: ${state.count}`,
+            text: `count is: ${store.count}`,
             action: {
               type: 'count.update',
               payload: { count: 2 },
@@ -41,9 +41,9 @@ export const render = createRenderer<Store>((state) => {
       {
         id: 'List',
         component: 'List',
-        items: state.posts,
-        error: state.error,
-        loading: state.loading,
+        items: store.posts,
+        error: state.matches('posts.error') ? 'Error loading posts' : '',
+        loading: state.matches('posts.loading') ? 'Loading posts...' : '',
       },
     ],
   };
