@@ -49,7 +49,6 @@ type States = {
   states: {
     idle: object;
     loading: object;
-    success: object;
     error: object;
   };
 };
@@ -92,7 +91,6 @@ const postsNode: StateNodeConfig<Context, States, Event> = {
         onError: 'error',
       },
     },
-    success: { always: 'idle' },
     error: {},
   },
 };
@@ -105,15 +103,16 @@ export const machine =
     id: 'store',
     initial: 'posts',
     type: 'parallel',
-    on: {
-      'count.update': {
-        actions: assign({
-          count: (context, event) => context.count + event.payload.count,
-        }),
-      },
-    },
     states: {
-      idle: {},
+      idle: {
+        on: {
+          'count.update': {
+            actions: assign({
+              count: (context, event) => context.count + event.payload.count,
+            }),
+          },
+        },
+      },
       posts: postsNode,
     },
   });
