@@ -1,6 +1,8 @@
 - Setup routes for machine
-  - Hook up new machine to route
-  - Setup postsMachine
+  - Delete old machine
+  - Hook up new machine to route and use it
+  - Setup countMachine
+  - setup spawnMachine function
 
 - Write an `update` function that takes the place of assign
   - It assigns

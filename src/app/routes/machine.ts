@@ -8,11 +8,11 @@ import {
   Actor,
   spawn,
   AnyInterpreter,
+  sendParent,
 } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
 import { assertType, delay } from 'utils';
-import { sendParent } from 'xstate/lib/actions';
 
 export type Context = {
   count: number;
@@ -96,6 +96,11 @@ const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
             sendUpdate(),
           ],
         },
+        'post.delete': {
+          actions: assign({
+            posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
+          }),
+        },
       },
     },
     success: {},
@@ -113,15 +118,39 @@ const homeMachine = createMachine<Context & { actors: Actor<Context, Event>[] },
     posts: [],
   },
   states: {
-    // posts: spawnMachine(homeMachine),
+    /// TODO
+    // posts: spawnMachine(postsMachine),
     posts: {
       entry: assign({
-        actors: () => [spawn(postsMachine, { autoForward: true })],
+        actors: () => [spawn(postsMachine)],
       }),
       exit: (context) => {
-        context.actors.forEach((actor) => actor.stop?.() as unknown);
+        context.actors.forEach((actor) => {
+          actor.stop?.();
+        });
+      },
+      on: {
+        '*': {
+          actions: (context, event) => {
+            context.actors.forEach((actor) => {
+              actor?.send(event);
+            });
+          },
+        },
+        update: {
+          actions: [
+            assign((context, event) => ({
+              ...context,
+              ...event.payload,
+            })),
+            sendUpdate(),
+          ],
+        },
       },
     },
+    count: {},
+    idle: {},
+    loading: {},
   },
 });
 
@@ -145,15 +174,23 @@ const routerMachine = createMachine<Context & { actors: Actor<Context, Event>[] 
     posts: [],
   },
   states: {
+    /// TODO
     // '/': spawnMachine(homeMachine),
     '/': {
       entry: assign({
-        actors: () => [spawn(homeMachine, { autoForward: true })],
+        actors: () => [spawn(homeMachine)],
       }),
       exit: (context) => {
         context.actors.forEach((actor) => actor.stop?.() as unknown);
       },
       on: {
+        '*': {
+          actions: (context, event) => {
+            context.actors.forEach((actor) => {
+              actor?.send(event);
+            });
+          },
+        },
         update: {
           actions: [
             assign((context, event) => ({
@@ -176,10 +213,10 @@ serviceNew.send({
   },
 });
 
-// serviceNew.subscribe((state) => {
-//   console.log('>', state.context);
-// });
-// console.log(serviceNew.state.children);
+serviceNew.subscribe((state) => {
+  // eslint-disable-next-line no-console
+  console.log('posts:', state.context.posts);
+});
 
 // eslint-disable-next-line no-console
 console.log(matches('posts.success', serviceNew));
