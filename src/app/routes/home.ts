@@ -34,14 +34,14 @@ export const render = createRenderer<Store>((store, state) => {
               payload: { count: -1 },
             },
           },
-          {
+          ...renderIf<Button>(state.matches('posts.idle'), {
             id: 'Button-post-add',
             text: 'Add a post',
             action: {
               type: 'post.create',
               payload: { title: 'New post' },
             },
-          },
+          }),
           ...renderIf<Button>(store.posts.length > 0, {
             id: 'Button-post-remove',
             text: 'remove',

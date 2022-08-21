@@ -3,14 +3,13 @@ import {
   assign,
   interpret,
   DoneInvokeEvent,
-  StateNodeConfig,
   Actor,
   spawn,
   AnyInterpreter,
 } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
-import { assertType, delay } from 'utils';
+import { assertType, delay, pick } from 'utils';
 
 export type Context = {
   count: number;
@@ -59,14 +58,6 @@ const fetchPosts = async () => {
   return posts;
 };
 
-type States = {
-  states: {
-    idle: object;
-    loading: object;
-    error: object;
-  };
-};
-
 export const matches = (state: string, service: AnyInterpreter): boolean => {
   return Object.values(service.state.children).some((child) => {
     assertType<AnyInterpreter>(child);
@@ -78,48 +69,6 @@ export const matches = (state: string, service: AnyInterpreter): boolean => {
       ? matches(postfix, child)
       : child.state.matches(state);
   });
-};
-
-const posts: StateNodeConfig<Context, States, Event> = {
-  id: 'posts',
-  initial: 'loading',
-  states: {
-    idle: {
-      on: {
-        'post.create': {
-          actions: assign({
-            posts: (context, event) => [
-              ...context.posts,
-              {
-                id: `${context.posts.length + 1}`,
-                title: event.payload.title,
-              },
-            ],
-          }),
-        },
-        'post.delete': {
-          actions: assign({
-            posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
-          }),
-        },
-      },
-    },
-    loading: {
-      invoke: {
-        src: () => fetchPosts(),
-        onDone: [
-          {
-            actions: assign<Context, DoneInvokeEvent<Post[]>>({
-              posts: (context, event) => [...context.posts, ...event.data],
-            }),
-            target: 'idle',
-          },
-        ],
-        onError: 'error',
-      },
-    },
-    error: {},
-  },
 };
 
 const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
@@ -170,6 +119,12 @@ const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
   },
 });
 
+// const countMachine = createMachine({
+//   context: {
+//     count: 0,
+//   },
+// });
+
 const homeMachine = createMachine<Context & { actors: Actor<Context, Event>[] }, Event>({
   id: 'home',
   type: 'parallel',
@@ -195,23 +150,30 @@ const homeMachine = createMachine<Context & { actors: Actor<Context, Event>[] },
       },
       on: {
         '*': {
-          actions: (context, event) => {
-            context.actors.forEach((actor) => {
-              actor?.send(event);
-            });
-          },
+          actions: [
+            (context, event) => {
+              context.actors.forEach((actor) => {
+                actor?.send(event);
+              });
+            },
+          ],
         },
         'xstate.update': {
+          actions: [assign((_, event) => pick(event.state.context, 'posts'))],
+        },
+      },
+    },
+    count: {
+      on: {
+        'count.update': {
           actions: [
-            assign((context, event) => ({
-              ...context,
-              ...event.state.context,
-            })),
+            assign({
+              count: (context, event) => context.count + event.payload.count,
+            }),
           ],
         },
       },
     },
-    count: {},
   },
 });
 
@@ -242,56 +204,14 @@ const routerMachine = createMachine<Context & { actors: Actor<Context, Event>[] 
           },
         },
         'xstate.update': {
-          actions: [
-            assign((context, event) => ({
-              ...context,
-              ...event.state.context,
-            })),
-          ],
+          actions: [assign((_, event) => pick(event.state.context, 'posts', 'count'))],
         },
       },
     },
   },
 });
 
-const serviceNew = interpret(routerMachine);
-serviceNew.start();
-serviceNew.send({
-  type: 'post.create',
-  payload: {
-    title: 'hi',
-  },
-});
-
-serviceNew.subscribe((state) => {
-  // eslint-disable-next-line
-  console.log('posts:', state.context.posts);
-  // eslint-disable-next-line
-  console.log('posts.loading', matches('posts.loading', serviceNew));
-  // eslint-disable-next-line
-  console.log('posts.idle', matches('posts.idle', serviceNew));
-});
-export const machine = createMachine<Context, Event>({
-  context: { count: 0, posts: [] },
-  predictableActionArguments: true,
-  id: 'store',
-  initial: 'posts',
-  type: 'parallel',
-  states: {
-    idle: {
-      on: {
-        'count.update': {
-          actions: assign({
-            count: (context, event) => context.count + event.payload.count,
-          }),
-        },
-      },
-    },
-    posts,
-  },
-});
-
-const service = interpret(machine);
+const service = interpret(routerMachine);
 
 if (CLIENT) {
   // @ts-expect-error - debugging

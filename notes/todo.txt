@@ -1,6 +1,4 @@
 - Setup routes for machine
-  - Delete old machine
-  - Hook up new machine to route and use it
   - Setup countMachine
   - setup spawnMachine function
 
