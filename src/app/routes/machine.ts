@@ -113,6 +113,7 @@ const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
             ],
           },
         ],
+        onError: 'error',
       },
     },
     error: {},
