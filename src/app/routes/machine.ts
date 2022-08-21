@@ -4,11 +4,9 @@ import {
   interpret,
   DoneInvokeEvent,
   StateNodeConfig,
-  EventObject,
   Actor,
   spawn,
   AnyInterpreter,
-  sendParent,
 } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
@@ -38,6 +36,9 @@ export type Event =
     }
   | {
       type: 'xstate.update';
+      state: {
+        context: Context;
+      };
     };
 
 /* c8 ignore start */
@@ -66,160 +67,17 @@ type States = {
   };
 };
 
-const sendUpdate = <C, E extends EventObject>(fn?: (context: C) => Partial<C>) =>
-  sendParent<C, E>((context) => ({
-    type: 'update',
-    payload: fn ? fn(context) : context,
-  }));
-
-const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
-  predictableActionArguments: true,
-  context: {
-    posts: [],
-  },
-  initial: 'loading',
-  states: {
-    loading: {
-      on: {
-        'post.create': {
-          target: 'success',
-          actions: [
-            assign({
-              posts: (context, event) => [
-                ...context.posts,
-                {
-                  id: `${context.posts.length + 1}`,
-                  title: event.payload.title,
-                },
-              ],
-            }),
-            sendUpdate(),
-          ],
-        },
-        'post.delete': {
-          actions: assign({
-            posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
-          }),
-        },
-      },
-    },
-    success: {},
-    error: {},
-  },
-});
-
-const homeMachine = createMachine<Context & { actors: Actor<Context, Event>[] }, Event>({
-  id: 'home',
-  type: 'parallel',
-  predictableActionArguments: true,
-  context: {
-    actors: [],
-    count: 0,
-    posts: [],
-  },
-  states: {
-    /// TODO
-    // posts: spawnMachine(postsMachine),
-    posts: {
-      entry: assign({
-        actors: () => [spawn(postsMachine)],
-      }),
-      exit: (context) => {
-        context.actors.forEach((actor) => {
-          actor.stop?.();
-        });
-      },
-      on: {
-        '*': {
-          actions: (context, event) => {
-            context.actors.forEach((actor) => {
-              actor?.send(event);
-            });
-          },
-        },
-        update: {
-          actions: [
-            assign((context, event) => ({
-              ...context,
-              ...event.payload,
-            })),
-            sendUpdate(),
-          ],
-        },
-      },
-    },
-    count: {},
-    idle: {},
-    loading: {},
-  },
-});
-
 export const matches = (state: string, service: AnyInterpreter): boolean => {
   return Object.values(service.state.children).some((child) => {
     assertType<AnyInterpreter>(child);
     const prefix = state.replace(/\.[^.]+$/, '');
     const postfix = state.replace(/^.+\./, '');
-    return child.children.size && child.state.toStrings().includes(prefix)
+    if (!child.state) return false;
+    return child.children?.size && child.state.toStrings().includes(prefix)
       ? matches(postfix, child)
       : child.state.matches(state);
   });
 };
-
-const routerMachine = createMachine<Context & { actors: Actor<Context, Event>[] }, Event>({
-  initial: '/',
-  predictableActionArguments: true,
-  context: {
-    actors: [],
-    count: 0,
-    posts: [],
-  },
-  states: {
-    /// TODO
-    // '/': spawnMachine(homeMachine),
-    '/': {
-      entry: assign({
-        actors: () => [spawn(homeMachine)],
-      }),
-      exit: (context) => {
-        context.actors.forEach((actor) => actor.stop?.() as unknown);
-      },
-      on: {
-        '*': {
-          actions: (context, event) => {
-            context.actors.forEach((actor) => {
-              actor?.send(event);
-            });
-          },
-        },
-        update: {
-          actions: [
-            assign((context, event) => ({
-              ...context,
-              ...event.payload,
-            })),
-          ],
-        },
-      },
-    },
-  },
-});
-
-const serviceNew = interpret(routerMachine);
-serviceNew.start();
-serviceNew.send({
-  type: 'post.create',
-  payload: {
-    title: 'hi',
-  },
-});
-
-serviceNew.subscribe((state) => {
-  // eslint-disable-next-line no-console
-  console.log('posts:', state.context.posts);
-});
-
-// eslint-disable-next-line no-console
-console.log(matches('posts.success', serviceNew));
 
 const posts: StateNodeConfig<Context, States, Event> = {
   id: 'posts',
@@ -262,6 +120,150 @@ const posts: StateNodeConfig<Context, States, Event> = {
     error: {},
   },
 };
+
+const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
+  predictableActionArguments: true,
+  context: {
+    posts: [],
+  },
+  initial: 'loading',
+  states: {
+    idle: {
+      on: {
+        'post.create': {
+          actions: [
+            assign({
+              posts: (context, event) => [
+                ...context.posts,
+                {
+                  id: `${context.posts.length + 1}`,
+                  title: event.payload.title,
+                },
+              ],
+            }),
+          ],
+        },
+        'post.delete': {
+          actions: assign({
+            posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
+          }),
+        },
+      },
+    },
+    loading: {
+      invoke: {
+        src: () => fetchPosts(),
+        onDone: [
+          {
+            target: 'idle',
+            actions: [
+              assign((context, event: DoneInvokeEvent<Post[]>) => ({
+                posts: [...context.posts, ...event.data],
+              })),
+            ],
+          },
+        ],
+      },
+    },
+    error: {},
+  },
+});
+
+const homeMachine = createMachine<Context & { actors: Actor<Context, Event>[] }, Event>({
+  id: 'home',
+  type: 'parallel',
+  predictableActionArguments: true,
+  context: {
+    actors: [],
+    count: 0,
+    posts: [],
+  },
+  states: {
+    /// TODO
+    // posts: spawnMachine(postsMachine),
+    posts: {
+      entry: [
+        assign({
+          actors: () => [spawn(postsMachine, { sync: true })],
+        }),
+      ],
+      exit: (context) => {
+        context.actors.forEach((actor) => {
+          actor.stop?.();
+        });
+      },
+      on: {
+        '*': {
+          actions: (context, event) => {
+            context.actors.forEach((actor) => {
+              actor?.send(event);
+            });
+          },
+        },
+        'xstate.update': {
+          actions: assign((context, event) => ({
+            ...context,
+            ...event.state.context,
+          })),
+        },
+      },
+    },
+    count: {},
+  },
+});
+
+const routerMachine = createMachine<Context & { actors: Actor<Context, Event>[] }, Event>({
+  initial: '/',
+  predictableActionArguments: true,
+  context: {
+    actors: [],
+    count: 0,
+    posts: [],
+  },
+  states: {
+    /// TODO
+    // '/': spawnMachine(homeMachine),
+    '/': {
+      entry: assign({
+        actors: () => [spawn(homeMachine, { sync: true })],
+      }),
+      exit: (context) => {
+        context.actors.forEach((actor) => actor.stop?.() as unknown);
+      },
+      on: {
+        '*': {
+          actions: (context, event) => {
+            context.actors.forEach((actor) => {
+              actor?.send(event);
+            });
+          },
+        },
+        'xstate.update': {
+          actions: assign((context, event) => ({
+            ...context,
+            ...event.state.context,
+          })),
+        },
+      },
+    },
+  },
+});
+
+const serviceNew = interpret(routerMachine);
+serviceNew.start();
+serviceNew.send({
+  type: 'post.create',
+  payload: {
+    title: 'hi',
+  },
+});
+
+serviceNew.subscribe((state) => {
+  // eslint-disable-next-line
+  console.log('posts:', state.context.posts);
+  // eslint-disable-next-line
+  console.log('posts.idle', matches('posts.idle', serviceNew));
+});
 
 export const machine = createMachine<Context, Event>({
   context: { count: 0, posts: [] },
