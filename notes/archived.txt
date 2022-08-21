@@ -63,3 +63,289 @@ https://gist.github.com/davidkpiano/0065abc99097759af736986d24368d33
 //     error: {},
 //   },
 // },
+
+
+
+import {
+  createMachine,
+  assign,
+  interpret,
+  DoneInvokeEvent,
+  StateNodeConfig,
+  EventObject,
+} from 'xstate';
+import { Post, postsSchema } from 'server/schemas';
+import { CLIENT, DEV } from 'utils/constants';
+import { assertType, delay } from 'utils';
+import { sendParent } from 'xstate/lib/actions';
+
+export type Context = {
+  count: number;
+  posts: Post[];
+};
+
+export type Event =
+  | {
+      type: 'count.update';
+      payload: { count: number };
+    }
+  | {
+      type: 'post.create';
+      payload: { title: string };
+    }
+  | {
+      type: 'post.delete';
+      payload: { id: string };
+    }
+  | {
+      type: 'update';
+      payload: Context;
+    };
+
+/* c8 ignore start */
+const fetchPosts = async () => {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+  const json = await res.json<{ id: number; title: string }[]>();
+  const posts = postsSchema.parse(
+    json
+      .map((post) => ({
+        id: `${post.id}`,
+        title: post.title,
+      }))
+      .slice(0, 5)
+  );
+  if (DEV) {
+    await delay(300);
+  }
+  return posts;
+};
+
+type States = {
+  states: {
+    idle: object;
+    loading: object;
+    error: object;
+  };
+};
+
+const sendUpdate = <C, E extends EventObject>() =>
+  sendParent<C, E>((context) => ({
+    type: 'update',
+    payload: context,
+  }));
+
+const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
+  predictableActionArguments: true,
+  context: {
+    posts: [],
+  },
+  initial: 'loading',
+  states: {
+    loading: {},
+    success: {},
+    error: {},
+  },
+});
+
+const homeMachine = createMachine<Context, Event>({
+  id: 'home',
+  type: 'parallel',
+  predictableActionArguments: true,
+  context: {
+    count: 0,
+    posts: [],
+  },
+  states: {
+    // posts: invokeMachine(postsMachine, {
+    //   onContextUpdate: ((context, event) => ({
+    //     posts: [...context.posts, ...event.payload.data],
+    //   }),
+    // }),
+    posts: {
+      initial: 'loading',
+      states: {
+        loading: {
+          on: {
+            'post.create': {
+              target: 'success',
+              actions: [
+                assign({
+                  posts: (context, event) => [
+                    ...context.posts,
+                    {
+                      id: `${context.posts.length + 1}`,
+                      title: event.payload.title,
+                    },
+                  ],
+                }),
+                sendUpdate(),
+              ],
+            },
+          },
+        },
+        success: {},
+        error: {},
+      },
+    },
+  },
+});
+
+const routerMachine = createMachine<Context, Event>({
+  initial: '/',
+  predictableActionArguments: true,
+  context: {
+    count: 0,
+    posts: [],
+  },
+  states: {
+    // '/': invokeMachine(homeMachine, {
+    //   data: (c) => c,
+    //   onContextUpdate: (context, event) => ({
+    //     count: event.payload.data.count,
+    //     posts: event.payload.data.posts,
+    //   })
+    // })
+    '/': {
+      type: 'parallel',
+      invoke: {
+        autoForward: true,
+        src: homeMachine,
+        data: (c) => c,
+      },
+      on: {
+        update: {
+          actions: [
+            assign((context, event) => ({
+              ...context,
+              ...event.payload,
+            })),
+          ],
+        },
+      },
+      states: {
+        ...Object.entries(homeMachine.states).reduce((acc, [key, state]) => {
+          if (!state || !state.config.on) {
+            return {
+              ...acc,
+              [key]: {},
+            };
+          }
+          return {
+            ...acc,
+            [key]: {
+              initial: state.initial,
+              on: Object.entries(state.config.on).reduce((acc, [key, value]) => {
+                if (!value) return acc;
+                if (typeof value !== 'string' && 'target' in value) {
+                  return {
+                    ...acc,
+                    [key]: value.target,
+                  };
+                }
+                return {
+                  ...acc,
+                  [key]: value,
+                };
+              }, {}),
+            },
+          };
+        }, {}),
+      },
+    },
+  },
+});
+
+console.log(routerMachine.config.states?.['/']?.states);
+
+const s = interpret(routerMachine);
+s.start();
+s.onTransition((service, event) => {
+  console.log('parent:', s.state.value, service.context, event);
+});
+// s.children.forEach((service) => {
+//   service.subscribe((state: State<Context>) => {
+//     console.log('child:', state.value, state.context);
+//   });
+// });
+s.send({
+  type: 'post.create',
+  payload: {
+    title: 'hi',
+  },
+});
+
+const posts: StateNodeConfig<Context, States, Event> = {
+  id: 'posts',
+  initial: 'loading',
+  states: {
+    idle: {
+      on: {
+        'post.create': {
+          actions: assign({
+            posts: (context, event) => [
+              ...context.posts,
+              {
+                id: `${context.posts.length + 1}`,
+                title: event.payload.title,
+              },
+            ],
+          }),
+        },
+        'post.delete': {
+          actions: assign({
+            posts: (context, event) => context.posts.filter(({ id }) => id !== event.payload.id),
+          }),
+        },
+      },
+    },
+    loading: {
+      invoke: {
+        src: () => fetchPosts(),
+        onDone: [
+          {
+            actions: assign<Context, DoneInvokeEvent<Post[]>>({
+              posts: (context, event) => [...context.posts, ...event.data],
+            }),
+            target: 'idle',
+          },
+        ],
+        onError: 'error',
+      },
+    },
+    error: {},
+  },
+};
+
+const routes = {
+  '/': {},
+};
+
+export const machine = createMachine<Context, Event>({
+  context: { count: 0, posts: [] },
+  predictableActionArguments: true,
+  id: 'store',
+  initial: 'posts',
+  type: 'parallel',
+  states: {
+    idle: {
+      on: {
+        'count.update': {
+          actions: assign({
+            count: (context, event) => context.count + event.payload.count,
+          }),
+        },
+      },
+    },
+    posts,
+  },
+});
+
+const service = interpret(machine);
+
+if (CLIENT) {
+  // @ts-expect-error - debugging
+  window.service = service;
+}
+
+export default service;
+/* c8 ignore stop */

@@ -1,8 +1,18 @@
-import { createMachine, assign, interpret, DoneInvokeEvent, StateNodeConfig } from 'xstate';
+import {
+  createMachine,
+  assign,
+  interpret,
+  DoneInvokeEvent,
+  StateNodeConfig,
+  EventObject,
+  Actor,
+  spawn,
+  AnyInterpreter,
+} from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
-import { delay } from 'utils';
-import { Path } from './routes';
+import { assertType, delay } from 'utils';
+import { sendParent } from 'xstate/lib/actions';
 
 export type Context = {
   count: number;
@@ -23,8 +33,11 @@ export type Event =
       payload: { id: string };
     }
   | {
-      type: 'render';
-      payload: { path: Path };
+      type: 'update';
+      payload: Context;
+    }
+  | {
+      type: 'xstate.update';
     };
 
 /* c8 ignore start */
@@ -53,7 +66,125 @@ type States = {
   };
 };
 
-const postsNode: StateNodeConfig<Context, States, Event> = {
+const sendUpdate = <C, E extends EventObject>(fn?: (context: C) => Partial<C>) =>
+  sendParent<C, E>((context) => ({
+    type: 'update',
+    payload: fn ? fn(context) : context,
+  }));
+
+const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
+  predictableActionArguments: true,
+  context: {
+    posts: [],
+  },
+  initial: 'loading',
+  states: {
+    loading: {
+      on: {
+        'post.create': {
+          target: 'success',
+          actions: [
+            assign({
+              posts: (context, event) => [
+                ...context.posts,
+                {
+                  id: `${context.posts.length + 1}`,
+                  title: event.payload.title,
+                },
+              ],
+            }),
+            sendUpdate(),
+          ],
+        },
+      },
+    },
+    success: {},
+    error: {},
+  },
+});
+
+const homeMachine = createMachine<Context & { actors: Actor<Context, Event>[] }, Event>({
+  id: 'home',
+  type: 'parallel',
+  predictableActionArguments: true,
+  context: {
+    actors: [],
+    count: 0,
+    posts: [],
+  },
+  states: {
+    // posts: spawnMachine(homeMachine),
+    posts: {
+      entry: assign({
+        actors: () => [spawn(postsMachine, { autoForward: true })],
+      }),
+      exit: (context) => {
+        context.actors.forEach((actor) => actor.stop?.() as unknown);
+      },
+    },
+  },
+});
+
+export const matches = (state: string, service: AnyInterpreter): boolean => {
+  return Object.values(service.state.children).some((child) => {
+    assertType<AnyInterpreter>(child);
+    const prefix = state.replace(/\.[^.]+$/, '');
+    const postfix = state.replace(/^.+\./, '');
+    return child.children.size && child.state.toStrings().includes(prefix)
+      ? matches(postfix, child)
+      : child.state.matches(state);
+  });
+};
+
+const routerMachine = createMachine<Context & { actors: Actor<Context, Event>[] }, Event>({
+  initial: '/',
+  predictableActionArguments: true,
+  context: {
+    actors: [],
+    count: 0,
+    posts: [],
+  },
+  states: {
+    // '/': spawnMachine(homeMachine),
+    '/': {
+      entry: assign({
+        actors: () => [spawn(homeMachine, { autoForward: true })],
+      }),
+      exit: (context) => {
+        context.actors.forEach((actor) => actor.stop?.() as unknown);
+      },
+      on: {
+        update: {
+          actions: [
+            assign((context, event) => ({
+              ...context,
+              ...event.payload,
+            })),
+          ],
+        },
+      },
+    },
+  },
+});
+
+const serviceNew = interpret(routerMachine);
+serviceNew.start();
+serviceNew.send({
+  type: 'post.create',
+  payload: {
+    title: 'hi',
+  },
+});
+
+// serviceNew.subscribe((state) => {
+//   console.log('>', state.context);
+// });
+// console.log(serviceNew.state.children);
+
+// eslint-disable-next-line no-console
+console.log(matches('posts.success', serviceNew));
+
+const posts: StateNodeConfig<Context, States, Event> = {
   id: 'posts',
   initial: 'loading',
   states: {
@@ -95,27 +226,25 @@ const postsNode: StateNodeConfig<Context, States, Event> = {
   },
 };
 
-export const machine =
-  /** @xstate-layout N4IgpgJg5mDOIC5SwC4HsBOYB0AHNqs2ANmgIYQCWAdlAMQRrU40BuaA1jqpjvoSXJVaCNmgDGZFJSYBtAAwBdRKH6VpTFSAAeiAEx6AnNj3yArAEYAzHoAch+fMOmzAGhABPRIYBsAXz93Hiw8AhQiUgoaejAMDEw8YikAM0wAW2xgvjCIoWjRanZJDWoFZSQQNRKtXQQ9K3lsABZbHytbawMzAHYfdy8EC0MLZp8zMz0mye6HM1s9AKD0EP5w7Fj4jDotKplqGsQ2puxDJotTH0MZib1+-QtG33Gmtvt5bscrRZAsunE0ACu1BQ2ABuAgUjAOwI6j2BwQVjOzQePiaVnGFnGejcnkQAFo9KjsFZzvZLt1EVZDIYvoEfsswHRVthxFhIdDYLDNBVanoHidutYfHYzFYSR07ggCUSSXZfFdKdTaUteEywtgIGBiGAUFCKrtuaBat1jj4fPILD4PoSrXpurZJdLjrKyQq0UqAnTqGhNfAKllsJQINqOVz9jz9E1Jed5N8A6tclFaKHqhGEPJJb44wzQgJYADxOI4H7VDDU0bEE1DLZsBbWmYrhYHt1xtGnM1qdWPlbqdjbNneLm1htMCm4WmzO2bmZhfIpiKrH1cXU5ycxqK5vJbGKzf26fGcmPDTp8ZNJZNa44LWL6rZWmizAOsEfwxWpS1HU1uidOxT0QY7WsT0-CAA */
-  createMachine<Context, Event>({
-    context: { count: 0, posts: [] },
-    predictableActionArguments: true,
-    id: 'store',
-    initial: 'posts',
-    type: 'parallel',
-    states: {
-      idle: {
-        on: {
-          'count.update': {
-            actions: assign({
-              count: (context, event) => context.count + event.payload.count,
-            }),
-          },
+export const machine = createMachine<Context, Event>({
+  context: { count: 0, posts: [] },
+  predictableActionArguments: true,
+  id: 'store',
+  initial: 'posts',
+  type: 'parallel',
+  states: {
+    idle: {
+      on: {
+        'count.update': {
+          actions: assign({
+            count: (context, event) => context.count + event.payload.count,
+          }),
         },
       },
-      posts: postsNode,
     },
-  });
+    posts,
+  },
+});
 
 const service = interpret(machine);
 

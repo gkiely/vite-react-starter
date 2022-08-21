@@ -40,7 +40,7 @@ export function delayMiddleware(timeout = 1000) {
   };
 }
 
-export function pick<T extends object, K extends keyof T>(obj: T, keys: K[]) {
+export function pick<T extends object, K extends keyof T>(obj: T, ...keys: K[]) {
   const result: Partial<T> = {};
   for (const key of keys) {
     result[key] = obj[key];
