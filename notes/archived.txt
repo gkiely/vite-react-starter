@@ -349,3 +349,11 @@ if (CLIENT) {
 
 export default service;
 /* c8 ignore stop */
+
+
+
+// const sendUpdate = <C, E extends EventObject>(fn?: (context: C) => Partial<C>) =>
+//   sendParent<C, E>((context) => ({
+//     type: 'update',
+//     payload: fn ? fn(context) : context,
+//   }));

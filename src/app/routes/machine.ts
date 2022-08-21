@@ -54,7 +54,7 @@ const fetchPosts = async () => {
       .slice(0, 5)
   );
   if (DEV) {
-    await delay(300);
+    await delay(1000);
   }
   return posts;
 };
@@ -73,6 +73,7 @@ export const matches = (state: string, service: AnyInterpreter): boolean => {
     const prefix = state.replace(/\.[^.]+$/, '');
     const postfix = state.replace(/^.+\./, '');
     if (!child.state) return false;
+    if (child.state.matches(state)) return true;
     return child.children?.size && child.state.toStrings().includes(prefix)
       ? matches(postfix, child)
       : child.state.matches(state);
@@ -201,10 +202,12 @@ const homeMachine = createMachine<Context & { actors: Actor<Context, Event>[] },
           },
         },
         'xstate.update': {
-          actions: assign((context, event) => ({
-            ...context,
-            ...event.state.context,
-          })),
+          actions: [
+            assign((context, event) => ({
+              ...context,
+              ...event.state.context,
+            })),
+          ],
         },
       },
     },
@@ -239,10 +242,12 @@ const routerMachine = createMachine<Context & { actors: Actor<Context, Event>[] 
           },
         },
         'xstate.update': {
-          actions: assign((context, event) => ({
-            ...context,
-            ...event.state.context,
-          })),
+          actions: [
+            assign((context, event) => ({
+              ...context,
+              ...event.state.context,
+            })),
+          ],
         },
       },
     },
@@ -262,9 +267,10 @@ serviceNew.subscribe((state) => {
   // eslint-disable-next-line
   console.log('posts:', state.context.posts);
   // eslint-disable-next-line
+  console.log('posts.loading', matches('posts.loading', serviceNew));
+  // eslint-disable-next-line
   console.log('posts.idle', matches('posts.idle', serviceNew));
 });
-
 export const machine = createMachine<Context, Event>({
   context: { count: 0, posts: [] },
   predictableActionArguments: true,
