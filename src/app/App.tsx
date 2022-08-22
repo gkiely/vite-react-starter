@@ -16,7 +16,8 @@ const Route = ({ path }: { path: Path }) => {
   if (DEV) {
     // Debugging
     // eslint-disable-next-line no-console
-    console.log(route, service.state.context, service.state.value);
+    // console.log(route, service.state.context, service.state.value);
+    // console.log(service.children);
   }
 
   useEffect(() => {

@@ -6,11 +6,13 @@ import {
   Actor,
   spawn,
   AnyInterpreter,
+  AnyStateMachine,
 } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
 import { assertType, delay, pick } from 'utils';
 
+/* c8 ignore start */
 export type Context = {
   count: number;
   posts: Post[];
@@ -37,10 +39,55 @@ export type Event =
       type: 'xstate.update';
       state: {
         context: Context;
+        event: {
+          type: Exclude<Event['type'], 'xstate.update'>;
+          payload?: Context | Partial<Context>;
+        };
       };
     };
 
-/* c8 ignore start */
+///// Helper functions /////
+const spawnMachine = <Machine extends AnyStateMachine>(machine: Machine) => {
+  return {
+    entry: [
+      assign<{ actors: Actor[] }>({
+        actors: (context) => [...context.actors, spawn(machine, { sync: true })] as Actor[],
+      }),
+    ],
+    exit: (context: { actors: Actor[] }) => {
+      context.actors.forEach((actor) => actor.stop?.() as unknown);
+    },
+  };
+};
+
+const syncMachines = <C extends Context, E extends Event>() => ({
+  '*': {
+    actions: (context: { actors: Actor[] }, event: Event) => {
+      context.actors.forEach((actor) => actor.send(event) as unknown);
+    },
+  },
+  'xstate.update': {
+    actions: assign<C, E>((_, event) => {
+      assertType<Extract<E, { type: 'xstate.update' }>>(event);
+      return pick(event.state.context, 'posts', 'count') as C;
+    }),
+  },
+});
+
+export const matches = (state: string, service: AnyInterpreter): boolean => {
+  return Object.values(service.state.children).some((child) => {
+    assertType<AnyInterpreter>(child);
+    const prefix = state.replace(/\.[^.]+$/, '');
+    const postfix = state.replace(/^.+\./, '');
+    if (!child.state) return false;
+    if (child.state.matches(state)) return true;
+    return child.children?.size && child.state.toStrings().includes(prefix)
+      ? matches(postfix, child)
+      : child.state.matches(state);
+  });
+};
+///// End of helper functions /////
+
 const fetchPosts = async () => {
   const res = await fetch('https://jsonplaceholder.typicode.com/posts');
   const json = await res.json<{ id: number; title: string }[]>();
@@ -56,19 +103,6 @@ const fetchPosts = async () => {
     await delay(1000);
   }
   return posts;
-};
-
-export const matches = (state: string, service: AnyInterpreter): boolean => {
-  return Object.values(service.state.children).some((child) => {
-    assertType<AnyInterpreter>(child);
-    const prefix = state.replace(/\.[^.]+$/, '');
-    const postfix = state.replace(/^.+\./, '');
-    if (!child.state) return false;
-    if (child.state.matches(state)) return true;
-    return child.children?.size && child.state.toStrings().includes(prefix)
-      ? matches(postfix, child)
-      : child.state.matches(state);
-  });
 };
 
 const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
@@ -120,13 +154,24 @@ const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
   },
 });
 
-// const countMachine = createMachine({
-//   context: {
-//     count: 0,
-//   },
-// });
+const countMachine = createMachine<Pick<Context, 'count'>, Event>({
+  id: 'count',
+  predictableActionArguments: true,
+  context: {
+    count: 0,
+  },
+  on: {
+    'count.update': {
+      actions: [
+        assign({
+          count: (context, event) => context.count + event.payload.count,
+        }),
+      ],
+    },
+  },
+});
 
-const homeMachine = createMachine<Context & { actors: Actor<Context, Event>[] }, Event>({
+const homeMachine = createMachine<Context & { actors: Actor[] }, Event>({
   id: 'home',
   type: 'parallel',
   predictableActionArguments: true,
@@ -135,50 +180,15 @@ const homeMachine = createMachine<Context & { actors: Actor<Context, Event>[] },
     count: 0,
     posts: [],
   },
+  on: syncMachines(),
   states: {
-    /// TODO
-    // posts: spawnMachine(postsMachine),
-    posts: {
-      entry: [
-        assign({
-          actors: () => [spawn(postsMachine, { sync: true })],
-        }),
-      ],
-      exit: (context) => {
-        context.actors.forEach((actor) => {
-          actor.stop?.();
-        });
-      },
-      on: {
-        '*': {
-          actions: [
-            (context, event) => {
-              context.actors.forEach((actor) => {
-                actor?.send(event);
-              });
-            },
-          ],
-        },
-        'xstate.update': {
-          actions: [assign((_, event) => pick(event.state.context, 'posts'))],
-        },
-      },
-    },
-    count: {
-      on: {
-        'count.update': {
-          actions: [
-            assign({
-              count: (context, event) => context.count + event.payload.count,
-            }),
-          ],
-        },
-      },
-    },
+    posts: spawnMachine(postsMachine),
+    count: spawnMachine(countMachine),
   },
 });
 
-const routerMachine = createMachine<Context & { actors: Actor<Context, Event>[] }, Event>({
+const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
+  id: 'router',
   initial: '/',
   predictableActionArguments: true,
   context: {
@@ -186,29 +196,9 @@ const routerMachine = createMachine<Context & { actors: Actor<Context, Event>[] 
     count: 0,
     posts: [],
   },
+  on: syncMachines(),
   states: {
-    /// TODO
-    // '/': spawnMachine(homeMachine),
-    '/': {
-      entry: assign({
-        actors: () => [spawn(homeMachine, { sync: true })],
-      }),
-      exit: (context) => {
-        context.actors.forEach((actor) => actor.stop?.() as unknown);
-      },
-      on: {
-        '*': {
-          actions: (context, event) => {
-            context.actors.forEach((actor) => {
-              actor?.send(event);
-            });
-          },
-        },
-        'xstate.update': {
-          actions: [assign((_, event) => pick(event.state.context, 'posts', 'count'))],
-        },
-      },
-    },
+    '/': spawnMachine(homeMachine),
   },
 });
 

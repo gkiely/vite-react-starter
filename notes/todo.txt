@@ -1,6 +1,9 @@
 - Setup routes for machine
-  - Setup countMachine
   - setup spawnMachine function
+  - setup routing
+  - cancel actors on route change
+
+- Exiting a state should cancel the spawned actors
 
 - Write an `update` function that takes the place of assign
   - It assigns
