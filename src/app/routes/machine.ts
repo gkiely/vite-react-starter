@@ -7,8 +7,6 @@ import {
   spawn,
   AnyInterpreter,
   AnyStateMachine,
-  StateMachine,
-  AnyState,
 } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
