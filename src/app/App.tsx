@@ -4,7 +4,7 @@ import * as styles from './App.css';
 import { Path, renderers } from 'routes/routes';
 import { assertType } from 'utils';
 import { renderComponent, renderLayout, RouteConfig } from 'utils/routing';
-import service from 'routes/machine';
+import service, { matches } from 'routes/machine';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { DEV } from 'utils/constants';
 
@@ -16,7 +16,8 @@ const Route = ({ path }: { path: Path }) => {
   if (DEV) {
     // Debugging
     // eslint-disable-next-line no-console
-    console.log(route, service.state.context, service.state.value);
+    // console.log(route, service.state.context, service.state.value);
+    // console.log(service.children);
   }
 
   useEffect(() => {
@@ -25,7 +26,11 @@ const Route = ({ path }: { path: Path }) => {
 
   useEffect(() => {
     const sub = service.subscribe((state) => {
-      setRoute(render(state.context, service.state));
+      const routeState = {
+        ...state,
+        matches: (path: string) => matches(path, service),
+      } as typeof state;
+      setRoute(render(state.context, routeState));
     });
     return () => sub.unsubscribe();
   }, [render]);

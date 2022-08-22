@@ -1,8 +1,128 @@
-- Get typegen working with state.matches
+- Setup routes for machine
+  - setup routing
+  - cancel all actors on route change
 
-- Push to cloudflare pages
+- Exiting a state should cancel the spawned actors
+
+- Write an `update` function that takes the place of assign
+  - It assigns
+  - It sendsParent for that key
+
+https://github.com/statelyai/xstate/discussions/2599#discussioncomment-2535584
+https://spectrum.chat/statecharts/general/routing-with-xstate~51467af4-f834-41af-9dce-75b8059a702e
+https://spectrum.chat/statecharts/general/the-xstate-router-and-the-use-router-machine-hook~85ff5e23-ec7f-4c7a-af58-b0b58009ccf3
+https://sawyerh.medium.com/routing-using-state-machines-3c797988d68e
+https://xstate.js.org/docs/guides/actors.html#spawning-machines
+
+- File xstate bug for actions: [] or actions: {} with spawn via codesandbox
+
+// Concepts
+// A top level routerMachine
+// A machine for each route (routeMachine)
+// Each routeMachine state can use machines via invokeMachine
+// - And listen via onContextUpdate or onStateUpdate
+// - Similarly the top level routerMachine can listen via onContextUpdate or onStateUpdate
+
+// The nice thing about this approach:
+- There is a machine for each route, route gets state and context
+- Each state can use a machine, instead of a nested state node
+- Machines can be written normally
+  - Machines can have their own context
+
+const routerMachine = {
+  context: {
+    count: 0,
+    posts: [],
+  },
+  states: {
+    '/': {
+      invoke: {
+        id: '/',
+        src: routeMachines['/'],
+        data: (context) => context,
+      },
+      on: {
+        update: {
+          actions: assign((context, event) => ({
+            store: {
+              ...context,
+              ...event.payload.data,
+            }
+          }),
+        }
+      }
+    },
+    // Simplified
+    'second-route': invokeMachine(homeRouteMachine, {
+      data: (c) => c,
+      onContextUpdate: (context, event) => ({
+        count: event.payload.data.count,
+        posts: event.payload.data.posts,
+      })
+    })
+  }
+}
+
+
+const homeRouteMachine = createMachine({
+  context: {
+    count: 0,
+    posts: [],
+    someOtherValueThatWontSync: 0,
+  },
+  states: {
+    // Maps all the states of the sub machine to this machine and keeps them in sync
+    // It will have to return the states of the child, invoke the machine, listen for 'state.update' and call send on the parent
+    posts: invokeMachine(postsMachine, {
+      onContextUpdate: ((context, event) => ({
+        posts: [...context.posts, ...event.payload.data],
+      }),
+    }),
+
+    // Would look something like this
+    posts: {
+      invoke: [
+        {
+          id: postsMachine.id,
+          src: postsMachine,
+        }
+      ],
+      on: {
+        'invokeMachine.context.update': {
+          actions: assign((context, event) => ({
+            store: {
+              ...context,
+              ...event.payload.data,
+            }
+          }),
+        },
+        'invokeMachine.state.update': {
+          actions: send((c, e) => ({
+            type: e.payload.type,
+            data: e.payload.data,
+          }))
+        }
+      },
+      states: {
+        ...postsMachine.getSnapshot().config.states,
+        // loading: {},
+        // success: {},
+        // error: {},
+      }
+    }
+  }
+})
+
+
+const routeMachines = {
+  '/': homeRouteMachine
+}
+
+
+
 
 Next
+- Push to cloudflare pages
 - Get server rendering working
   - Switch off js x
   - Server render initial page x
