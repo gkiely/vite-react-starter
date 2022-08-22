@@ -60,7 +60,7 @@ const spawnMachine = <Machine extends AnyStateMachine>(machine: Machine) => {
   };
 };
 
-const syncMachines = <C extends Context, E extends Event>() => ({
+const sync = <C extends Context, E extends Event>(...keys: (keyof Context)[]) => ({
   '*': {
     actions: (context: { actors: Actor[] }, event: Event) => {
       context.actors.forEach((actor) => {
@@ -71,7 +71,7 @@ const syncMachines = <C extends Context, E extends Event>() => ({
   'xstate.update': {
     actions: assign<C, E>((_, event) => {
       assertType<Extract<E, { type: 'xstate.update' }>>(event);
-      return pick(event.state.context, 'posts', 'count') as C;
+      return pick(event.state.context, ...keys) as C;
     }),
   },
 });
@@ -183,7 +183,7 @@ const homeMachine = createMachine<Context & { actors: Actor[] }, Event>({
     count: 0,
     posts: [],
   },
-  on: syncMachines(),
+  on: sync('count', 'posts'),
   states: {
     posts: spawnMachine(postsMachine),
     count: spawnMachine(countMachine),
@@ -199,7 +199,7 @@ const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
     count: 0,
     posts: [],
   },
-  on: syncMachines(),
+  on: sync('count', 'posts'),
   states: {
     '/': spawnMachine(homeMachine),
   },
