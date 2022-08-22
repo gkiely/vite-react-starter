@@ -7,6 +7,8 @@ import {
   spawn,
   AnyInterpreter,
   AnyStateMachine,
+  StateMachine,
+  AnyState,
 } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
@@ -63,7 +65,9 @@ const spawnMachine = <Machine extends AnyStateMachine>(machine: Machine) => {
 const syncMachines = <C extends Context, E extends Event>() => ({
   '*': {
     actions: (context: { actors: Actor[] }, event: Event) => {
-      context.actors.forEach((actor) => actor.send(event) as unknown);
+      context.actors.forEach((actor) => {
+        actor.send(event);
+      });
     },
   },
   'xstate.update': {
@@ -77,10 +81,11 @@ const syncMachines = <C extends Context, E extends Event>() => ({
 export const matches = (state: string, service: AnyInterpreter): boolean => {
   return Object.values(service.state.children).some((child) => {
     assertType<AnyInterpreter>(child);
-    const prefix = state.replace(/\.[^.]+$/, '');
-    const postfix = state.replace(/^.+\./, '');
     if (!child.state) return false;
     if (child.state.matches(state)) return true;
+
+    const prefix = state.replace(/\.[^.]+$/, '');
+    const postfix = state.replace(/^.+\./, '');
     return child.children?.size && child.state.toStrings().includes(prefix)
       ? matches(postfix, child)
       : child.state.matches(state);
