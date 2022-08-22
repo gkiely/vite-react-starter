@@ -1,7 +1,6 @@
 - Setup routes for machine
-  - setup spawnMachine function
   - setup routing
-  - cancel actors on route change
+  - cancel all actors on route change
 
 - Exiting a state should cancel the spawned actors
 
