@@ -39,6 +39,7 @@ export type Event =
       type: 'xstate.update';
       state: {
         context: Context;
+        machine: AnyStateMachine;
         event: {
           type: Exclude<Event['type'], 'xstate.update'>;
           payload?: Context | Partial<Context>;
@@ -62,9 +63,13 @@ const spawnMachine = <Machine extends AnyStateMachine>(machine: Machine) => {
 
 const sync = <C extends Context, E extends Event>(...keys: (keyof Context)[]) => ({
   '*': {
-    actions: (context: { actors: Actor[] }, event: Event) => {
+    actions: (context: { actors: Actor[] }, event: E) => {
       context.actors.forEach((actor) => {
-        actor.send(event);
+        assertType<AnyInterpreter>(actor);
+        const { nextEvents } = actor.state;
+        if (nextEvents.includes(event.type) || nextEvents.includes('*')) {
+          actor.send(event);
+        }
       });
     },
   },
@@ -109,6 +114,7 @@ const fetchPosts = async () => {
 };
 
 const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
+  id: 'posts',
   predictableActionArguments: true,
   context: {
     posts: [],
