@@ -1,8 +1,4 @@
-- Setup routes for machine
-  - setup routing
-  - cancel all actors on route change
-
-- Exiting a state should cancel the spawned actors
+- Keep store data between route changes
 
 - Write an `update` function that takes the place of assign
   - It assigns

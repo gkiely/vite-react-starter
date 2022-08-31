@@ -7,10 +7,15 @@ import {
   spawn,
   AnyInterpreter,
   AnyStateMachine,
+  TransitionConfig,
 } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
 import { assertType, delay, pick } from 'utils';
+import { Path } from './routes';
+
+/// TODO: Not sure why but I can't import paths
+const paths: Path[] = ['/', '/second'];
 
 /* c8 ignore start */
 export type Context = {
@@ -36,6 +41,10 @@ export type Event =
       payload: Context;
     }
   | {
+      type: 'route';
+      payload: Path;
+    }
+  | {
       type: 'xstate.update';
       state: {
         context: Context;
@@ -51,8 +60,14 @@ export type Event =
 const spawnMachine = <Machine extends AnyStateMachine>(machine: Machine) => {
   return {
     entry: [
-      assign<{ actors: Actor[] }>({
-        actors: (context) => [...context.actors, spawn(machine, { sync: true })] as Actor[],
+      assign<Context & { actors: Actor[] }>({
+        actors: (context) => {
+          const keys = Object.keys(machine.context as Context);
+          const data = pick(context, ...keys);
+
+          return [...context.actors, spawn(machine.withContext(data), { sync: true })] as Actor[];
+        },
+        // actors: (context) => [...context.actors, spawn(machine, { sync: true })] as Actor[],
       }),
     ],
     exit: (context: { actors: Actor[] }) => {
@@ -61,7 +76,7 @@ const spawnMachine = <Machine extends AnyStateMachine>(machine: Machine) => {
   };
 };
 
-const sync = <C extends Context, E extends Event>(...keys: (keyof Context)[]) => ({
+const sync = <C extends Partial<Context>, E extends Event>(...keys: (keyof Context)[]) => ({
   '*': {
     actions: (context: { actors: Actor[] }, event: E) => {
       context.actors.forEach((actor) => {
@@ -119,8 +134,19 @@ const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
   context: {
     posts: [],
   },
-  initial: 'loading',
+  initial: 'initial',
   states: {
+    initial: {
+      always: [
+        {
+          target: 'loading',
+          cond: (context) => context.posts.length === 0,
+        },
+        {
+          target: 'idle',
+        },
+      ],
+    },
     idle: {
       on: {
         'post.create': {
@@ -180,6 +206,15 @@ const countMachine = createMachine<Pick<Context, 'count'>, Event>({
   },
 });
 
+const route: TransitionConfig<Context, Extract<Event, { type: 'route' }>>[] = paths.map((path) => {
+  return {
+    target: path,
+    cond: (_, event) => {
+      return event.payload === path;
+    },
+  };
+});
+
 const homeMachine = createMachine<Context & { actors: Actor[] }, Event>({
   id: 'home',
   type: 'parallel',
@@ -196,6 +231,20 @@ const homeMachine = createMachine<Context & { actors: Actor[] }, Event>({
   },
 });
 
+const secondMachine = createMachine<Omit<Context, 'posts'> & { actors: Actor[] }, Event>({
+  id: 'second',
+  type: 'parallel',
+  predictableActionArguments: true,
+  context: {
+    actors: [],
+    count: 0,
+  },
+  on: sync('count'),
+  states: {
+    count: spawnMachine(countMachine),
+  },
+});
+
 const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
   id: 'router',
   initial: '/',
@@ -205,9 +254,13 @@ const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
     count: 0,
     posts: [],
   },
-  on: sync('count', 'posts'),
+  on: {
+    ...sync('count', 'posts'),
+    route,
+  },
   states: {
     '/': spawnMachine(homeMachine),
+    '/second': spawnMachine(secondMachine),
   },
 });
 
