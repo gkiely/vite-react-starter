@@ -1,7 +1,6 @@
 - Fix tests
   - Seems like it's actually performing a fetch
 
-
 Next
 - Push to cloudflare pages
 - Get server rendering working

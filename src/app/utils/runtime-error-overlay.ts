@@ -49,11 +49,9 @@ window.addEventListener('unhandledrejection', ({ reason }) => {
   void showErrorOverlay(reason);
 });
 
-// Clear console once error is resolved
+// Clear console on hot reload
 if (import.meta.hot) {
-  import.meta.hot.on('vite:beforeUpdate', () => {
-    const errorOverlay = document.querySelector('vite-error-overlay');
-    if (!errorOverlay) return;
+  import.meta.hot?.on('vite:beforeUpdate', () => {
     // eslint-disable-next-line no-console
     console.clear();
   });

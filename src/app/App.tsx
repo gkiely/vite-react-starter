@@ -6,27 +6,19 @@ import { assertType } from 'utils';
 import { renderComponent, renderLayout, RouteConfig } from 'utils/routing';
 import service, { matches } from 'routes/machine';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { DEV } from 'utils/constants';
 
 // Clear console on hot-reload
-if (import.meta.hot) {
-  import.meta.hot?.on('vite:beforeUpdate', () => {
-    // eslint-disable-next-line no-console
-    console.clear();
-  });
-}
-
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
   const render = renderers[path];
   const [route, setRoute] = useState<RouteConfig>(render(service.state.context, service.state));
 
-  if (DEV) {
-    // Debugging
-    // eslint-disable-next-line no-console
-    // console.log(route, service.state.context, service.state.value);
-    // console.log(service.children);
-  }
+  // if (DEV) {
+  //   // Debugging
+  //   // eslint-disable-next-line no-console
+  //   // console.log(route, service.state.context, service.state.value);
+  //   // console.log(service.children);
+  // }
 
   useEffect(() => {
     window.scrollTo(0, 0);
