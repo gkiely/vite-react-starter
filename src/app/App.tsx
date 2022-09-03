@@ -33,7 +33,9 @@ const Route = ({ path }: { path: Path }) => {
       } as typeof state;
       setRoute(render(state.context, routeState));
     });
-    return () => sub.unsubscribe();
+    return () => {
+      sub.unsubscribe();
+    };
   }, [render]);
 
   return (
@@ -49,7 +51,6 @@ const Route = ({ path }: { path: Path }) => {
     </>
   );
 };
-/* c8 ignore stop */
 
 function App() {
   const [location] = useLocation();
@@ -66,5 +67,5 @@ function App() {
     </HelmetProvider>
   );
 }
-
+/* c8 ignore stop */
 export default App;

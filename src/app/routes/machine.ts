@@ -16,6 +16,7 @@ import { Path } from './routes';
 
 /// TODO: Not sure why but I can't import paths
 const paths: Path[] = ['/', '/second'];
+// const paths: Path[] = ['/'];
 
 /* c8 ignore start */
 export type Context = {
@@ -74,6 +75,17 @@ const spawnMachine = <Machine extends AnyStateMachine>(machine: Machine) => {
     },
   };
 };
+
+const routing: TransitionConfig<Context, Extract<Event, { type: 'route' }>>[] = paths.map(
+  (path) => {
+    return {
+      target: path,
+      cond: (_, event, parent) => {
+        return event.payload !== parent.state.value;
+      },
+    };
+  }
+);
 
 const sync = <C extends Partial<Context>, E extends Event>(...keys: (keyof Context)[]) => ({
   '*': {
@@ -136,6 +148,7 @@ const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
   initial: 'initial',
   states: {
     initial: {
+      entry: [],
       always: [
         {
           target: 'loading',
@@ -205,15 +218,6 @@ const countMachine = createMachine<Pick<Context, 'count'>, Event>({
   },
 });
 
-const route: TransitionConfig<Context, Extract<Event, { type: 'route' }>>[] = paths.map((path) => {
-  return {
-    target: path,
-    cond: (_, event) => {
-      return event.payload === path;
-    },
-  };
-});
-
 const homeMachine = createMachine<Context & { actors: Actor[] }, Event>({
   id: 'home',
   type: 'parallel',
@@ -255,7 +259,7 @@ const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
   },
   on: {
     ...sync('count', 'posts'),
-    route,
+    route: routing,
   },
   states: {
     '/': spawnMachine(homeMachine),
