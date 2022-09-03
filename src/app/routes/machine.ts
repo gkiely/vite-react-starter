@@ -67,7 +67,6 @@ const spawnMachine = <Machine extends AnyStateMachine>(machine: Machine) => {
 
           return [...context.actors, spawn(machine.withContext(data), { sync: true })] as Actor[];
         },
-        // actors: (context) => [...context.actors, spawn(machine, { sync: true })] as Actor[],
       }),
     ],
     exit: (context: { actors: Actor[] }) => {
