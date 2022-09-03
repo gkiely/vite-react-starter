@@ -24,15 +24,7 @@ const Header = ({ body, title, buttons, links }: Props) => {
       <p>{title}</p>
       {buttons.map((button) => (
         <div style={{ paddingBottom: '.5em' }} key={button.id}>
-          <Button
-            {...(button.action && {
-              onClick: () => {
-                button.action && send(button.action);
-              },
-            })}
-          >
-            {button.text}
-          </Button>
+          <Button onClick={() => button.action && send(button.action)}>{button.text}</Button>
         </div>
       ))}
       {body && <p>{renderTags(body)}</p>}

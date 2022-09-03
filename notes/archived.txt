@@ -1,9 +1,17 @@
+https://github.com/statelyai/xstate/discussions/1939
+https://github.com/statelyai/xstate/issues/428
+
 https://github.com/statelyai/xstate/discussions/1807#discussioncomment-257842
 https://codesandbox.io/s/xstate-todomvc-33wr94qv1?file=/todosMachine.js
 
 https://gist.github.com/davidkpiano/0065abc99097759af736986d24368d33
 
 
+https://github.com/statelyai/xstate/discussions/2599#discussioncomment-2535584
+https://spectrum.chat/statecharts/general/routing-with-xstate~51467af4-f834-41af-9dce-75b8059a702e
+https://spectrum.chat/statecharts/general/the-xstate-router-and-the-use-router-machine-hook~85ff5e23-ec7f-4c7a-af58-b0b58009ccf3
+https://sawyerh.medium.com/routing-using-state-machines-3c797988d68e
+https://xstate.js.org/docs/guides/actors.html#spawning-machines
 
 
 // type PostsLoaderContext = {

@@ -8,6 +8,14 @@ import service, { matches } from 'routes/machine';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { DEV } from 'utils/constants';
 
+// Clear console on hot-reload
+if (import.meta.hot) {
+  import.meta.hot?.on('vite:beforeUpdate', () => {
+    // eslint-disable-next-line no-console
+    console.clear();
+  });
+}
+
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
   const render = renderers[path];
