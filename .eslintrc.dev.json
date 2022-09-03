@@ -26,6 +26,6 @@
     "@typescript-eslint/restrict-plus-operands": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/unbound-method": "off",
-    "jsx-no-leaked-values/jsx-no-leaked-values": "off"
+    "@typescript-eslint/strict-boolean-expressions": "off"
   }
 }

@@ -98,12 +98,12 @@ const sync = <C extends Partial<Context>, E extends Event>(...keys: (keyof Conte
 export const matches = (state: string, service: AnyInterpreter): boolean => {
   return Object.values(service.state.children).some((child) => {
     assertType<AnyInterpreter>(child);
-    if (!child.state) return false;
+    if (typeof child.state === 'undefined') return false;
     if (child.state.matches(state)) return true;
 
     const prefix = state.replace(/\.[^.]+$/, '');
     const postfix = state.replace(/^.+\./, '');
-    return child.children?.size && child.state.toStrings().includes(prefix)
+    return Boolean(child.children?.size) && child.state.toStrings().includes(prefix)
       ? matches(postfix, child)
       : child.state.matches(state);
   });
