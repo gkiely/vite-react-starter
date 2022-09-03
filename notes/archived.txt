@@ -365,3 +365,15 @@ export default service;
 //     type: 'update',
 //     payload: fn ? fn(context) : context,
 //   }));
+
+
+// const t = NaN;
+const t = '';
+// const myNum = 10 * Math.random;
+// const t = 0;
+// const t = true;
+// const t = '';
+// const t = undefined;
+// const t = null;
+
+{t && <p>test</p>}
