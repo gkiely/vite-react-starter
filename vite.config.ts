@@ -99,4 +99,8 @@ export default defineConfig(({ command }) => ({
   json: {
     stringify: true,
   },
+  optimizeDeps: {
+    // Fix vite being unable to discover zod after updating an npm package
+    include: ['zod'],
+  },
 }));
