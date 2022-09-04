@@ -12,11 +12,7 @@ import {
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
 import { assertType, delay, pick } from 'utils';
-import { Path } from './routes';
-
-/// TODO: Not sure why but I can't import paths
-const paths: Path[] = ['/', '/second'];
-// const paths: Path[] = ['/'];
+import { paths, Path } from './paths';
 
 /* c8 ignore start */
 export type Context = {
@@ -264,6 +260,7 @@ const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
   states: {
     '/': spawnMachine(homeMachine),
     '/second': spawnMachine(secondMachine),
+    '/third': {},
   },
 });
 

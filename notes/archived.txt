@@ -377,3 +377,54 @@ const t = '';
 // const t = null;
 
 {t && <p>test</p>}
+
+
+
+Next
+- Push to cloudflare pages
+- Render a second page with the prev routes posts
+
+  Some options:
+  - Current route calls nextRoute with appropriate state, which then calls onEnter
+  - onEnter has access to state
+  - Global store
+
+- Array support for routes names ['', '/']
+- Server render / and add to readme (client and server rendering)
+- Use a machine instead of reducer
+
+Then
+- Add error boundary
+- File typescript bug for object spread
+
+- Write an eslint plugin to require a catch block for async
+- Add type builder for hono
+
+- Allow actions
+- Allow using machines
+- Ability to go from update -> createMachine
+
+- Front end deploy to pages
+- Server deploy to workers
+
+
+V2
+- Write a client router that behaves the same way as hono, currently it takes .3-.5ms to respond
+- Rewrite types from scratch
+
+
+- Setup time travel debugging
+- Add a check for combining reducers, making sure duplicate actions aren't used
+- Ability to create sub routes
+  - Essentially I can break out an existing route, create a new one and have it be used
+    - I will have to think about how this would work with send
+    - Either via passing the prop to the component, or potentially having sub routes via the url, that then direct where they are sent
+      /home
+      /home/posts
+  - Ability to createRenderer in render function
+
+Later
+- Setup node vite plugin so node updates trigger a hot module reload
+- Try miniflare instead of wrangler? Or just wait until js api is supported in wrangler
+https://github.com/cloudflare/miniflare
+https://github.com/cloudflare/wrangler2/issues/771

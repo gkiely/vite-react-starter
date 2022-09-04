@@ -1,4 +1,4 @@
-import { Plugin, splitVendorChunkPlugin } from 'vite';
+import { splitVendorChunkPlugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
@@ -46,7 +46,7 @@ export default defineConfig(({ command }) => ({
     react(),
     process.argv.includes('--server') ? wranglerPlugin() : undefined,
     DEV &&
-      (checker({
+      checker({
         typescript: true,
         eslint: {
           lintCommand: 'eslint -c .eslintrc.json --cache --fix --ext ts,tsx src',
@@ -54,7 +54,7 @@ export default defineConfig(({ command }) => ({
             logLevel: ['error'],
           },
         },
-      }) as Plugin),
+      }),
     // Clear terminal plugin for vitest
     WATCH_TEST && clearVitest(),
     vanillaExtractPlugin({

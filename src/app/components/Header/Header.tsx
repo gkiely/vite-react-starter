@@ -5,7 +5,7 @@ import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
 import { useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
-import type { Path } from 'routes/routes';
+import type { Path } from 'routes/paths';
 import type { Event } from 'routes/machine';
 
 export type Props = {
