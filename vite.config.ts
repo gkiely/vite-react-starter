@@ -5,6 +5,7 @@ import checker from 'vite-plugin-checker';
 import wranglerPlugin from './scripts/vite-plugin-wrangler';
 import clearVitest from './scripts/vite-plugin-clear-vitest';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
+import filterReplace from 'vite-plugin-filter-replace';
 import path from 'node:path';
 const TEST = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
 const DEV = !TEST;
@@ -61,6 +62,18 @@ export default defineConfig(({ command }) => ({
       identifiers: command === 'serve' ? 'debug' : 'short',
     }),
     command === 'build' ? splitVendorChunkPlugin() : undefined,
+    // Remove act(() => ...) from code
+    !TEST &&
+      filterReplace([
+        {
+          filter: /src\/app\/App\.tsx$/,
+          replace: {
+            // https://regex101.com/r/n2TIfm/1
+            from: /(act\S+\s=>\s)([^)]+)(\))/g,
+            to: '$2',
+          },
+        },
+      ]),
   ],
   // TODO
   // Submit fix to esbuild for 'linked': https://github.com/evanw/esbuild/blob/master/pkg/api/api_impl.go#L1458

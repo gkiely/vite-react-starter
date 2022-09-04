@@ -1,2 +1,0 @@
-- Setup global fetch so it fails by default
-

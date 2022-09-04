@@ -1,18 +1,9 @@
-import {
-  createMachine,
-  assign,
-  interpret,
-  DoneInvokeEvent,
-  Actor,
-  spawn,
-  AnyInterpreter,
-  AnyStateMachine,
-  TransitionConfig,
-} from 'xstate';
+import { createMachine, assign, interpret, DoneInvokeEvent, Actor, AnyStateMachine } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
-import { assertType, delay, pick } from 'utils';
+import { delay } from 'utils';
 import { paths, Path } from './paths';
+import { spawnMachine, sync } from './machine-utils';
 
 /* c8 ignore start */
 export type Context = {
@@ -54,68 +45,7 @@ export type Event =
     };
 
 ///// Helper functions /////
-const spawnMachine = <Machine extends AnyStateMachine>(machine: Machine) => {
-  return {
-    entry: [
-      assign<Context & { actors: Actor[] }>({
-        actors: (context) => {
-          const keys = Object.keys(machine.context as Context);
-          const data = pick(context, ...keys);
 
-          return [...context.actors, spawn(machine.withContext(data), { sync: true })] as Actor[];
-        },
-      }),
-    ],
-    exit: (context: { actors: Actor[] }) => {
-      context.actors.forEach((actor) => actor.stop?.() as unknown);
-    },
-  };
-};
-
-const routing: TransitionConfig<Context, Extract<Event, { type: 'route' }>>[] = paths.map(
-  (path) => {
-    return {
-      target: path,
-      cond: (_, event, parent) => {
-        return event.payload !== parent.state.value;
-      },
-    };
-  }
-);
-
-const sync = <C extends Partial<Context>, E extends Event>(...keys: (keyof Context)[]) => ({
-  '*': {
-    actions: (context: { actors: Actor[] }, event: E) => {
-      context.actors.forEach((actor) => {
-        assertType<AnyInterpreter>(actor);
-        const { nextEvents } = actor.state;
-        if (nextEvents.includes(event.type) || nextEvents.includes('*')) {
-          actor.send(event);
-        }
-      });
-    },
-  },
-  'xstate.update': {
-    actions: assign<C, E>((_, event) => {
-      assertType<Extract<E, { type: 'xstate.update' }>>(event);
-      return pick(event.state.context, ...keys) as C;
-    }),
-  },
-});
-
-export const matches = (state: string, service: AnyInterpreter): boolean => {
-  return Object.values(service.state.children).some((child) => {
-    assertType<AnyInterpreter>(child);
-    if (typeof child.state === 'undefined') return false;
-    if (child.state.matches(state)) return true;
-
-    const prefix = state.replace(/\.[^.]+$/, '');
-    const postfix = state.replace(/^.+\./, '');
-    return Boolean(child.children?.size) && child.state.toStrings().includes(prefix)
-      ? matches(postfix, child)
-      : child.state.matches(state);
-  });
-};
 ///// End of helper functions /////
 
 const fetchPosts = async () => {
@@ -144,7 +74,6 @@ const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
   initial: 'initial',
   states: {
     initial: {
-      entry: [],
       always: [
         {
           target: 'loading',
@@ -255,7 +184,14 @@ const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
   },
   on: {
     ...sync('count', 'posts'),
-    route: routing,
+    route: paths.map((path) => {
+      return {
+        target: path,
+        cond: (_, event, parent) => {
+          return event.payload !== parent.state.value;
+        },
+      };
+    }),
   },
   states: {
     '/': spawnMachine(homeMachine),

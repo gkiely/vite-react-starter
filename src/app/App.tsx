@@ -5,10 +5,11 @@ import type { Path } from 'routes/paths';
 import { renderers } from 'routes/routes';
 import { assertType } from 'utils';
 import { renderComponent, renderLayout, RouteConfig } from 'utils/routing';
-import service, { matches } from 'routes/machine';
+import service from 'routes/machine';
+import { matches } from 'routes/machine-utils';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { act } from 'utils/test-utils';
 
-// Clear console on hot-reload
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
   const render = renderers[path];
@@ -32,7 +33,7 @@ const Route = ({ path }: { path: Path }) => {
         ...state,
         matches: (path: string) => matches(path, service),
       } as typeof state;
-      setRoute(render(state.context, routeState));
+      act(() => setRoute(render(state.context, routeState)));
     });
     return () => {
       sub.unsubscribe();

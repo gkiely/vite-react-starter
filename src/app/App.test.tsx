@@ -16,32 +16,30 @@ afterEach(() => {
   }
 });
 
+beforeEach(() => {
+  vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+    json: () => Promise.resolve(posts),
+  } as Response);
+});
+
 describe('App', () => {
   it('should render', () => {
     render(<App />);
+    expect(screen.getByText('Loading posts...')).toBeInTheDocument();
     expect(screen.getByText('Home route')).toBeInTheDocument();
   });
 
-  it('should count', async () => {
+  it('should count', () => {
     render(<App />);
     const button = screen.getByRole('button', { name: 'count is: 0' });
     fireEvent.click(button);
-    await screen.findByText('count is: 1');
     expect(screen.getByText('count is: 1')).toBeInTheDocument();
   });
 
   it('should render posts', async () => {
-    vi.spyOn(global, 'fetch').mockResolvedValueOnce({
-      json: () => Promise.resolve(posts),
-    } as Response);
     render(<App />);
     await screen.findByText('Good Morning');
     expect(screen.getByText('Good Morning')).toBeInTheDocument();
-  });
-
-  it('should fail gracefully if no posts are returned', () => {
-    render(<App />);
-    expect(screen.getByText('Home route')).toBeInTheDocument();
   });
 
   it('should show an error if the network request fails', async () => {
