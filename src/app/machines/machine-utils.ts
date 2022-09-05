@@ -13,7 +13,6 @@ import {
 import { assertType, pick } from 'utils';
 
 /* c8 ignore start */
-// <DefaultContext, StateSchema, EventObject>
 export const spawnMachine = <
   Machine extends StateMachine<Machine['context'], StateSchema, EventFrom<Machine>>,
   K extends ContextFrom<Machine>,
@@ -23,6 +22,7 @@ export const spawnMachine = <
 ) => {
   return {
     entry: [
+      // () => console.log('spawnMachine entry:', machine.config.id),
       assign<{ actors: Actor[] }>({
         actors: (context) => {
           const keys = Object.keys(machine.context as Partial<Record<K, V>>);
@@ -31,9 +31,12 @@ export const spawnMachine = <
         },
       }),
     ],
-    exit: (context: { actors: Actor[] }) => {
-      context.actors.forEach((actor) => actor.stop?.() as unknown);
-    },
+    exit: [
+      // () => console.log('spawnMachine exit:', machine.config.id),
+      (context: { actors: Actor[] }) => {
+        context.actors.forEach((actor) => actor.stop?.() as unknown);
+      },
+    ],
   };
 };
 

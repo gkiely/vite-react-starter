@@ -15,13 +15,6 @@ const Route = ({ path }: { path: Path }) => {
   const render = renderers[path];
   const [route, setRoute] = useState<RouteConfig>(render(service.state.context, service.state));
 
-  // if (DEV) {
-  //   // Debugging
-  //   // eslint-disable-next-line no-console
-  //   // console.log(route, service.state.context, service.state.value);
-  //   // console.log(service.children);
-  // }
-
   useEffect(() => {
     window.scrollTo(0, 0);
     service.send('route', { payload: path });

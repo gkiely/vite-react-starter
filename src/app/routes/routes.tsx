@@ -15,7 +15,6 @@ type Renderers<T = ReturnType<typeof createRenderer<Store>>> = {
 /// TODO add array routing support: ['', '/']: client
 // In order to render the initial state based on the route
 export const renderers: Renderers = {
-  '': home.render,
   '/': home.render,
   '/second': second.render,
   '/third': third.render,

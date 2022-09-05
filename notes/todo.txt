@@ -1,2 +1,1 @@
-- machine-utils methods should be generic
 - Build the modal exercise

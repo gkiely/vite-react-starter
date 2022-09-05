@@ -171,7 +171,7 @@ const secondMachine = createMachine<Omit<Context, 'posts'> & { actors: Actor[] }
 
 const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
   id: 'router',
-  initial: '/',
+  initial: window.location.pathname,
   predictableActionArguments: true,
   context: {
     actors: [],
@@ -180,14 +180,15 @@ const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
   },
   on: {
     ...sync('count', 'posts'),
-    route: paths.map((path) => {
-      return {
-        target: path,
-        cond: (_, event, parent) => {
-          return event.payload !== parent.state.value;
-        },
-      };
-    }),
+    // Handle route state
+    // Listens for a call to route and moves to target provided by payload
+    route: paths.map((path) => ({
+      target: path,
+      cond: (_, event, parent) => {
+        if (path === event.payload && path === parent.state.value) return false;
+        return event.payload === path;
+      },
+    })),
   },
   states: {
     '/': spawnMachine(homeMachine),
