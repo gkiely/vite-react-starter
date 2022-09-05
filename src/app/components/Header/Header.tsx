@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { Link } from 'wouter';
-import logo from '../../../img/logo.svg';
+import logo from 'src/img/logo.svg';
 import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
 import { useSend } from 'utils/routing';

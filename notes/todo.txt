@@ -1,6 +1,9 @@
 - Build the modal exercise
-
 - Remove store schema for routes, pull from machines
+
+- Build vitest-preview/test-preview
+  - Works with vitest initially
+  - Should be lightweight
  
 
 AC with JTBD syntax

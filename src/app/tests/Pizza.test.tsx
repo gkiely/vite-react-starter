@@ -23,7 +23,6 @@ const openModal = () => {
 
 test('renders pizza', () => {
   render(<App />);
-  screen.debug();
   expect(screen.getByText(/pizza/i)).toBeInTheDocument();
 });
 
