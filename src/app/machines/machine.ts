@@ -2,7 +2,7 @@ import { createMachine, assign, interpret, DoneInvokeEvent, Actor, AnyStateMachi
 import { Post, postsSchema } from 'server/schemas';
 import { CLIENT, DEV } from 'utils/constants';
 import { delay } from 'utils';
-import { paths, Path } from './paths';
+import { paths, Path } from '../routes/paths';
 import { spawnMachine, sync } from './machine-utils';
 
 /* c8 ignore start */
@@ -43,10 +43,6 @@ export type Event =
         };
       };
     };
-
-///// Helper functions /////
-
-///// End of helper functions /////
 
 const fetchPosts = async () => {
   const res = await fetch('https://jsonplaceholder.typicode.com/posts');

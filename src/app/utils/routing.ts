@@ -1,6 +1,6 @@
 /* c8 ignore start */
 import { createElement, Dispatch, ReactNode, SetStateAction } from 'react';
-import service from 'routes/machine';
+import service from '../machines/machine';
 import * as Components from '../components';
 import * as Sections from '../sections';
 import { assertType } from 'utils';

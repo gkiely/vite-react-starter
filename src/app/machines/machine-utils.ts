@@ -1,16 +1,22 @@
-import { assign, Actor, spawn, AnyInterpreter, AnyStateMachine } from 'xstate';
+import { assign, Actor, spawn, AnyInterpreter, StateMachine, StateSchema } from 'xstate';
 import { assertType, pick } from 'utils';
-import { Context, Event } from './machine';
+import { Event } from './machine';
 
 /* c8 ignore start */
-export const spawnMachine = <Machine extends AnyStateMachine>(machine: Machine) => {
+// <DefaultContext, StateSchema, EventObject>
+export const spawnMachine = <
+  Machine extends StateMachine<Machine['context'], StateSchema, Event>,
+  K extends keyof Machine['context'],
+  V extends Machine['context'][K]
+>(
+  machine: Machine
+) => {
   return {
     entry: [
-      assign<Context & { actors: Actor[] }>({
+      assign<{ actors: Actor[] }>({
         actors: (context) => {
-          const keys = Object.keys(machine.context as Context);
-          const data = pick(context, ...keys);
-
+          const keys = Object.keys(machine.context as Partial<Record<K, V>>);
+          const data = pick(context as Record<K, V>, ...keys);
           return [...context.actors, spawn(machine.withContext(data), { sync: true })] as Actor[];
         },
       }),
@@ -21,7 +27,7 @@ export const spawnMachine = <Machine extends AnyStateMachine>(machine: Machine) 
   };
 };
 
-export const sync = <C extends Partial<Context>, E extends Event>(...keys: (keyof Context)[]) => ({
+export const sync = <C extends Record<string, unknown>, E extends Event>(...keys: (keyof C)[]) => ({
   '*': {
     actions: (context: { actors: Actor[] }, event: E) => {
       context.actors.forEach((actor) => {
@@ -36,7 +42,8 @@ export const sync = <C extends Partial<Context>, E extends Event>(...keys: (keyo
   'xstate.update': {
     actions: assign<C, E>((_, event) => {
       assertType<Extract<E, { type: 'xstate.update' }>>(event);
-      return pick(event.state.context, ...keys) as C;
+      assertType<C>(event.state.context);
+      return pick<C, keyof C>(event.state.context, ...keys);
     }),
   },
 });

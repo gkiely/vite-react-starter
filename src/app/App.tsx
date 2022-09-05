@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import * as styles from './App.css';
-import type { Path } from 'routes/paths';
-import { renderers } from 'routes/routes';
-import { assertType } from 'utils';
-import { renderComponent, renderLayout, RouteConfig } from 'utils/routing';
-import service from 'routes/machine';
-import { matches } from 'routes/machine-utils';
+import type { Path } from './routes/paths';
+import { renderers } from './routes/routes';
+import { assertType } from './utils';
+import { renderComponent, renderLayout, RouteConfig } from './utils/routing';
+import service from './machines/machine';
+import { matches } from './machines/machine-utils';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { act } from 'utils/test-utils';
 

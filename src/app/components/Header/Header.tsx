@@ -6,7 +6,7 @@ import Button from 'elements/Button/Button';
 import { useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
 import type { Path } from 'routes/paths';
-import type { Event } from 'routes/machine';
+import type { Event } from '../../machines/machine';
 
 export type Props = {
   title: string;
