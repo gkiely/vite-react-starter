@@ -1,7 +1,7 @@
 import { toEnum } from 'utils';
 
 /* c8 ignore start */
-export const paths = ['/', '/second', '/third'] as const;
+export const paths = ['/', '/second', '/third', '/404'] as const;
 
 export type Path = typeof paths[number];
 

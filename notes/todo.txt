@@ -1,1 +1,4 @@
 - Build the modal exercise
+
+- Remove store schema for routes, pull from machines
+ 

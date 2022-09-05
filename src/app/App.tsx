@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import * as styles from './App.css';
-import type { Path } from './routes/paths';
+import { paths, Path } from './routes/paths';
 import { renderers } from './routes/routes';
 import { assertType } from './utils';
 import { renderComponent, renderLayout, RouteConfig } from './utils/routing';
@@ -24,7 +24,7 @@ const Route = ({ path }: { path: Path }) => {
     const sub = service.subscribe((state) => {
       const routeState = {
         ...state,
-        matches: (path: string) => matches(path, service),
+        matches: (state: string) => matches(state, service),
       } as typeof state;
       act(() => setRoute(render(state.context, routeState)));
     });
@@ -58,7 +58,7 @@ function App() {
   // Render the route
   return (
     <HelmetProvider>
-      <Route key={location} path={location} />
+      <Route key={location} path={paths.includes(location) ? location : '/404'} />
     </HelmetProvider>
   );
 }

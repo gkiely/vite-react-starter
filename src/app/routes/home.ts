@@ -1,7 +1,7 @@
 import { Store } from 'server/schemas';
 import { createRenderer, renderIf } from 'utils/routing';
 import { Props as HeaderProps } from 'components/Header/Header';
-type Button = HeaderProps['buttons'][number];
+type Button = Required<HeaderProps>['buttons'][number];
 
 /* c8 ignore start */
 export const render = createRenderer<Store>((store, state) => {

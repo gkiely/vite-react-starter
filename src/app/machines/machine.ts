@@ -171,7 +171,7 @@ const secondMachine = createMachine<Omit<Context, 'posts'> & { actors: Actor[] }
 
 const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
   id: 'router',
-  initial: window.location.pathname,
+  initial: paths.includes(window.location.pathname as Path) ? window.location.pathname : '/404',
   predictableActionArguments: true,
   context: {
     actors: [],
@@ -194,6 +194,7 @@ const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
     '/': spawnMachine(homeMachine),
     '/second': spawnMachine(secondMachine),
     '/third': {},
+    '/404': {},
   },
 });
 
