@@ -15,3 +15,7 @@ vi.stubGlobal('fetch', () => {
     json: vi.fn(),
   };
 });
+
+vi.stubGlobal('location', {
+  pathname: '/',
+});
