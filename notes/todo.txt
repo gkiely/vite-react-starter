@@ -2,3 +2,22 @@
 
 - Remove store schema for routes, pull from machines
  
+
+AC with JTBD syntax
+- Able to open a modal
+- Able to select pizza toppings
+- As you select toppings, it updates the price
+- You can select all, unselect
+- When you confirm, the toppings show on the main page
+- When you cancel modal exits
+
+
+- Write tests for AC
+- Make tests pass
+  - Make components
+    - Pizza
+      - Button
+      - List
+    - PizzaModal
+- Refactor
+

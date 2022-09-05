@@ -193,6 +193,7 @@ const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
   states: {
     '/': spawnMachine(homeMachine),
     '/second': spawnMachine(secondMachine),
+    '/pizza': {},
     '/third': {},
     '/404': {},
   },

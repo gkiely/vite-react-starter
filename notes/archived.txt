@@ -457,3 +457,11 @@ https://github.com/cloudflare/wrangler2/issues/771
 //   return vi.spyOn(global, 'fetch').mockImplementationOnce((path) => app.request(requestPath));
 // };
 
+
+How to do TDD a component like a modal?
+- You either make a new route for that component, /component/MyModal
+- You make a story or export default props for the that component
+- You just test the route
+
+I will start with testing the route, and move to other solutions when needed
+

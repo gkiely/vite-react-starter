@@ -13,10 +13,11 @@ export type Props = {
   body?: Tags;
   buttons?: { id: string; action?: Event; text: string }[];
   links?: { id: string; to: Path; text: string }[];
+  image?: boolean;
 };
 
 /* c8 ignore start */
-const Header = ({ body, title, buttons, links }: Props) => {
+const Header = ({ body, title, buttons, links, image = true }: Props) => {
   const send = useSend();
   return (
     <header className={styles.header}>

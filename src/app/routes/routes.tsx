@@ -7,6 +7,7 @@ import { Path } from './paths';
 import * as second from './second-route';
 import * as third from './third-route';
 import * as notFound from './notFound';
+import * as pizza from './pizza';
 
 /* c8 ignore start */
 type Renderers<T = ReturnType<typeof createRenderer<Store>>> = {
@@ -19,6 +20,7 @@ export const renderers: Renderers = {
   '/': home.render,
   '/second': second.render,
   '/third': third.render,
+  '/pizza': pizza.render,
   '/404': notFound.render,
 };
 
