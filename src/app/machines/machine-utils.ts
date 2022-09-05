@@ -1,12 +1,22 @@
-import { assign, Actor, spawn, AnyInterpreter, StateMachine, StateSchema } from 'xstate';
+import {
+  assign,
+  Actor,
+  spawn,
+  AnyInterpreter,
+  StateMachine,
+  StateSchema,
+  ContextFrom,
+  EventFrom,
+  EventObject,
+  UpdateObject,
+} from 'xstate';
 import { assertType, pick } from 'utils';
-import { Event } from './machine';
 
 /* c8 ignore start */
 // <DefaultContext, StateSchema, EventObject>
 export const spawnMachine = <
-  Machine extends StateMachine<Machine['context'], StateSchema, Event>,
-  K extends keyof Machine['context'],
+  Machine extends StateMachine<Machine['context'], StateSchema, EventFrom<Machine>>,
+  K extends ContextFrom<Machine>,
   V extends Machine['context'][K]
 >(
   machine: Machine
@@ -27,7 +37,9 @@ export const spawnMachine = <
   };
 };
 
-export const sync = <C extends Record<string, unknown>, E extends Event>(...keys: (keyof C)[]) => ({
+export const sync = <C extends Record<string, unknown>, E extends EventObject>(
+  ...keys: (keyof C)[]
+) => ({
   '*': {
     actions: (context: { actors: Actor[] }, event: E) => {
       context.actors.forEach((actor) => {
@@ -41,7 +53,7 @@ export const sync = <C extends Record<string, unknown>, E extends Event>(...keys
   },
   'xstate.update': {
     actions: assign<C, E>((_, event) => {
-      assertType<Extract<E, { type: 'xstate.update' }>>(event);
+      assertType<UpdateObject>(event);
       assertType<C>(event.state.context);
       return pick<C, keyof C>(event.state.context, ...keys);
     }),
