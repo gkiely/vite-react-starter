@@ -1,5 +1,5 @@
 import { useSend } from 'utils/routing';
-import { Event } from '../../machines/machine';
+import { Event } from '../../machines/machines';
 import * as styles from './Pizza.css';
 
 export type Props = {

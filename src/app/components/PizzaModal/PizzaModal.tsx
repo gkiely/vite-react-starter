@@ -1,5 +1,5 @@
 import * as styles from './PizzaModal.css';
-import type { Event } from '../../machines/machine';
+import type { Event } from 'machines/machines';
 import { useSend } from 'utils/routing';
 
 export type Props = {

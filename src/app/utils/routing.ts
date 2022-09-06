@@ -34,7 +34,6 @@ export type RouteConfig =
     };
 
 export const useSend = () => service.send;
-// export const useSend = () => (a: unknown) => {};
 
 export const createRenderer = <S>(
   fn: (store: S, state: InterpreterFrom<typeof routerMachine>['state']) => RouteConfig

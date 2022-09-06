@@ -3,8 +3,9 @@ import { CLIENT } from 'utils/constants';
 import { paths, Path } from '../routes/paths';
 import { spawnMachine, sync } from './machine-utils';
 import pizzaRoute from './pizza.machine';
-import { Context, Event, homeMachine, secondMachine } from './machine';
+import { Context, Event, homeMachine, secondMachine } from './machines';
 
+/* c8 ignore start */
 export const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
   id: 'router',
   initial: paths.includes(window.location.pathname as Path) ? window.location.pathname : '/404',
@@ -43,3 +44,4 @@ if (CLIENT) {
 }
 
 export default service;
+/* c8 ignore stop */

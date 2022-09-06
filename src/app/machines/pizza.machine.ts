@@ -1,5 +1,5 @@
 import { Actor, createMachine } from 'xstate';
-import { modalMachine, Event } from '../machines/machine';
+import { modalMachine, Event } from './machines';
 import { spawnMachine, sync } from '../machines/machine-utils';
 
 // pizza machine

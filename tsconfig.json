@@ -41,6 +41,7 @@
       "img/*": ["./src/app/img/*"],
       "server/*": ["./server/*"],
       "common/*": ["./src/common/*"],
+      "machines/*": ["./src/app/machines/*"],
     }
   },
   "typeRoots": ["./node_modules/@types", "./src/types"],

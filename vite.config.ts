@@ -93,6 +93,7 @@ export default defineConfig(({ command }) => ({
       store: path.resolve(__dirname, './src/app/store'),
       utils: path.resolve(__dirname, './src/app/utils'),
       common: path.resolve(__dirname, './src/app/common'),
+      machines: path.resolve(__dirname, './src/app/machines'),
       server: command === 'serve' ? './server' : path.resolve(__dirname, './server'),
     },
   },
