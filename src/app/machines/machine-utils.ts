@@ -54,13 +54,15 @@ export const sync = <C extends Record<string, unknown>, E extends EventObject>(
       });
     },
   },
-  'xstate.update': {
-    actions: assign<C, E>((_, event) => {
-      assertType<UpdateObject>(event);
-      assertType<C>(event.state.context);
-      return pick<C, keyof C>(event.state.context, ...keys);
-    }),
-  },
+  ...(keys.length && {
+    'xstate.update': {
+      actions: assign<C, E>((_, event) => {
+        assertType<UpdateObject>(event);
+        assertType<C>(event.state.context);
+        return pick<C, keyof C>(event.state.context, ...keys);
+      }),
+    },
+  }),
 });
 
 export const matches = (state: string, service: AnyInterpreter): boolean => {
