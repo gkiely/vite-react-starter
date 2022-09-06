@@ -1,8 +1,21 @@
 - Build the modal exercise
+
+Refactor structure
+- src/app/ui
+  - components
+  - elements
+  - groups
+  - sections
+
+- src/app/routes
+- src/app/machines
+
+
 - Fix renderIf for components
   - Allow just returning undefined and filter, to avoid having to use spread?
 - Remove store schema for routes, pull from machines 
 - Fix import Event from '../../machine';
+- Change Event to something else
 
 AC with JTBD syntax
 - Able to open a modal

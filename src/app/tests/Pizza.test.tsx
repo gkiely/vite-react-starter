@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import service from '../machines/machine';
+import service from '../machines/routerMachine';
 import App from '../App';
 
 beforeAll(() => {

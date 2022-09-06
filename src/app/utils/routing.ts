@@ -1,10 +1,11 @@
 /* c8 ignore start */
 import { createElement, Dispatch, ReactNode, SetStateAction } from 'react';
-import service from '../machines/machine';
+import service, { routerMachine } from '../machines/routerMachine';
 import * as Components from '../components';
 import * as Sections from '../sections';
 import { assertType } from 'utils';
 import { Intersect } from 'utils/types';
+import { InterpreterFrom } from 'xstate';
 
 type C = typeof Components;
 type S = typeof Sections;
@@ -33,8 +34,11 @@ export type RouteConfig =
     };
 
 export const useSend = () => service.send;
+// export const useSend = () => (a: unknown) => {};
 
-export const createRenderer = <S>(fn: (store: S, state: typeof service.state) => RouteConfig) => fn;
+export const createRenderer = <S>(
+  fn: (store: S, state: InterpreterFrom<typeof routerMachine>['state']) => RouteConfig
+) => fn;
 
 export type SetState<S> = Dispatch<SetStateAction<S>>;
 

@@ -1,7 +1,6 @@
 /* c8 ignore start */
 import { Store } from 'server/schemas';
 import { createRenderer } from 'utils/routing';
-// import { Props } from 'components/PizzaModal/PizzaModal';
 
 export const render = createRenderer<Store>((store, state) => {
   return {

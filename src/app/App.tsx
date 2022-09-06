@@ -5,7 +5,7 @@ import { paths, Path } from './routes/paths';
 import { renderers } from './routes/routes';
 import { assertType } from './utils';
 import { renderComponent, renderLayout, RouteConfig } from './utils/routing';
-import service from './machines/machine';
+import service from './machines/routerMachine';
 import { matches } from './machines/machine-utils';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { act } from 'utils/test-utils';

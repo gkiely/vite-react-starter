@@ -1,8 +1,8 @@
-import { createMachine, assign, interpret, DoneInvokeEvent, Actor, AnyStateMachine } from 'xstate';
+import { createMachine, assign, DoneInvokeEvent, Actor, AnyStateMachine } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
-import { CLIENT, DEV } from 'utils/constants';
+import { DEV } from 'utils/constants';
 import { delay } from 'utils';
-import { paths, Path } from '../routes/paths';
+import { Path } from '../routes/paths';
 import { spawnMachine, sync } from './machine-utils';
 
 /* c8 ignore start */
@@ -67,7 +67,7 @@ const fetchPosts = async () => {
   return posts;
 };
 
-const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
+export const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
   id: 'posts',
   predictableActionArguments: true,
   context: {
@@ -128,7 +128,7 @@ const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
   },
 });
 
-const countMachine = createMachine<Pick<Context, 'count'>, Event>({
+export const countMachine = createMachine<Pick<Context, 'count'>, Event>({
   id: 'count',
   predictableActionArguments: true,
   context: {
@@ -145,7 +145,7 @@ const countMachine = createMachine<Pick<Context, 'count'>, Event>({
   },
 });
 
-const homeMachine = createMachine<Context & { actors: Actor[] }, Event>({
+export const homeMachine = createMachine<Context & { actors: Actor[] }, Event>({
   id: 'home',
   type: 'parallel',
   predictableActionArguments: true,
@@ -161,7 +161,7 @@ const homeMachine = createMachine<Context & { actors: Actor[] }, Event>({
   },
 });
 
-const secondMachine = createMachine<Omit<Context, 'posts'> & { actors: Actor[] }, Event>({
+export const secondMachine = createMachine<Omit<Context, 'posts'> & { actors: Actor[] }, Event>({
   id: 'second',
   type: 'parallel',
   predictableActionArguments: true,
@@ -175,8 +175,7 @@ const secondMachine = createMachine<Omit<Context, 'posts'> & { actors: Actor[] }
   },
 });
 
-// modal machine
-const modalMachine = createMachine<unknown, Event>({
+export const modalMachine = createMachine<unknown, Event>({
   id: 'modal',
   initial: 'closed',
   predictableActionArguments: true,
@@ -195,56 +194,4 @@ const modalMachine = createMachine<unknown, Event>({
   },
 });
 
-// pizza machine
-const pizzaRoute = createMachine<{ actors: Actor[] }, Event>({
-  id: 'pizza',
-  type: 'parallel',
-  predictableActionArguments: true,
-  context: {
-    actors: [],
-  },
-  on: sync(),
-  states: {
-    modal: spawnMachine(modalMachine),
-  },
-});
-
-const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
-  id: 'router',
-  initial: paths.includes(window.location.pathname as Path) ? window.location.pathname : '/404',
-  predictableActionArguments: true,
-  context: {
-    actors: [],
-    count: 0,
-    posts: [],
-  },
-  on: {
-    ...sync('count', 'posts'),
-    // Handle route state
-    // Listens for a call to route and moves to target provided by payload
-    route: paths.map((path) => ({
-      target: path,
-      cond: (_, event, parent) => {
-        if (path === event.payload && path === parent.state.value) return false;
-        return event.payload === path;
-      },
-    })),
-  },
-  states: {
-    '/': spawnMachine(homeMachine),
-    '/second': spawnMachine(secondMachine),
-    '/pizza': spawnMachine(pizzaRoute),
-    '/third': {},
-    '/404': {},
-  },
-});
-
-const service = interpret(routerMachine);
-
-if (CLIENT) {
-  // @ts-expect-error - debugging
-  window.service = service;
-}
-
-export default service;
 /* c8 ignore stop */

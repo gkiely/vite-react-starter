@@ -7,7 +7,7 @@ import { Path } from './paths';
 import * as second from './second-route';
 import * as third from './third-route';
 import * as notFound from './notFound';
-import * as pizza from './pizza';
+import * as pizza from './pizza.route';
 
 /* c8 ignore start */
 type Renderers<T = ReturnType<typeof createRenderer<Store>>> = {
