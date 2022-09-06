@@ -12,7 +12,10 @@ export const content = style({
   flexDirection: 'column',
 });
 
+export const link = style({
+  color: '#61dafb',
+});
+
 export const button = style({
-  fontSize: '1.5rem',
-  padding: '.8rem',
+  fontSize: 'calc(10px + 2vmin)',
 });

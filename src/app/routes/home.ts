@@ -53,7 +53,12 @@ export const render = createRenderer<Store>((store, state) => {
         ],
         links: [
           {
-            id: '/second',
+            id: 'pizza',
+            to: '/pizza',
+            text: 'Pizza route',
+          },
+          {
+            id: 'second',
             to: '/second',
             text: 'Second route',
           },

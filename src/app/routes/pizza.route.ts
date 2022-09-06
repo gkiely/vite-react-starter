@@ -2,7 +2,7 @@
 import { Store } from 'server/schemas';
 import { createRenderer } from 'utils/routing';
 
-export const render = createRenderer<Store>((store, state) => {
+export const render = createRenderer<Store>((_store, state) => {
   return {
     title: 'Pizza',
     components: [
@@ -10,11 +10,18 @@ export const render = createRenderer<Store>((store, state) => {
         id: 'Pizza',
         component: 'Pizza',
         button: {
-          text: 'SELECT TOPPINGS',
+          text: 'Select toppings',
           action: {
             type: 'modal.open',
           },
         },
+        links: [
+          {
+            id: 'home',
+            to: '/',
+            text: 'Home route',
+          },
+        ],
       },
       // TODO:
       // renderIf should accept either a component or a generic element

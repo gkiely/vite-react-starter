@@ -17,7 +17,7 @@ afterEach(() => {
 });
 
 const openModal = () => {
-  const button = screen.getByRole('button', { name: 'SELECT TOPPINGS' });
+  const button = screen.getByRole('button', { name: /select toppings/i });
   fireEvent.click(button);
 };
 
@@ -32,6 +32,7 @@ test('able to open a pizza toppings modal', () => {
   openModal();
   expect(screen.getByText(/pizza toppings/i)).toBeInTheDocument();
 });
+
 test.todo('after selecting a topping, the price updates', () => {
   render(<App />);
   openModal();

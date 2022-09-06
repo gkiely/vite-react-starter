@@ -10,6 +10,8 @@ Refactor structure
 - src/app/routes
 - src/app/machines
 
+- Implement abort fetch
+- Implement click out of modal
 
 - Fix renderIf for components
   - Allow just returning undefined and filter, to avoid having to use spread?
