@@ -42,6 +42,13 @@ export const renderIf = <T>(flag: boolean, data: T): [T] | [] => {
   return flag ? [data] : [];
 };
 
+export const renderComponentIf = <T>(
+  flag: boolean,
+  data: Readonly<T> & { component: keyof C; id: string }
+): [Readonly<T> & { component: keyof C; id: string }] | [] => {
+  return flag ? [data] : [];
+};
+
 export const expectType = <T>(data: T): T => data;
 
 export type ComponentProps = Props[keyof C];

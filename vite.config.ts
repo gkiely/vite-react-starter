@@ -103,6 +103,9 @@ export default defineConfig(({ command }) => ({
   },
   server: {
     port: 3000,
+    watch: {
+      ignored: ['/coverage'],
+    },
     proxy: {
       '/server': 'http://localhost:8080/',
       '/api': 'http://localhost:8080/',

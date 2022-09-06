@@ -33,6 +33,12 @@ export type Event =
       payload: Path;
     }
   | {
+      type: 'modal.open';
+    }
+  | {
+      type: 'modal.close';
+    }
+  | {
       type: 'xstate.update';
       state: {
         context: Context;
@@ -169,6 +175,40 @@ const secondMachine = createMachine<Omit<Context, 'posts'> & { actors: Actor[] }
   },
 });
 
+// modal machine
+const modalMachine = createMachine<unknown, Event>({
+  id: 'modal',
+  initial: 'closed',
+  predictableActionArguments: true,
+  context: {},
+  states: {
+    closed: {
+      on: {
+        'modal.open': 'open',
+      },
+    },
+    open: {
+      on: {
+        'modal.close': 'closed',
+      },
+    },
+  },
+});
+
+// pizza machine
+const pizzaRoute = createMachine<{ actors: Actor[] }, Event>({
+  id: 'pizza',
+  type: 'parallel',
+  predictableActionArguments: true,
+  context: {
+    actors: [],
+  },
+  on: sync(),
+  states: {
+    modal: spawnMachine(modalMachine),
+  },
+});
+
 const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
   id: 'router',
   initial: paths.includes(window.location.pathname as Path) ? window.location.pathname : '/404',
@@ -193,7 +233,7 @@ const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
   states: {
     '/': spawnMachine(homeMachine),
     '/second': spawnMachine(secondMachine),
-    '/pizza': {},
+    '/pizza': spawnMachine(pizzaRoute),
     '/third': {},
     '/404': {},
   },

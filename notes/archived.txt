@@ -465,3 +465,8 @@ How to do TDD a component like a modal?
 
 I will start with testing the route, and move to other solutions when needed
 
+
+
+- Build vitest-preview/test-preview
+  - Works with vitest initially
+  - Should be lightweight

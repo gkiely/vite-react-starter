@@ -1,10 +1,8 @@
 - Build the modal exercise
-- Remove store schema for routes, pull from machines
-
-- Build vitest-preview/test-preview
-  - Works with vitest initially
-  - Should be lightweight
- 
+- Fix renderIf for components
+  - Allow just returning undefined and filter, to avoid having to use spread?
+- Remove store schema for routes, pull from machines 
+- Fix import Event from '../../machine';
 
 AC with JTBD syntax
 - Able to open a modal
@@ -15,7 +13,7 @@ AC with JTBD syntax
 - When you cancel modal exits
 
 
-- Write tests for AC
+- Write tests for AC x
 - Make tests pass
   - Make components
     - Pizza
