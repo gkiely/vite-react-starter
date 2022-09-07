@@ -1,7 +1,7 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 import { calc } from '@vanilla-extract/css-utils';
 
-export const content = style({
+export const background = style({
   position: 'fixed',
   top: 0,
   left: 0,
@@ -12,12 +12,44 @@ export const content = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  color: 'white',
   fontSize: calc.add('10px', '2vmin'),
   flexDirection: 'column',
 });
 
+export const content = style({
+  marginTop: '-30vh',
+  background: '#fff',
+  padding: '3rem',
+  borderRadius: 3,
+  textAlign: 'left',
+});
+
+export const ul = style({
+  listStyleType: 'none',
+  padding: 0,
+  margin: 0,
+  marginBottom: calc.subtract('3rem', '6px'),
+});
+
+export const li = style({
+  display: 'flex',
+  marginBottom: 6,
+});
+
 export const button = style({
-  // fontSize: '1.5rem',
-  // padding: '.8rem',
+  fontSize: '1rem',
+  padding: '.3rem',
+});
+
+globalStyle(`${content} label`, {
+  marginLeft: '1rem',
+});
+
+globalStyle(`${content} h1`, {
+  marginBottom: 0,
+});
+
+globalStyle(`${content} input`, {
+  margin: '0px 1.5px',
+  transform: 'scale(1.5)',
 });

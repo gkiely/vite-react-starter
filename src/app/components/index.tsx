@@ -7,7 +7,7 @@ export { default as Content } from './Content/Content';
 
 export { default as Sidebar } from './Sidebar/Sidebar';
 
-export { default as Pizza } from './Pizza/Pizza';
+export { default as PizzaHeader } from './Pizza/PizzaHeader';
 
 export { default as PizzaModal } from './PizzaModal/PizzaModal';
 /* c8 ignore stop */

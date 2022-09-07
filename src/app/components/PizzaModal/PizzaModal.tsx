@@ -3,36 +3,81 @@ import type { Event } from 'machines/machines';
 import { useSend } from 'utils/routing';
 
 export type Props = {
-  cancel: {
+  text: string;
+  buttons: {
     text: string;
     action: Event;
-  };
-  confirm: {
+  }[];
+  items: {
     text: string;
-    action: Event;
-  };
+    checked: boolean;
+    // action: Event;
+    action?: {
+      type: string;
+      payload: unknown;
+    };
+    actions?: {
+      change: {
+        type: string;
+        payload: unknown;
+      };
+      add: {
+        type: string;
+        payload: unknown;
+      };
+      subtract: {
+        type: string;
+        payload: unknown;
+      };
+    };
+  }[];
 };
 
 /* c8 ignore start */
-const PizzaModal = ({ cancel, confirm }: Props) => {
+const PizzaModal = ({ text, buttons, items }: Props) => {
   const send = useSend();
   return (
-    <div className={styles.content}>
-      <h1>Pizza toppings</h1>
-      <ul>
-        <li>
-          <input id="cheese" name="cheese" type="checkbox" />
-          <label htmlFor="cheese">Cheese</label>
-        </li>
-      </ul>
-      <div>
-        <button className={styles.button} onClick={() => send(cancel.action)}>
-          {cancel.text}
-        </button>
-        &nbsp;
-        <button className={styles.button} onClick={() => send(confirm.action)}>
-          {confirm.text}
-        </button>
+    <div className={styles.background}>
+      <div className={styles.content}>
+        <h1>Pizza toppings</h1>
+        <small>{text}</small>
+        <br />
+        <br />
+        <ul className={styles.ul}>
+          {items
+            .map((item) => ({
+              id: item.text.toLowerCase().replace(/\s/, ''),
+              ...item,
+            }))
+            .map((item) => (
+              <li key={item.id} className={styles.li}>
+                <input
+                  checked={item.checked}
+                  onChange={(e) => {
+                    // console.log('onChange', e.target.id, item.checked);
+                    // send(item.actions?.change.type);
+                    // send(item.checked ? item.actions?.subtract : item.actions?.add);
+                  }}
+                  id={item.id}
+                  name={item.id}
+                  type="checkbox"
+                />
+                <label htmlFor={item.id}>{item.text}</label>
+              </li>
+            ))}
+        </ul>
+        <div>
+          {buttons.map((button, i) => (
+            <button
+              key={i}
+              className={styles.button}
+              style={{ marginRight: i + 1 === buttons.length ? 0 : 6 }}
+              onClick={() => send(button.action)}
+            >
+              {button.text}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

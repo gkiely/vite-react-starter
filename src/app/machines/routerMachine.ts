@@ -14,6 +14,7 @@ export const routerMachine = createMachine<Context & { actors: Actor[] }, Event>
     actors: [],
     count: 0,
     posts: [],
+    price: 0,
   },
   on: {
     ...sync('count', 'posts'),

@@ -9,6 +9,7 @@ import { spawnMachine, sync } from './machine-utils';
 export type Context = {
   count: number;
   posts: Post[];
+  price: number;
 };
 
 export type Event =
@@ -145,7 +146,10 @@ export const countMachine = createMachine<Pick<Context, 'count'>, Event>({
   },
 });
 
-export const homeMachine = createMachine<Context & { actors: Actor[] }, Event>({
+export const homeMachine = createMachine<
+  Pick<Context, 'count' | 'posts'> & { actors: Actor[] },
+  Event
+>({
   id: 'home',
   type: 'parallel',
   predictableActionArguments: true,
@@ -161,7 +165,7 @@ export const homeMachine = createMachine<Context & { actors: Actor[] }, Event>({
   },
 });
 
-export const secondMachine = createMachine<Omit<Context, 'posts'> & { actors: Actor[] }, Event>({
+export const secondMachine = createMachine<Pick<Context, 'count'> & { actors: Actor[] }, Event>({
   id: 'second',
   type: 'parallel',
   predictableActionArguments: true,

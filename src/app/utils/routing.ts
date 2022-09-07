@@ -9,12 +9,13 @@ import { InterpreterFrom } from 'xstate';
 
 type C = typeof Components;
 type S = typeof Sections;
+type K = keyof C;
 
 type Props = {
   [K in keyof C]: { component: K; id: string } & Parameters<C[K]>[number];
 };
 
-export type ComponentConfig = Props[keyof C];
+export type ComponentConfig = Props[K];
 
 export type LayoutConfig = {
   id: string;
@@ -41,15 +42,16 @@ export const createRenderer = <S>(
 
 export type SetState<S> = Dispatch<SetStateAction<S>>;
 
+// TODO: infer the correct type without using as const
 export const renderIf = <T>(flag: boolean, data: T): [T] | [] => {
   return flag ? [data] : [];
 };
 
-export const renderComponentIf = <T>(
-  flag: boolean,
-  data: Readonly<T> & { component: keyof C; id: string }
-): [Readonly<T> & { component: keyof C; id: string }] | [] => {
-  return flag ? [data] : [];
+// TODO: ideally we don't return an empty component, we return undefined
+export const renderComponentIf = <T extends K>(flag: boolean, data: Props[T]): Props[T] => {
+  const emptyComponent = { component: '' };
+  assertType<Props[T]>(emptyComponent);
+  return flag ? data : emptyComponent;
 };
 
 export const expectType = <T>(data: T): T => data;
@@ -57,6 +59,10 @@ export const expectType = <T>(data: T): T => data;
 export type ComponentProps = Props[keyof C];
 export const renderComponent = (props: ComponentProps) => {
   const Component = Components[props.component];
+
+  // Empty component used by renderComponentIf
+  if (!props.id && (props.component as string) === '') return undefined;
+
   if (props.id) {
     assertType<{ key: string }>(props);
     props.key = props.id;

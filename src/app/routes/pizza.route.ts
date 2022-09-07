@@ -1,14 +1,44 @@
 /* c8 ignore start */
 import { Store } from 'server/schemas';
-import { createRenderer } from 'utils/routing';
+import { createRenderer, renderComponentIf } from 'utils/routing';
 
-export const render = createRenderer<Store>((_store, state) => {
+type ListItem = {
+  text: string;
+  price: number;
+};
+const createListItem = ({ text, price }: ListItem) => ({
+  text,
+  price,
+  checked: false,
+  actions: {
+    change: {
+      type: 'list.change',
+      payload: text.toLowerCase().replace(/\s/, ''),
+    },
+    add: {
+      type: 'price.add',
+      payload: price,
+    },
+    subtract: {
+      type: 'price.subtract',
+      payload: price,
+    },
+  },
+});
+
+export const render = createRenderer<Store>((store, state) => {
+  const items = [
+    createListItem({ text: 'Cheese', price: 0.99 }),
+    createListItem({ text: 'Meat', price: 1.29 }),
+    createListItem({ text: 'Bacon', price: 0.5 }),
+    createListItem({ text: 'Spinach', price: 0.99 }),
+  ];
   return {
     title: 'Pizza',
     components: [
       {
-        id: 'Pizza',
-        component: 'Pizza',
+        id: 'PizzaHeader',
+        component: 'PizzaHeader',
         button: {
           text: 'Select toppings',
           action: {
@@ -23,32 +53,39 @@ export const render = createRenderer<Store>((_store, state) => {
           },
         ],
       },
-      // TODO:
-      // renderIf should accept either a component or a generic element
-      // component containing both an id and component
-      // renderIf<Props>(state.matches('modal.open'), {
-      //  id: 'Modal',
-      // })
-      ...(state.matches('modal.open')
-        ? [
-            {
-              id: 'Modal',
-              component: 'PizzaModal',
-              cancel: {
-                text: 'Cancel',
-                action: {
-                  type: 'modal.close',
-                },
-              },
-              confirm: {
-                text: 'Confirm',
-                action: {
-                  type: 'modal.close',
-                },
-              },
-            } as const,
-          ]
-        : []),
+      renderComponentIf(state.matches('modal.open'), {
+        id: 'Modal',
+        component: 'PizzaModal',
+        text: 'There will be an upcharge of $0.00',
+        buttons: [
+          {
+            text: 'Confirm',
+            action: {
+              type: 'modal.close',
+            },
+          },
+          {
+            text: 'Cancel',
+            action: {
+              type: 'modal.close',
+            },
+          },
+        ],
+        items: [
+          {
+            text: 'Select all',
+            checked: false,
+            action: {
+              type: 'price.set',
+              payload:
+                store.price && store.price > 0
+                  ? 0
+                  : items.map((o) => o.price).reduce((a, b) => a + b, 0),
+            },
+          },
+          ...items,
+        ],
+      }),
     ],
   };
 });
