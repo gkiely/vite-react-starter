@@ -6,6 +6,7 @@ import * as Sections from '../sections';
 import { assertType } from 'utils';
 import { Intersect } from 'utils/types';
 import { InterpreterFrom } from 'xstate';
+import { Event } from 'machines/machines';
 
 type C = typeof Components;
 type S = typeof Sections;
@@ -34,10 +35,21 @@ export type RouteConfig =
       components: Readonly<ComponentConfig[]>;
     };
 
-export const useSend = () => service.send;
+// export const useSend = () => service.send;
 
-export const createRenderer = <S>(
-  fn: (store: S, state: InterpreterFrom<typeof routerMachine>['state']) => RouteConfig
+export const useSend =
+  () =>
+  <E extends Event | { type: string }>(event: E) => {
+    assertType<Event>(event);
+    return service.send(event);
+  };
+
+export const createRenderer = <C>(
+  fn: (
+    store: InterpreterFrom<typeof routerMachine>['state']['context'],
+    state: InterpreterFrom<typeof routerMachine>['state'],
+    routeStore: C
+  ) => RouteConfig
 ) => fn;
 
 export type SetState<S> = Dispatch<SetStateAction<S>>;

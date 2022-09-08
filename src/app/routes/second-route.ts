@@ -1,8 +1,7 @@
 /* c8 ignore start */
-import { Store } from 'server/schemas';
 import { createRenderer } from 'utils/routing';
 
-export const render = createRenderer<Store>((store, state) => {
+export const render = createRenderer((store, state) => {
   return {
     title: 'Second route',
     components: [

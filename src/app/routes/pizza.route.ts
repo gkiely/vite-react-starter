@@ -1,38 +1,8 @@
 /* c8 ignore start */
-import { Store } from 'server/schemas';
+import { RouteContext } from 'machines/pizza.machine';
 import { createRenderer, renderComponentIf } from 'utils/routing';
 
-type ListItem = {
-  text: string;
-  price: number;
-};
-const createListItem = ({ text, price }: ListItem) => ({
-  text,
-  price,
-  checked: false,
-  actions: {
-    change: {
-      type: 'list.change',
-      payload: text.toLowerCase().replace(/\s/, ''),
-    },
-    add: {
-      type: 'price.add',
-      payload: price,
-    },
-    subtract: {
-      type: 'price.subtract',
-      payload: price,
-    },
-  },
-});
-
-export const render = createRenderer<Store>((store, state) => {
-  const items = [
-    createListItem({ text: 'Cheese', price: 0.99 }),
-    createListItem({ text: 'Meat', price: 1.29 }),
-    createListItem({ text: 'Bacon', price: 0.5 }),
-    createListItem({ text: 'Spinach', price: 0.99 }),
-  ];
+export const render = createRenderer<RouteContext>((store, state, context) => {
   return {
     title: 'Pizza',
     components: [
@@ -74,16 +44,13 @@ export const render = createRenderer<Store>((store, state) => {
         items: [
           {
             text: 'Select all',
-            checked: false,
+            checked: state.matches('selectAll.checked'),
+            price: 0,
             action: {
-              type: 'price.set',
-              payload:
-                store.price && store.price > 0
-                  ? 0
-                  : items.map((o) => o.price).reduce((a, b) => a + b, 0),
+              type: 'change',
             },
           },
-          ...items,
+          // ...context.items,
         ],
       }),
     ],

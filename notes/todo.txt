@@ -1,9 +1,14 @@
+- Get events from every route machine
+- Fix ts errors
+
 - Build the modal exercise
   - I want a way to just have route specific state
     - In this case I want select all to be route specific, not in the store
   - Move createListItem to pizza route machine
   - Hash out simple machine, then extract to list and price if needed:
     - Set up list machine and price machine
+
+https://www.youtube.com/watch?v=cO36bwdwAbE&t=41s
 
 Refactor structure
 - src/app/ui

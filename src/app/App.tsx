@@ -2,18 +2,26 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import * as styles from './App.css';
 import { paths, Path } from './routes/paths';
-import { renderers } from './routes/routes';
+import { Context, renderers } from './routes/routes';
 import { assertType } from './utils';
 import { renderComponent, renderLayout, RouteConfig } from './utils/routing';
 import service from './machines/routerMachine';
 import { matches } from './machines/machine-utils';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { act } from 'utils/test-utils';
+import { AnyInterpreter } from 'xstate';
 
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
   const render = renderers[path];
-  const [route, setRoute] = useState<RouteConfig>(render(service.state.context, service.state));
+  const emptyService = { state: { context: {} } };
+
+  const routeService = service.state.children[path] ?? emptyService;
+  assertType<AnyInterpreter>(routeService);
+  assertType<Context>(routeService.state.context);
+  const [route, setRoute] = useState<RouteConfig>(
+    render(service.state.context, service.state, routeService.state.context)
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -26,12 +34,17 @@ const Route = ({ path }: { path: Path }) => {
         ...state,
         matches: (state: string) => matches(state, service),
       } as typeof state;
-      act(() => setRoute(render(state.context, routeState)));
+      act(() => {
+        const routeService = state.children[path] ?? emptyService;
+        assertType<AnyInterpreter>(routeService);
+        assertType<Context>(routeService.state.context);
+        setRoute(render(state.context, routeState, routeService.state.context));
+      });
     });
     return () => {
       sub.unsubscribe();
     };
-  }, [render]);
+  }, [render, path]);
 
   return (
     <>

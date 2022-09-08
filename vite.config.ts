@@ -68,8 +68,16 @@ export default defineConfig(({ command }) => ({
         {
           filter: /src\/app\/App\.tsx$/,
           replace: {
-            // https://regex101.com/r/n2TIfm/1
-            from: /(act\S+\s=>\s)([^)]+)(\))/g,
+            // https://regex101.com/r/g6B3Lf/2
+            from: /(act\S+\s=>\s)([^){]+)(\))/g,
+            to: '$2',
+          },
+        },
+        {
+          filter: /src\/app\/App\.tsx$/,
+          replace: {
+            // https://regex101.com/r/bXL4Qa/1
+            from: /(act\(\(\)\s=>\s\{)([^}]+)(\}\);)/g,
             to: '$2',
           },
         },

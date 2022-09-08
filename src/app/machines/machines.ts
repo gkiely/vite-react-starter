@@ -150,7 +150,7 @@ export const homeMachine = createMachine<
   Pick<Context, 'count' | 'posts'> & { actors: Actor[] },
   Event
 >({
-  id: 'home',
+  id: '/home',
   type: 'parallel',
   predictableActionArguments: true,
   context: {
@@ -166,7 +166,7 @@ export const homeMachine = createMachine<
 });
 
 export const secondMachine = createMachine<Pick<Context, 'count'> & { actors: Actor[] }, Event>({
-  id: 'second',
+  id: '/second',
   type: 'parallel',
   predictableActionArguments: true,
   context: {

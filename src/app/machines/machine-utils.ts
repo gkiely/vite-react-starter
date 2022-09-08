@@ -27,7 +27,14 @@ export const spawnMachine = <
         actors: (context) => {
           const keys = Object.keys(machine.context as Partial<Record<K, V>>);
           const data = pick(context as Record<K, V>, ...keys);
-          return [...context.actors, spawn(machine.withContext(data), { sync: true })] as Actor[];
+          // debugger;
+          return [
+            ...context.actors,
+            spawn(machine.withContext({ ...machine.context, ...data }), {
+              name: machine.id,
+              sync: true,
+            }),
+          ] as Actor[];
         },
       }),
     ],

@@ -1,8 +1,7 @@
-import { Store } from 'server/schemas';
 import { createRenderer, renderIf } from 'utils/routing';
 
 /* c8 ignore start */
-export const render = createRenderer<Store>((store, state) => {
+export const render = createRenderer((store, state) => {
   return {
     title: 'Home route',
     components: [
