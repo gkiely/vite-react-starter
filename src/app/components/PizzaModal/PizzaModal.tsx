@@ -60,8 +60,7 @@ const PizzaModal = ({ text, buttons, items }: Props) => {
             .map((item) => (
               <li key={item.id} className={styles.li}>
                 <input
-                  // checked={item.checked}
-                  // onChange={() => item.action && send(item.action)}
+                  checked={item.checked}
                   onChange={() => item.action && send(item.action)}
                   // onChange={() => {
                   //   send({

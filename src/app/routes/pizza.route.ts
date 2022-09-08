@@ -50,7 +50,7 @@ export const render = createRenderer<RouteContext>((store, state, context) => {
               type: 'change',
             },
           },
-          // ...context.items,
+          ...context.items,
         ],
       }),
     ],

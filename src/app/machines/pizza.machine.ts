@@ -1,7 +1,8 @@
-import { Actor, createMachine, StateTransition } from 'xstate';
+import { Actor, assign, createMachine, StateTransition } from 'xstate';
 import { modalMachine } from './machines';
 import { spawnMachine, sync } from '../machines/machine-utils';
 
+/* c8 ignore start */
 export type ListItem = {
   text: string;
   price: number;
@@ -54,13 +55,27 @@ const pizzaRoute = createMachine<RouteContext, Events>({
       initial: 'unchecked',
       states: {
         unchecked: {
-          // entry: [() => console.log('unchecked')],
+          entry: [
+            assign((context) => ({
+              items: context.items.map((item) => ({
+                ...item,
+                checked: false,
+              })),
+            })),
+          ],
           on: {
             change: 'checked',
           },
         },
         checked: {
-          // entry: [() => console.log('checked')],
+          entry: [
+            assign((context) => ({
+              items: context.items.map((item) => ({
+                ...item,
+                checked: true,
+              })),
+            })),
+          ],
           on: {
             change: 'unchecked',
           },
@@ -75,3 +90,4 @@ type TransitionData = NonNullable<ReturnType<typeof pizzaRoute.machine.getTransi
 type MachineEvents = TransitionData extends StateTransition<infer _, infer I> ? I : never;
 
 export default pizzaRoute;
+/* c8 ignore stop */
