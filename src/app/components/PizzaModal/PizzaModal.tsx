@@ -2,6 +2,7 @@ import * as styles from './PizzaModal.css';
 import type { Event } from 'machines/machines';
 import { useSend } from 'utils/routing';
 import { ListItem } from 'machines/pizza.machine';
+import { TEST } from 'utils/constants';
 
 export type Props = {
   text: string;
@@ -62,11 +63,12 @@ const PizzaModal = ({ text, buttons, items }: Props) => {
               <input
                 checked={item.checked}
                 onChange={() => item.action && send(item.action)}
-                // onChange={() => {
-                //   send({
-                //     type: ''
-                //   })
-                // }}
+                // RTL does not support onChange
+                {...(TEST && {
+                  onClick: () => {
+                    item.action && send(item.action);
+                  },
+                })}
                 id={item.id}
                 name={item.id}
                 type="checkbox"

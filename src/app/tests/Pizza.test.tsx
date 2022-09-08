@@ -1,10 +1,10 @@
+/* eslint-disable import/first */
+vi.stubGlobal('location', { pathname: '/pizza' });
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import service from '../machines/routerMachine';
 import App from '../App';
-
-beforeAll(() => {
-  vi.stubGlobal('location', { pathname: '/pizza' });
-});
+// import { delay } from 'utils';
 
 afterAll(() => {
   vi.stubGlobal('location', { pathname: '/' });
@@ -27,33 +27,35 @@ test('renders a select toppings button', () => {
   expect(screen.queryByText(/confirm/i)).not.toBeInTheDocument();
 });
 
-test.todo('able to open a pizza toppings modal', () => {
+test('able to open a pizza toppings modal', () => {
   render(<App />);
   openModal();
   expect(screen.getByText(/pizza toppings/i)).toBeInTheDocument();
 });
 
-test.todo('after selecting a topping, the price updates', () => {
+test('after selecting a topping, the price updates', () => {
   render(<App />);
   openModal();
-  const topping = screen.getByRole('label', { name: /cheese/i });
-  fireEvent.click(topping);
-  expect(screen.getByText('There will be an upcharge of $0.99')).toBeInTheDocument();
+
+  const checkbox = screen.getByLabelText(/cheese/i);
+  fireEvent.click(checkbox);
+  expect(checkbox).toBeChecked();
+  expect(screen.getAllByText('There will be an upcharge of $0.99')[0]).toBeInTheDocument();
 });
-test.todo('after selecting all toppings, the price updates', () => {
+test('after selecting all toppings, the price updates', () => {
   render(<App />);
   openModal();
-  const select = screen.getByRole('label', { name: /Select all/i });
-  fireEvent.click(select);
-  expect(screen.getByText('There will be an upcharge of $2.28')).toBeInTheDocument();
+  const checkbox = screen.getByLabelText(/Select all/i);
+  fireEvent.click(checkbox);
+  expect(screen.getAllByText('There will be an upcharge of $3.77')[0]).toBeInTheDocument();
 });
-test.todo('after unselecting all topppings, the price updates', () => {
+test('after unselecting all topppings, the price updates', () => {
   render(<App />);
   openModal();
-  const select = screen.getByRole('label', { name: /Select all/i });
-  fireEvent.click(select);
-  fireEvent.click(select);
-  expect(screen.getByText('There will be an upcharge of $0.00')).toBeInTheDocument();
+  const checkbox = screen.getByLabelText(/Select all/i);
+  fireEvent.click(checkbox);
+  fireEvent.click(checkbox);
+  expect(screen.getByText('There will be an upcharge of $0')).toBeInTheDocument();
 });
 test.todo('after clicking confirm, the toppings show on the main page', () => {
   render(<App />);

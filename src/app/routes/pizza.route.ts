@@ -9,7 +9,7 @@ export const render = createRenderer<RouteContext>((_store, state, context) => {
       {
         id: 'PizzaHeader',
         component: 'PizzaHeader',
-        text: `There will be an upcharge of $${context.price}`,
+        text: context.price > 0 ? `There will be an upcharge of $${context.price}` : '',
         button: {
           text: 'Select toppings',
           action: {

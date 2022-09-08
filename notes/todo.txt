@@ -1,7 +1,16 @@
-- Fix tests
-  - Stopped working after last 3 commits
+- Confirm/cancel
+  - potentialPrice
+  - price
+- Click outside the modal
 - Get events from every route machine and move Events out of machines
 - Fix ts errors
+- Get onChange working or file a bug
+Pull this repo
+https://codesandbox.io/s/oj5lk0qk6y?module=/src/index.test.js&file=/src/index.test.js
+
+Thread:
+https://github.com/testing-library/react-testing-library/issues/175
+
 
 - Build the modal exercise
   - I want a way to just have route specific state
