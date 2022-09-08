@@ -1,7 +1,7 @@
 import type { Path } from 'routes/paths';
 import { useSend } from 'utils/routing';
 import type { Event } from 'machines/machines';
-import * as styles from './Pizza.css';
+import * as styles from './PizzaHeader.css';
 import { Fragment } from 'react';
 import { Link } from 'wouter';
 
