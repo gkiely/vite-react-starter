@@ -1,4 +1,6 @@
-- Get events from every route machine
+- Fix tests
+  - Stopped working after last 3 commits
+- Get events from every route machine and move Events out of machines
 - Fix ts errors
 
 - Build the modal exercise

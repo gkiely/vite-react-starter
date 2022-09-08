@@ -11,9 +11,14 @@ export type Props = {
   }[];
   items: Array<
     ListItem & {
-      action?: {
-        type: 'change';
-      };
+      action?:
+        | {
+            type: 'change';
+            payload: string;
+          }
+        | {
+            type: 'select';
+          };
     }
   >;
   // items: {
@@ -52,28 +57,24 @@ const PizzaModal = ({ text, buttons, items }: Props) => {
         <br />
         <br />
         <ul className={styles.ul}>
-          {items
-            .map((item) => ({
-              id: item.text.toLowerCase().replace(/\s/, ''),
-              ...item,
-            }))
-            .map((item) => (
-              <li key={item.id} className={styles.li}>
-                <input
-                  checked={item.checked}
-                  onChange={() => item.action && send(item.action)}
-                  // onChange={() => {
-                  //   send({
-                  //     type: ''
-                  //   })
-                  // }}
-                  id={item.id}
-                  name={item.id}
-                  type="checkbox"
-                />
-                <label htmlFor={item.id}>{item.text}</label>
-              </li>
-            ))}
+          {items.map((item) => (
+            <li key={item.id} className={styles.li}>
+              <input
+                checked={item.checked}
+                onChange={() => item.action && send(item.action)}
+                // onChange={() => {
+                //   send({
+                //     type: ''
+                //   })
+                // }}
+                id={item.id}
+                name={item.id}
+                type="checkbox"
+              />
+              <label htmlFor={item.id}>{item.text}</label>
+              &nbsp;&nbsp;<small>${item.price}</small>
+            </li>
+          ))}
         </ul>
         <div>
           {buttons.map((button, i) => (

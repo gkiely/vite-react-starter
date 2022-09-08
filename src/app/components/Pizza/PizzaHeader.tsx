@@ -11,13 +11,15 @@ export type Props = {
     action: Event;
   };
   links?: { id: string; to: Path; text: string }[];
+  text: string;
 };
 
 /* c8 ignore start */
-const Pizza = ({ button, links }: Props) => {
+const Pizza = ({ button, links, text }: Props) => {
   const send = useSend();
   return (
     <div className={styles.content}>
+      <p>{text}</p>
       <button className={styles.button} onClick={() => send(button.action)}>
         {button.text}
       </button>

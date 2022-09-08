@@ -2,13 +2,14 @@
 import { RouteContext } from 'machines/pizza.machine';
 import { createRenderer, renderComponentIf } from 'utils/routing';
 
-export const render = createRenderer<RouteContext>((store, state, context) => {
+export const render = createRenderer<RouteContext>((_store, state, context) => {
   return {
     title: 'Pizza',
     components: [
       {
         id: 'PizzaHeader',
         component: 'PizzaHeader',
+        text: `There will be an upcharge of $${context.price}`,
         button: {
           text: 'Select toppings',
           action: {
@@ -26,7 +27,7 @@ export const render = createRenderer<RouteContext>((store, state, context) => {
       renderComponentIf(state.matches('modal.open'), {
         id: 'Modal',
         component: 'PizzaModal',
-        text: 'There will be an upcharge of $0.00',
+        text: `There will be an upcharge of $${context.price}`,
         buttons: [
           {
             text: 'Confirm',
@@ -43,14 +44,29 @@ export const render = createRenderer<RouteContext>((store, state, context) => {
         ],
         items: [
           {
+            id: 'SelectAll',
             text: 'Select all',
-            checked: state.matches('selectAll.checked'),
-            price: 0,
+            checked: state.matches('selectAll.selected'),
+            price: Number(
+              context.items
+                .map((o) => o.price)
+                .reduce((a, b) => a + b, 0)
+                .toFixed(2)
+            ),
             action: {
-              type: 'change',
+              type: 'select',
             },
           },
-          ...context.items,
+          ...context.items.map(
+            (item) =>
+              ({
+                ...item,
+                action: {
+                  type: 'change',
+                  payload: item.id,
+                },
+              } as const)
+          ),
         ],
       }),
     ],

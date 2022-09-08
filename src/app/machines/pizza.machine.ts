@@ -7,9 +7,15 @@ export type ListItem = {
   text: string;
   price: number;
   checked?: boolean;
+  id: string;
 };
 
-const createListItem = ({ text, price, checked = false }: ListItem) => ({
+const createListItem = ({
+  text,
+  price,
+  checked = false,
+}: Pick<ListItem, 'text' | 'price' | 'checked'>): ListItem => ({
+  id: text.toLowerCase().replace(/\s/, ''),
   text,
   price,
   checked,
@@ -21,69 +27,95 @@ export type RouteContext = {
   price: number;
 };
 
-// action: {
-//   type: 'price.set',
-//   payload:
-//     store.price && store.price > 0
-//       ? 0
-//       : items.map((o) => o.price).reduce((a, b) => a + b, 0),
-// },
-
-type Events = {
-  type: 'change';
-};
+type Events =
+  | {
+      type: 'change';
+      payload: string;
+    }
+  | {
+      type: 'select';
+    };
 
 // pizza machine
-const pizzaRoute = createMachine<RouteContext, Events>({
-  id: '/pizza',
-  type: 'parallel',
-  predictableActionArguments: true,
-  context: {
-    actors: [],
-    price: 0,
-    items: [
-      createListItem({ text: 'Cheese', price: 0.99 }),
-      createListItem({ text: 'Meat', price: 1.29 }),
-      createListItem({ text: 'Bacon', price: 0.5 }),
-      createListItem({ text: 'Spinach', price: 0.99 }),
-    ],
-  },
-  on: sync(),
-  states: {
-    modal: spawnMachine(modalMachine),
-    selectAll: {
-      initial: 'unchecked',
-      states: {
-        unchecked: {
-          entry: [
-            assign((context) => ({
-              items: context.items.map((item) => ({
-                ...item,
-                checked: false,
+const pizzaRoute = createMachine<RouteContext, Events>(
+  {
+    id: '/pizza',
+    type: 'parallel',
+    predictableActionArguments: true,
+    context: {
+      actors: [],
+      price: 0,
+      items: [
+        createListItem({ text: 'Cheese', price: 0.99 }),
+        createListItem({ text: 'Meat', price: 1.29 }),
+        createListItem({ text: 'Bacon', price: 0.5 }),
+        createListItem({ text: 'Spinach', price: 0.99 }),
+      ],
+    },
+    on: {
+      ...sync(),
+      change: {
+        actions: [
+          assign((context, e) => ({
+            items: context.items.map((item) =>
+              item.id === e.payload ? { ...item, checked: !item.checked } : item
+            ),
+          })),
+          'updatePrice',
+        ],
+      },
+    },
+    states: {
+      modal: spawnMachine(modalMachine),
+      selectAll: {
+        initial: 'unselected',
+        states: {
+          unselected: {
+            entry: [
+              assign((context) => ({
+                items: context.items.map((item) => ({
+                  ...item,
+                  checked: false,
+                })),
               })),
-            })),
-          ],
-          on: {
-            change: 'checked',
+              'updatePrice',
+            ],
+            on: {
+              select: 'selected',
+            },
           },
-        },
-        checked: {
-          entry: [
-            assign((context) => ({
-              items: context.items.map((item) => ({
-                ...item,
-                checked: true,
+          selected: {
+            entry: [
+              assign((context) => ({
+                items: context.items.map((item) => ({
+                  ...item,
+                  checked: true,
+                })),
               })),
-            })),
-          ],
-          on: {
-            change: 'unchecked',
+              'updatePrice',
+            ],
+            on: {
+              select: 'unselected',
+            },
           },
         },
       },
     },
   },
-});
+  {
+    actions: {
+      updatePrice: assign((context) => ({
+        price: Number(
+          context.items
+            .filter((o) => o.checked)
+            .map((o) => o.price)
+            .reduce((a, b) => a + b, 0)
+            .toFixed(2)
+        ),
+      })),
+    },
+  }
+);
 
 type TransitionData = NonNullable<ReturnType<typeof pizzaRoute.machine.getTransitionData>>;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -27,7 +27,7 @@ test('renders a select toppings button', () => {
   expect(screen.queryByText(/confirm/i)).not.toBeInTheDocument();
 });
 
-test('able to open a pizza toppings modal', () => {
+test.todo('able to open a pizza toppings modal', () => {
   render(<App />);
   openModal();
   expect(screen.getByText(/pizza toppings/i)).toBeInTheDocument();

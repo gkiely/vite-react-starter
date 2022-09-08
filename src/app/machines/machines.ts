@@ -9,7 +9,6 @@ import { spawnMachine, sync } from './machine-utils';
 export type Context = {
   count: number;
   posts: Post[];
-  price: number;
 };
 
 export type Event =

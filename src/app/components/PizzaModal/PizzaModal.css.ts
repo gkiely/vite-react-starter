@@ -34,6 +34,7 @@ export const ul = style({
 export const li = style({
   display: 'flex',
   marginBottom: 6,
+  alignItems: 'center',
 });
 
 export const button = style({
