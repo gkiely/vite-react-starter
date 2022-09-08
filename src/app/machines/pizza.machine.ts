@@ -54,13 +54,13 @@ const pizzaRoute = createMachine<RouteContext, Events>({
       initial: 'unchecked',
       states: {
         unchecked: {
-          entry: [() => console.log('unchecked')],
+          // entry: [() => console.log('unchecked')],
           on: {
             change: 'checked',
           },
         },
         checked: {
-          entry: [() => console.log('checked')],
+          // entry: [() => console.log('checked')],
           on: {
             change: 'unchecked',
           },
@@ -71,6 +71,7 @@ const pizzaRoute = createMachine<RouteContext, Events>({
 });
 
 type TransitionData = NonNullable<ReturnType<typeof pizzaRoute.machine.getTransitionData>>;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type MachineEvents = TransitionData extends StateTransition<infer _, infer I> ? I : never;
 
 export default pizzaRoute;
