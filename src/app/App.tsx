@@ -11,10 +11,11 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { act } from 'utils/test-utils';
 import { AnyInterpreter } from 'xstate';
 
+const emptyService = { state: { context: {} } };
+
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
   const render = renderers[path];
-  const emptyService = { state: { context: {} } };
 
   const routeService = service.state.children[path] ?? emptyService;
   assertType<AnyInterpreter>(routeService);
