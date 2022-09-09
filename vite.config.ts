@@ -83,6 +83,18 @@ export default defineConfig(({ command }) => ({
           },
         },
       ]),
+    // beforeImport
+    // TEST &&
+    //   filterReplace([
+    //     {
+    //       filter: /src\/app\/tests\/pizza\.test\.tsx?$/,
+    //       replace: {
+    //         // eslint-disable-next-line regexp/no-super-linear-backtracking
+    //         from: /(beforeImport\(\(\)\s=>\s\{\s+)(((?!(\n\}\);))[\s\S])+)(\s+\}\);)/g,
+    //         to: '$2',
+    //       },
+    //     },
+    //   ]),
   ],
   // TODO
   // Submit fix to esbuild for 'linked': https://github.com/evanw/esbuild/blob/master/pkg/api/api_impl.go#L1458

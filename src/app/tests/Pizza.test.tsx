@@ -1,10 +1,10 @@
-/* eslint-disable import/first */
-vi.stubGlobal('location', { pathname: '/pizza' });
-
 import { fireEvent, render, screen } from '@testing-library/react';
 import service from '../machines/router.machine';
 import App from '../App';
-// import { delay } from 'utils';
+
+beforeAll(() => {
+  vi.stubGlobal('location', { pathname: '/pizza' });
+});
 
 afterAll(() => {
   vi.stubGlobal('location', { pathname: '/' });
