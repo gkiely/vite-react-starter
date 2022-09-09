@@ -73,16 +73,17 @@ export const sync = <C extends Record<string, unknown>, E extends EventObject>(
 });
 
 export const matches = (state: string, service: AnyInterpreter): boolean => {
-  return Object.values(service.state.children).some((child) => {
+  return Object.values(service.getSnapshot().children).some((child) => {
     assertType<AnyInterpreter>(child);
-    if (typeof child.state === 'undefined') return false;
-    if (child.state.matches(state)) return true;
+    const snapshot = child.getSnapshot();
+    if (typeof snapshot === 'undefined') return false;
+    if (snapshot.matches(state)) return true;
 
     const prefix = state.replace(/\.[^.]+$/, '');
     const postfix = state.replace(/^.+\./, '');
-    return Boolean(child.children?.size) && child.state.toStrings().includes(prefix)
+    return Boolean(child.children?.size) && snapshot.toStrings().includes(prefix)
       ? matches(postfix, child)
-      : child.state.matches(state);
+      : snapshot.matches(state);
   });
 };
 /* c8 ignore stop */
