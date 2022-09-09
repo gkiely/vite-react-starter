@@ -5,23 +5,26 @@ import { paths, Path } from './routes/paths';
 import { Context, renderers } from './routes/routes';
 import { assertType } from './utils';
 import { renderComponent, renderLayout, RouteConfig } from './utils/routing';
-import service from './machines/routerMachine';
+import service from './machines/router.machine';
 import { matches } from './machines/machine-utils';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { act } from 'utils/test-utils';
 import { AnyInterpreter } from 'xstate';
 
-const emptyService = { state: { context: {} } };
-
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
   const render = renderers[path];
 
-  const routeService = service.state.children[path] ?? emptyService;
-  assertType<AnyInterpreter>(routeService);
-  assertType<Context>(routeService.state.context);
+  const routeService = service.getSnapshot().children[path];
+  if (routeService) {
+    assertType<AnyInterpreter>(routeService);
+  }
+
+  const snapshot = service.getSnapshot();
+  const routeSnapshot = routeService?.getSnapshot() ?? {};
+  assertType<{ context: Context }>(routeSnapshot);
   const [route, setRoute] = useState<RouteConfig>(
-    render(service.state.context, service.state, routeService.state.context)
+    render(snapshot.context, snapshot, routeSnapshot.context)
   );
 
   useEffect(() => {
@@ -36,10 +39,11 @@ const Route = ({ path }: { path: Path }) => {
         matches: (state: string) => matches(state, service),
       } as typeof state;
       act(() => {
-        const routeService = state.children[path] ?? emptyService;
+        const routeService = state.children[path];
         assertType<AnyInterpreter>(routeService);
-        assertType<Context>(routeService.state.context);
-        setRoute(render(state.context, routeState, routeService.state.context));
+        const routeSnapshot = routeService?.getSnapshot() ?? {};
+        assertType<Context>(routeSnapshot.context);
+        setRoute(render(state.context, routeState, routeSnapshot.context));
       });
     });
     return () => {

@@ -8,6 +8,21 @@
 Pull this repo
 https://codesandbox.io/s/oj5lk0qk6y?module=/src/index.test.js&file=/src/index.test.js
 
+- selectAllMachine
+- See if there's a way to re-use machines with assigned actions
+- Move modal to use toggleMachine
+  - We might need a way to prefix -> modal.active, modal.inactive
+  - And then a way for the route to infer the prefixed event
+
+- I shouldn't have to set the machine.id to match the route
+  - Allow doing it via spawnMachine on router.machine
+
+spawnMachine should require a list of events that get passed to the child
+Either: 
+- Move sync to spawnMachine as a '*' listener via withConfig, then convert from '*' to list of keys provided, if that works
+Otherwise
+- When actor is saved to ref, store list of keys in it, then check for it in sync '*'
+
 Thread:
 https://github.com/testing-library/react-testing-library/issues/175
 

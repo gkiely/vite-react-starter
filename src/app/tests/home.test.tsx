@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import service from '../machines/routerMachine';
+import service from '../machines/router.machine';
 import { Post } from 'server/schemas';
 import App from '../App';
 

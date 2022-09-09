@@ -2,7 +2,12 @@
 import { RouteContext } from 'machines/pizza.machine';
 import { createRenderer, renderComponentIf } from 'utils/routing';
 
-export const render = createRenderer<RouteContext>((_store, state, context) => {
+const initialContext: RouteContext = {
+  price: 0,
+  items: [],
+};
+
+export const render = createRenderer<RouteContext>((_store, state, context = initialContext) => {
   return {
     title: 'Pizza',
     components: [

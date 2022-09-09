@@ -2,11 +2,7 @@ import { Context, Next } from 'hono';
 import type { EventObject } from 'xstate';
 
 /* c8 ignore start */
-export function assertType<T>(value: unknown): asserts value is T {
-  if (value === undefined) {
-    throw new Error('value must be defined');
-  }
-}
+export function assertType<T>(value: unknown): asserts value is T {}
 
 export function assertEventType<TE extends EventObject, TType extends TE['type']>(
   event: TE,

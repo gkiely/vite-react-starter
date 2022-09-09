@@ -22,9 +22,12 @@ const createListItem = ({
 });
 
 export type RouteContext = {
-  actors: Actor[];
   items: ListItem[];
   price: number;
+};
+
+type Context = RouteContext & {
+  actors: Actor[];
 };
 
 type Events =
@@ -36,8 +39,43 @@ type Events =
       type: 'select';
     };
 
+// const selectAllMachine = createMachine({
+//   context: {
+//     price: 0,
+//     items: [],
+//   },
+//   states: {
+//     checked: {
+//       entry: ['uncheckAll', 'setPrice'],
+//       on: {
+//         toggle: 'unchecked',
+//       },
+//     },
+//     unchecked: {
+//       entry: ['checkAll', 'setPrice'],
+//       on: {
+//         toggle: 'checked',
+//       },
+//     },
+//   }
+// });
+
+/*
+// TODO: see if there is a way to do this
+// Re-use a machine and assign actions to it
+// Might even be able to infer the partial config
+selectAll: spawnMachine(toggleMachine, {
+  active: {
+    entry: ['uncheckAll', 'setPrice']
+  },
+  inactive: {
+    entry: ['checkAll', 'setPrice']
+  },
+})
+*/
+
 // pizza machine
-const pizzaRoute = createMachine<RouteContext, Events>(
+const pizzaRoute = createMachine<Context, Events>(
   {
     id: '/pizza',
     type: 'parallel',
@@ -55,14 +93,7 @@ const pizzaRoute = createMachine<RouteContext, Events>(
     on: {
       ...sync(),
       change: {
-        actions: [
-          assign((context, e) => ({
-            items: context.items.map((item) =>
-              item.id === e.payload ? { ...item, checked: !item.checked } : item
-            ),
-          })),
-          'updatePrice',
-        ],
+        actions: ['checkToggle', 'setPrice'],
       },
     },
     states: {
@@ -71,29 +102,13 @@ const pizzaRoute = createMachine<RouteContext, Events>(
         initial: 'unselected',
         states: {
           unselected: {
-            entry: [
-              assign((context) => ({
-                items: context.items.map((item) => ({
-                  ...item,
-                  checked: false,
-                })),
-              })),
-              'updatePrice',
-            ],
+            entry: ['uncheckAll', 'setPrice'],
             on: {
               select: 'selected',
             },
           },
           selected: {
-            entry: [
-              assign((context) => ({
-                items: context.items.map((item) => ({
-                  ...item,
-                  checked: true,
-                })),
-              })),
-              'updatePrice',
-            ],
+            entry: ['checkAll', 'setPrice'],
             on: {
               select: 'unselected',
             },
@@ -104,7 +119,27 @@ const pizzaRoute = createMachine<RouteContext, Events>(
   },
   {
     actions: {
-      updatePrice: assign((context) => ({
+      checkToggle: assign((context, e) => {
+        if (e.type !== 'change') return context;
+        return {
+          items: context.items.map((item) =>
+            item.id === e.payload ? { ...item, checked: !item.checked } : item
+          ),
+        };
+      }),
+      checkAll: assign((context) => ({
+        items: context.items.map((item) => ({
+          ...item,
+          checked: true,
+        })),
+      })),
+      uncheckAll: assign((context) => ({
+        items: context.items.map((item) => ({
+          ...item,
+          checked: false,
+        })),
+      })),
+      setPrice: assign((context) => ({
         price: Number(
           context.items
             .filter((o) => o.checked)

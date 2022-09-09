@@ -1,6 +1,6 @@
 /* c8 ignore start */
 import { createElement, Dispatch, ReactNode, SetStateAction } from 'react';
-import service, { routerMachine } from '../machines/routerMachine';
+import service, { routerMachine } from '../machines/router.machine';
 import * as Components from '../components';
 import * as Sections from '../sections';
 import { assertType } from 'utils';
@@ -48,7 +48,7 @@ export const createRenderer = <C>(
   fn: (
     store: InterpreterFrom<typeof routerMachine>['state']['context'],
     state: InterpreterFrom<typeof routerMachine>['state'],
-    routeStore: C
+    context: C | undefined
   ) => RouteConfig
 ) => fn;
 

@@ -149,7 +149,7 @@ export const homeMachine = createMachine<
   Pick<Context, 'count' | 'posts'> & { actors: Actor[] },
   Event
 >({
-  id: '/home',
+  id: '/',
   type: 'parallel',
   predictableActionArguments: true,
   context: {

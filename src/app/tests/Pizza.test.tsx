@@ -2,7 +2,7 @@
 vi.stubGlobal('location', { pathname: '/pizza' });
 
 import { fireEvent, render, screen } from '@testing-library/react';
-import service from '../machines/routerMachine';
+import service from '../machines/router.machine';
 import App from '../App';
 // import { delay } from 'utils';
 

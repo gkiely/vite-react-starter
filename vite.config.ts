@@ -62,10 +62,10 @@ export default defineConfig(({ command }) => ({
       identifiers: command === 'serve' ? 'debug' : 'short',
     }),
     command === 'build' ? splitVendorChunkPlugin() : undefined,
-    // Remove act(() => ...) from code
     !TEST &&
       filterReplace([
         {
+          // Remove single line act(() => ...) from code
           filter: /src\/app\/App\.tsx$/,
           replace: {
             // https://regex101.com/r/g6B3Lf/2
@@ -74,10 +74,11 @@ export default defineConfig(({ command }) => ({
           },
         },
         {
+          // Remove multi-line act(() => {}) from code
           filter: /src\/app\/App\.tsx$/,
           replace: {
-            // https://regex101.com/r/bXL4Qa/1
-            from: /(act\(\(\)\s=>\s\{)([^}]+)(\}\);)/g,
+            // https://regex101.com/r/bXL4Qa/3
+            from: /(act\(\(\)\s=>\s\{)(((?!(\}\);))[\s\S])*)(\}\);)/g,
             to: '$2',
           },
         },
