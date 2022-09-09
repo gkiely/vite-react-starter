@@ -31,7 +31,7 @@ vi.stubGlobal('location', {
   pathname: '/',
 });
 
-// When pushing to production, fail if console logs
+// Fail if console logs
 if (process.env.VITEST_MODE === 'WATCH' || process.env.npm_lifecycle_event !== 'coverage') {
   const { log } = console;
   const reportError = (msg: string, type: 'log' | 'warn' | 'error') => {
