@@ -6,10 +6,6 @@ beforeAll(() => {
   vi.stubGlobal('location', { pathname: '/pizza' });
 });
 
-afterAll(() => {
-  vi.stubGlobal('location', { pathname: '/' });
-});
-
 afterEach(() => {
   if (service.initialized) {
     service.stop();
