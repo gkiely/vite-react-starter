@@ -37,7 +37,7 @@ if (process.env.VITEST_MODE !== 'WATCH' && process.env.npm_lifecycle_event !== '
   const { log } = console;
   const reportError = (msg: string, type: 'log' | 'warn' | 'error') => {
     log(msg);
-    const err = new Error(`console.${type} was called in test`);
+    const err = new Error(`console.${type} was called`);
     expect.fail(
       (err.stack as string)
         .replace(/(.+setup\.vitest\.ts.+\n+)/g, '')
