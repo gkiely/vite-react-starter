@@ -65,9 +65,7 @@ const PizzaModal = ({ text, buttons, items }: Props) => {
                 onChange={() => item.action && send(item.action)}
                 // RTL does not support onChange
                 {...(TEST && {
-                  onClick: () => {
-                    item.action && send(item.action);
-                  },
+                  onClick: () => item.action && send(item.action),
                 })}
                 id={item.id}
                 name={item.id}
