@@ -32,7 +32,8 @@ vi.stubGlobal('location', {
 });
 
 // Fail if console logs
-if (process.env.VITEST_MODE === 'WATCH' || process.env.npm_lifecycle_event !== 'coverage') {
+// When not running in watch or coverage mode
+if (process.env.VITEST_MODE !== 'WATCH' && process.env.npm_lifecycle_event !== 'coverage') {
   const { log } = console;
   const reportError = (msg: string, type: 'log' | 'warn' | 'error') => {
     log(msg);
