@@ -58,15 +58,15 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
-    "@mui/material": "^5.10.3",
+    "@mui/material": "^5.10.4",
     "@xstate/react": "^3.0.1",
     "hono": "^2.1.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet-async": "^1.3.0",
     "wouter": "^2.8.0-alpha.2",
-    "xstate": "^4.33.5",
-    "zod": "^3.18.0"
+    "xstate": "^4.33.6",
+    "zod": "^3.19.0"
   },
   "browserslist": {
     "development": [
@@ -83,18 +83,17 @@
     "@testing-library/cypress": "^8.0.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^14.4.3",
     "@types/react": "^18.0.18",
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.36.2",
     "@typescript-eslint/parser": "^5.36.2",
-    "@vanilla-extract/css": "^1.7.4",
+    "@vanilla-extract/css": "^1.9.0",
     "@vanilla-extract/css-utils": "^0.1.2",
-    "@vanilla-extract/vite-plugin": "^3.3.1",
+    "@vanilla-extract/vite-plugin": "^3.4.0",
     "@vitejs/plugin-react": "^2.1.0",
     "@vitest/coverage-c8": "^0.23.1",
     "c8": "^7.12.0",
-    "concurrently": "^7.3.0",
+    "concurrently": "^7.4.0",
     "cypress": "^10.7.0",
     "eslint": "^8.23.0",
     "eslint-config-react-app": "^7.0.1",
@@ -106,11 +105,10 @@
     "eslint-plugin-promise": "^6.0.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-regexp": "^1.9.0",
-    "eslint-plugin-testing-library": "^5.6.1",
+    "eslint-plugin-testing-library": "^5.6.3",
     "eslint-plugin-unicorn": "^43.0.2",
     "eslint-plugin-validate-jsx-nesting": "^0.1.0",
     "happy-dom": "^6.0.4",
-    "jsdom": "^20.0.0",
     "local-cypress": "^1.2.6",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
@@ -121,6 +119,6 @@
     "vite-plugin-checker": "^0.5.1",
     "vite-plugin-filter-replace": "^0.1.9",
     "vitest": "^0.23.1",
-    "wrangler": "^2.0.28"
+    "wrangler": "^2.0.29"
   }
 }
