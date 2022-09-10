@@ -31,6 +31,10 @@ export const routerMachine = createMachine<Context & { actors: Actor[] }, Event>
     '/': spawnMachine(homeMachine),
     '/second': spawnMachine(secondMachine),
     '/pizza': spawnMachine(pizzaRoute),
+    // Testing
+    // '/': {},
+    // '/second': {},
+    // '/pizza': {},
     '/third': {},
     '/404': {},
   },

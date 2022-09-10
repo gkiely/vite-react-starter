@@ -1,19 +1,12 @@
-- Confirm/cancel
-  - potentialPrice
-  - price
-- Click outside the modal
-
-
-- Only match with matches when machine id matches prefix
-- 
-
 - Get events from every route machine and move Events out of machines
-- Fix ts errors
 - Get onChange working or file a bug
 Pull this repo
 https://codesandbox.io/s/oj5lk0qk6y?module=/src/index.test.js&file=/src/index.test.js
+- Remove zod types
 
-- selectAllMachine
+
+
+Then
 - See if there's a way to re-use machines with assigned actions
 - Move modal to use toggleMachine
   - We might need a way to prefix -> modal.active, modal.inactive
