@@ -1,7 +1,9 @@
-import { Actor, assign, createMachine, StateTransition } from 'xstate';
+import { assertType } from 'utils';
+import { Actor, assign, createMachine } from 'xstate';
 import { spawnMachine, sync } from '../machines/machine-utils';
 
 /* c8 ignore start */
+
 export type ListItem = {
   text: string;
   price: number;
@@ -100,7 +102,7 @@ export const listMachine = createMachine<Omit<RouteContext, 'items' | 'price'>, 
   {
     actions: {
       check: assign((context, e) => {
-        if (e.type !== 'change') return context;
+        assertType<Extract<Events, { type: 'change' }>>(e);
         return {
           cartItems: context.cartItems.map((item) =>
             item.id === e.payload ? { ...item, checked: !item.checked } : item
@@ -205,9 +207,9 @@ const pizzaRoute = createMachine<Context, Events>({
   },
 });
 
-type TransitionData = NonNullable<ReturnType<typeof pizzaRoute.machine.getTransitionData>>;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type MachineEvents = TransitionData extends StateTransition<infer _, infer I> ? I : never;
+// type TransitionData = NonNullable<ReturnType<typeof pizzaRoute.machine.getTransitionData>>;
+// // eslint-disable-next-line @typescript-eslint/no-unused-vars
+// type MachineEvents = TransitionData extends StateTransition<infer _, infer I> ? I : never;
 
 export default pizzaRoute;
 /* c8 ignore stop */

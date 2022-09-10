@@ -53,19 +53,21 @@ test('after unselecting all topppings, the price updates', () => {
   fireEvent.click(checkbox);
   expect(screen.getByText('There will be an upcharge of $0')).toBeInTheDocument();
 });
-test.todo('after clicking confirm, the toppings show on the main page', () => {
+test('after clicking confirm, the price shows on the main page', () => {
   render(<App />);
   openModal();
-  const topping = screen.getByRole('label', { name: /cheese/i });
-  fireEvent.click(topping);
+  const checkbox = screen.getByLabelText(/cheese/i);
+  fireEvent.click(checkbox);
   const button = screen.getByRole('button', { name: /confirm/i });
   fireEvent.click(button);
-  expect(screen.getByText('cheese was selected')).toBeInTheDocument();
+  expect(screen.getByText('There will be an upcharge of $0.99')).toBeInTheDocument();
 });
-test.todo('after clicking cancel, the modal exits', () => {
+test('after clicking cancel, the modal exits', () => {
   render(<App />);
   openModal();
+  const checkbox = screen.getByLabelText(/cheese/i);
+  fireEvent.click(checkbox);
   const button = screen.getByRole('button', { name: /cancel/i });
   fireEvent.click(button);
-  expect(screen.queryByText('cheese was selected')).not.toBeInTheDocument();
+  expect(screen.queryByText('There will be an upcharge of $0.99')).not.toBeInTheDocument();
 });
