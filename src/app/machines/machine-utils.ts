@@ -75,19 +75,17 @@ export const sync = <C extends Record<string, unknown>, E extends EventObject>(
   }),
 });
 
-const reg = /^.+\./;
-
 export const matches = (query: string, service: AnyInterpreter): boolean => {
   return Object.values(service.getSnapshot().children).some((child) => {
     assertType<AnyInterpreter>(child);
     const snapshot = child.getSnapshot();
-
     if (!snapshot) return false;
-    if (snapshot.matches(query)) return true;
 
-    const postfix = query.replace(reg, '');
+    const prefix = query.replace(/\.[^.]+$/, '');
+    const postfix = query.replace(/^.+\./, '');
+    if (child.id === prefix && snapshot.matches(postfix)) return true;
 
-    return child.children?.size ? matches(postfix, child) : snapshot.matches(query);
+    return child.children?.size ? matches(query, child) : snapshot.matches(query);
   });
 };
 /* c8 ignore stop */

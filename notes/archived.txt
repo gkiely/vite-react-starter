@@ -471,14 +471,19 @@ I will start with testing the route, and move to other solutions when needed
   - Works with vitest initially
   - Should be lightweight
 
-
-    // Testing matches
-    // console.log(
-    //   '>',
-    //   child.id,
-    //   snapshot.value,
-    //   query,
-    //   snapshot.matches(query),
-    //   Array.from(child.children.keys())
-    // );
-    // if (snapshot.matches(query)) console.log('matched');
+// console.log('matches', query);
+// // Testing matches
+// // eslint-disable-next-line no-console
+// console.log(
+//   '>',
+//   child.id,
+//   snapshot.value,
+//   query,
+//   { prefix, postfix },
+//   snapshot.matches(postfix),
+//   Array.from(child.children.keys())
+// );
+// if ((child.id === prefix && snapshot.matches(postfix)) || snapshot.matches(query)) {
+//   // eslint-disable-next-line no-console
+//   console.log('matched', query);
+// }
