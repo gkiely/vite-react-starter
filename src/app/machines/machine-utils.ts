@@ -22,12 +22,11 @@ export const spawnMachine = <
 ) => {
   return {
     entry: [
-      // () => console.log('spawnMachine entry:', machine.config.id),
+      // () => console.log('spawnMachine entry:', machine.id),
       assign<{ actors: Actor[] }>({
         actors: (context) => {
           const keys = Object.keys(machine.context as Partial<Record<K, V>>);
           const data = pick(context as Record<K, V>, ...keys);
-          // debugger;
           return [
             ...context.actors,
             spawn(machine.withContext({ ...machine.context, ...data }), {
@@ -41,8 +40,11 @@ export const spawnMachine = <
     exit: [
       // () => console.log('spawnMachine exit:', machine.config.id),
       (context: { actors: Actor[] }) => {
-        context.actors.forEach((actor) => actor.stop?.() as unknown);
+        context.actors.find((o) => o.id !== machine.id)?.stop?.();
       },
+      assign<{ actors: Actor[] }>((context) => ({
+        actors: context.actors.filter((o) => o.id !== machine.id),
+      })),
     ],
   };
 };
@@ -54,8 +56,9 @@ export const sync = <C extends Record<string, unknown>, E extends EventObject>(
     actions: (context: { actors: Actor[] }, event: E) => {
       context.actors.forEach((actor) => {
         assertType<AnyInterpreter>(actor);
-        const { nextEvents } = actor.state;
+        const { nextEvents } = actor.getSnapshot();
         if (nextEvents.includes(event.type) || nextEvents.includes('*')) {
+          // console.log(event.type, actor.id, context, nextEvents);
           actor.send(event);
         }
       });
@@ -63,7 +66,7 @@ export const sync = <C extends Record<string, unknown>, E extends EventObject>(
   },
   ...(keys.length && {
     'xstate.update': {
-      actions: assign<C, E>((_, event) => {
+      actions: assign<C, E>((context, event) => {
         assertType<UpdateObject>(event);
         assertType<C>(event.state.context);
         return pick<C, keyof C>(event.state.context, ...keys);
@@ -72,18 +75,19 @@ export const sync = <C extends Record<string, unknown>, E extends EventObject>(
   }),
 });
 
-export const matches = (state: string, service: AnyInterpreter): boolean => {
+const reg = /^.+\./;
+
+export const matches = (query: string, service: AnyInterpreter): boolean => {
   return Object.values(service.getSnapshot().children).some((child) => {
     assertType<AnyInterpreter>(child);
     const snapshot = child.getSnapshot();
-    if (typeof snapshot === 'undefined') return false;
-    if (snapshot.matches(state)) return true;
 
-    const prefix = state.replace(/\.[^.]+$/, '');
-    const postfix = state.replace(/^.+\./, '');
-    return Boolean(child.children?.size) && snapshot.toStrings().includes(prefix)
-      ? matches(postfix, child)
-      : snapshot.matches(state);
+    if (!snapshot) return false;
+    if (snapshot.matches(query)) return true;
+
+    const postfix = query.replace(reg, '');
+
+    return child.children?.size ? matches(postfix, child) : snapshot.matches(query);
   });
 };
 /* c8 ignore stop */

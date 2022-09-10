@@ -39,6 +39,9 @@ export type Event =
       type: 'modal.close';
     }
   | {
+      type: 'modal.confirm';
+    }
+  | {
       type: 'xstate.update';
       state: {
         context: Context;
@@ -175,25 +178,6 @@ export const secondMachine = createMachine<Pick<Context, 'count'> & { actors: Ac
   on: sync('count'),
   states: {
     count: spawnMachine(countMachine),
-  },
-});
-
-export const modalMachine = createMachine<unknown, Event>({
-  id: 'modal',
-  initial: 'closed',
-  predictableActionArguments: true,
-  context: {},
-  states: {
-    closed: {
-      on: {
-        'modal.open': 'open',
-      },
-    },
-    open: {
-      on: {
-        'modal.close': 'closed',
-      },
-    },
   },
 });
 

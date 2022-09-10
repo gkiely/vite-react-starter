@@ -3,7 +3,9 @@ import { RouteContext } from 'machines/pizza.machine';
 import { createRenderer, renderComponentIf } from 'utils/routing';
 
 const initialContext: RouteContext = {
+  cartItems: [],
   price: 0,
+  cartPrice: 0,
   items: [],
 };
 
@@ -32,12 +34,12 @@ export const render = createRenderer<RouteContext>((_store, state, context = ini
       renderComponentIf(state.matches('modal.open'), {
         id: 'Modal',
         component: 'PizzaModal',
-        text: `There will be an upcharge of $${context.price}`,
+        text: `There will be an upcharge of $${context.cartPrice}`,
         buttons: [
           {
             text: 'Confirm',
             action: {
-              type: 'modal.close',
+              type: 'modal.confirm',
             },
           },
           {
@@ -51,9 +53,9 @@ export const render = createRenderer<RouteContext>((_store, state, context = ini
           {
             id: 'SelectAll',
             text: 'Select all',
-            checked: state.matches('selectAll.selected'),
+            checked: state.matches('list.selected'),
             price: Number(
-              context.items
+              context.cartItems
                 .map((o) => o.price)
                 .reduce((a, b) => a + b, 0)
                 .toFixed(2)
@@ -62,7 +64,7 @@ export const render = createRenderer<RouteContext>((_store, state, context = ini
               type: 'select',
             },
           },
-          ...context.items.map(
+          ...context.cartItems.map(
             (item) =>
               ({
                 ...item,

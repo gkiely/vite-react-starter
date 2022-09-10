@@ -14,6 +14,8 @@ https://codesandbox.io/s/oj5lk0qk6y?module=/src/index.test.js&file=/src/index.te
   - We might need a way to prefix -> modal.active, modal.inactive
   - And then a way for the route to infer the prefixed event
 
+- Setup debug logging ?debug
+
 - I shouldn't have to set the machine.id to match the route
   - Allow doing it via spawnMachine on router.machine
 

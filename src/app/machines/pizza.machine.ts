@@ -1,5 +1,4 @@
 import { Actor, assign, createMachine, StateTransition } from 'xstate';
-import { modalMachine } from './machines';
 import { spawnMachine, sync } from '../machines/machine-utils';
 
 /* c8 ignore start */
@@ -22,8 +21,10 @@ const createListItem = ({
 });
 
 export type RouteContext = {
+  cartItems: ListItem[];
   items: ListItem[];
   price: number;
+  cartPrice: number;
 };
 
 type Context = RouteContext & {
@@ -37,81 +38,60 @@ type Events =
     }
   | {
       type: 'select';
+    }
+  | {
+      type: 'confirm';
+    }
+  | {
+      type: 'cancel';
+    }
+  | {
+      type: 'modal.open';
+    }
+  | {
+      type: 'modal.close';
+    }
+  | {
+      type: 'modal.confirm';
     };
 
-// const selectAllMachine = createMachine({
-//   context: {
-//     price: 0,
-//     items: [],
-//   },
-//   states: {
-//     checked: {
-//       entry: ['uncheckAll', 'setPrice'],
-//       on: {
-//         toggle: 'unchecked',
-//       },
-//     },
-//     unchecked: {
-//       entry: ['checkAll', 'setPrice'],
-//       on: {
-//         toggle: 'checked',
-//       },
-//     },
-//   }
-// });
-
-/*
-// TODO: see if there is a way to do this
-// Re-use a machine and assign actions to it
-// Might even be able to infer the partial config
-selectAll: spawnMachine(toggleMachine, {
-  active: {
-    entry: ['uncheckAll', 'setPrice']
-  },
-  inactive: {
-    entry: ['checkAll', 'setPrice']
-  },
-})
-*/
-
-// pizza machine
-const pizzaRoute = createMachine<Context, Events>(
+export const listMachine = createMachine<Omit<RouteContext, 'items' | 'price'>, Events>(
   {
-    id: '/pizza',
-    type: 'parallel',
+    id: 'list',
+    initial: 'resume',
     predictableActionArguments: true,
     context: {
-      actors: [],
-      price: 0,
-      items: [
-        createListItem({ text: 'Cheese', price: 0.99 }),
-        createListItem({ text: 'Meat', price: 1.29 }),
-        createListItem({ text: 'Bacon', price: 0.5 }),
-        createListItem({ text: 'Spinach', price: 0.99 }),
-      ],
+      cartPrice: 0,
+      cartItems: [],
     },
     on: {
-      ...sync(),
       change: {
-        actions: ['checkToggle', 'setPrice'],
+        actions: ['check', 'setPrice'],
       },
     },
     states: {
-      modal: spawnMachine(modalMachine),
-      selectAll: {
-        initial: 'unselected',
-        states: {
-          unselected: {
-            entry: ['uncheckAll', 'setPrice'],
-            on: {
-              select: 'selected',
-            },
+      resume: {
+        always: [
+          {
+            cond: (context) => context.cartItems.every((item) => item.checked),
+            target: 'selected',
           },
-          selected: {
-            entry: ['checkAll', 'setPrice'],
-            on: {
-              select: 'unselected',
-            },
+          'unselected',
+        ],
+      },
+      unselected: {
+        on: {
+          select: {
+            target: 'selected',
+            actions: ['checkAll', 'setPrice'],
+          },
+        },
+      },
+      selected: {
+        on: {
+          select: {
+            target: 'unselected',
+            actions: ['uncheckAll', 'setPrice'],
           },
         },
       },
@@ -119,29 +99,29 @@ const pizzaRoute = createMachine<Context, Events>(
   },
   {
     actions: {
-      checkToggle: assign((context, e) => {
+      check: assign((context, e) => {
         if (e.type !== 'change') return context;
         return {
-          items: context.items.map((item) =>
+          cartItems: context.cartItems.map((item) =>
             item.id === e.payload ? { ...item, checked: !item.checked } : item
           ),
         };
       }),
       checkAll: assign((context) => ({
-        items: context.items.map((item) => ({
+        cartItems: context.cartItems.map((item) => ({
           ...item,
           checked: true,
         })),
       })),
       uncheckAll: assign((context) => ({
-        items: context.items.map((item) => ({
+        cartItems: context.cartItems.map((item) => ({
           ...item,
           checked: false,
         })),
       })),
       setPrice: assign((context) => ({
-        price: Number(
-          context.items
+        cartPrice: Number(
+          context.cartItems
             .filter((o) => o.checked)
             .map((o) => o.price)
             .reduce((a, b) => a + b, 0)
@@ -151,6 +131,79 @@ const pizzaRoute = createMachine<Context, Events>(
     },
   }
 );
+
+export const modalMachine = createMachine<Context, Events>({
+  id: 'modal',
+  initial: 'closed',
+  predictableActionArguments: true,
+  context: {
+    actors: [],
+    price: 0,
+    cartPrice: 0,
+    cartItems: [],
+    items: [],
+  },
+  on: sync('cartPrice', 'cartItems'),
+  states: {
+    closed: {
+      on: {
+        'modal.open': 'open',
+      },
+    },
+    open: {
+      ...spawnMachine(listMachine),
+      on: {
+        'modal.close': {
+          target: 'closed',
+          actions: [
+            assign((context) => ({
+              cartItems: context.items,
+              cartPrice: context.price,
+            })),
+          ],
+        },
+        'modal.confirm': {
+          target: 'closed',
+          actions: [
+            assign((context) => ({
+              items: context.cartItems,
+              price: context.cartPrice,
+            })),
+          ],
+        },
+      },
+    },
+  },
+});
+
+const getCartItems = () => {
+  return [
+    createListItem({ text: 'Cheese', price: 0.99 }),
+    createListItem({ text: 'Meat', price: 1.29 }),
+    createListItem({ text: 'Bacon', price: 0.5 }),
+    createListItem({ text: 'Spinach', price: 0.99 }),
+  ];
+};
+
+// pizza machine
+const pizzaRoute = createMachine<Context, Events>({
+  id: '/pizza',
+  type: 'parallel',
+  predictableActionArguments: true,
+  context: {
+    actors: [],
+    price: 0,
+    cartPrice: 0,
+    cartItems: getCartItems(),
+    items: getCartItems(),
+  },
+  on: {
+    ...sync('price', 'items', 'cartPrice', 'cartItems'),
+  },
+  states: {
+    modal: spawnMachine(modalMachine),
+  },
+});
 
 type TransitionData = NonNullable<ReturnType<typeof pizzaRoute.machine.getTransitionData>>;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

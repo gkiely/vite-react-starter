@@ -471,3 +471,14 @@ I will start with testing the route, and move to other solutions when needed
   - Works with vitest initially
   - Should be lightweight
 
+
+    // Testing matches
+    // console.log(
+    //   '>',
+    //   child.id,
+    //   snapshot.value,
+    //   query,
+    //   snapshot.matches(query),
+    //   Array.from(child.children.keys())
+    // );
+    // if (snapshot.matches(query)) console.log('matched');

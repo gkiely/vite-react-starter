@@ -22,29 +22,6 @@ export type Props = {
           };
     }
   >;
-  // items: {
-  //   text: string;
-  //   checked: boolean;
-  //   // action: Event;
-  //   action?: {
-  //     type: string;
-  //     payload: unknown;
-  //   };
-  //   actions?: {
-  //     change: {
-  //       type: string;
-  //       payload: unknown;
-  //     };
-  //     add: {
-  //       type: string;
-  //       payload: unknown;
-  //     };
-  //     subtract: {
-  //       type: string;
-  //       payload: unknown;
-  //     };
-  //   };
-  // }[];
 };
 
 /* c8 ignore start */
@@ -62,7 +39,9 @@ const PizzaModal = ({ text, buttons, items }: Props) => {
             <li key={item.id} className={styles.li}>
               <input
                 checked={item.checked}
-                onChange={() => item.action && send(item.action)}
+                onChange={() => {
+                  item.action && send(item.action);
+                }}
                 // RTL does not support onChange
                 {...(TEST && {
                   onClick: () => item.action && send(item.action),
