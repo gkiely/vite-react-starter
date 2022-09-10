@@ -49,6 +49,11 @@ export const render = createRenderer<RouteContext>((_store, state, context = ini
             },
           },
         ],
+        actions: {
+          close: {
+            type: 'modal.close',
+          },
+        },
         items: [
           {
             id: 'SelectAll',

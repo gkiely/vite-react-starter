@@ -60,29 +60,24 @@ type Events =
 export const listMachine = createMachine<Omit<RouteContext, 'items' | 'price'>, Events>(
   {
     id: 'list',
-    initial: 'resume',
+    initial: 'unselected',
     predictableActionArguments: true,
     context: {
       cartPrice: 0,
       cartItems: [],
     },
-    on: {
-      change: {
-        actions: ['check', 'setPrice'],
-      },
-    },
     states: {
-      resume: {
+      unselected: {
         always: [
           {
             cond: (context) => context.cartItems.every((item) => item.checked),
             target: 'selected',
           },
-          'unselected',
         ],
-      },
-      unselected: {
         on: {
+          change: {
+            actions: ['check', 'setPrice'],
+          },
           select: {
             target: 'selected',
             actions: ['checkAll', 'setPrice'],
@@ -91,6 +86,10 @@ export const listMachine = createMachine<Omit<RouteContext, 'items' | 'price'>, 
       },
       selected: {
         on: {
+          change: {
+            target: 'unselected',
+            actions: ['check', 'setPrice'],
+          },
           select: {
             target: 'unselected',
             actions: ['uncheckAll', 'setPrice'],
