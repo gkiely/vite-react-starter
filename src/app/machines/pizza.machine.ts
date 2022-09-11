@@ -33,7 +33,7 @@ type Context = RouteContext & {
   actors: Actor[];
 };
 
-type Events =
+export type Events =
   | {
       type: 'change';
       payload: string;
@@ -205,10 +205,6 @@ const pizzaRoute = createMachine<Context, Events>({
     modal: spawnMachine(modalMachine),
   },
 });
-
-// type TransitionData = NonNullable<ReturnType<typeof pizzaRoute.machine.getTransitionData>>;
-// // eslint-disable-next-line @typescript-eslint/no-unused-vars
-// type MachineEvents = TransitionData extends StateTransition<infer _, infer I> ? I : never;
 
 export default pizzaRoute;
 /* c8 ignore stop */

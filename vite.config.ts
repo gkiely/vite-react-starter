@@ -115,6 +115,7 @@ export default defineConfig(({ command }) => ({
       utils: path.resolve(__dirname, './src/app/utils'),
       common: path.resolve(__dirname, './src/app/common'),
       machines: path.resolve(__dirname, './src/app/machines'),
+      types: path.resolve(__dirname, './src/app/types'),
       server: command === 'serve' ? './server' : path.resolve(__dirname, './server'),
     },
   },

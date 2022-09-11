@@ -26,6 +26,7 @@
     "noUncheckedIndexedAccess": true,
     "useDefineForClassFields": true,
     "useUnknownInCatchVariables": true,
+    "noErrorTruncation": true,
     "types": ["@types/node", "vitest/globals", "@testing-library/jest-dom", "@testing-library/cypress"],
     "paths": {
       "components/*": ["./src/app/components/*"],
@@ -42,6 +43,7 @@
       "server/*": ["./server/*"],
       "common/*": ["./src/common/*"],
       "machines/*": ["./src/app/machines/*"],
+      "types": ["./src/app/types"]
     }
   },
   "typeRoots": ["./node_modules/@types", "./src/types"],

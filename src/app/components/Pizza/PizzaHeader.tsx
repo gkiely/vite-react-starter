@@ -1,6 +1,6 @@
 import type { Path } from 'routes/paths';
 import { useSend } from 'utils/routing';
-import type { Event } from 'machines/machines';
+import type { Events } from 'machines/pizza.machine';
 import * as styles from './PizzaHeader.css';
 import { Fragment } from 'react';
 import { Link } from 'wouter';
@@ -8,7 +8,7 @@ import { Link } from 'wouter';
 export type Props = {
   button: {
     text: string;
-    action: Event;
+    action: Extract<Events, { type: 'modal.open' }>;
   };
   links?: { id: string; to: Path; text: string }[];
   text: string;

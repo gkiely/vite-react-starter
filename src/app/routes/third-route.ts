@@ -36,6 +36,10 @@ export const render = createRenderer(() => {
           text: 'Second route',
           to: '/second',
         },
+        button: {
+          text: 'Back to second route',
+          to: '/second',
+        },
       },
       {
         id: 'content',

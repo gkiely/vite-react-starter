@@ -1,32 +1,20 @@
 import * as styles from './PizzaModal.css';
-import type { Event } from 'machines/machines';
 import { useSend } from 'utils/routing';
-import { ListItem } from 'machines/pizza.machine';
+import { Events, ListItem } from 'machines/pizza.machine';
 import { TEST } from 'utils/constants';
 
 export type Props = {
   text: string;
   buttons: {
     text: string;
-    action: Event;
+    action: Extract<Events, { type: 'modal.confirm' | 'modal.close' }>;
   }[];
   actions: {
-    close: {
-      type: 'modal.close';
-    };
+    close: Extract<Events, { type: 'modal.close' }>;
   };
-  items: Array<
-    ListItem & {
-      action?:
-        | {
-            type: 'change';
-            payload: string;
-          }
-        | {
-            type: 'select';
-          };
-    }
-  >;
+  items: (ListItem & {
+    action?: Extract<Events, { type: 'change' | 'select' }>;
+  })[];
 };
 
 /* c8 ignore start */

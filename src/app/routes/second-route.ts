@@ -9,18 +9,22 @@ export const render = createRenderer((store, state) => {
         id: 'Header',
         component: 'Header',
         title: 'Second route',
-        body: [
-          { text: 'Update ' },
-          { code: 'App.tsx' },
-          { text: ' and save to test HMR updates.' },
-        ],
+        body: [{ text: '*Counts by 2' }],
         buttons: [
           {
-            id: 'Button-count-add',
+            id: 'add',
             text: `count is: ${store.count}`,
             action: {
               type: 'count.update',
               payload: { count: 2 },
+            },
+          },
+          {
+            id: 'subtract',
+            text: `Subtract count`,
+            action: {
+              type: 'count.update',
+              payload: { count: -2 },
             },
           },
         ],

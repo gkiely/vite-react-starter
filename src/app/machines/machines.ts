@@ -1,17 +1,12 @@
-import { createMachine, assign, DoneInvokeEvent, Actor, AnyStateMachine } from 'xstate';
+import { createMachine, assign, DoneInvokeEvent, AnyStateMachine } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { DEV } from 'utils/constants';
 import { delay } from 'utils';
-import { Path } from '../routes/paths';
-import { spawnMachine, sync } from './machine-utils';
+import type { Path } from '../routes/paths';
+import type { Context } from './router.machine';
 
 /* c8 ignore start */
-export type Context = {
-  count: number;
-  posts: Post[];
-};
-
-export type Event =
+export type Events =
   | {
       type: 'count.update';
       payload: { count: number };
@@ -25,21 +20,8 @@ export type Event =
       payload: { id: string };
     }
   | {
-      type: 'update';
-      payload: Context;
-    }
-  | {
       type: 'route';
       payload: Path;
-    }
-  | {
-      type: 'modal.open';
-    }
-  | {
-      type: 'modal.close';
-    }
-  | {
-      type: 'modal.confirm';
     }
   | {
       type: 'xstate.update';
@@ -47,7 +29,7 @@ export type Event =
         context: Context;
         machine: AnyStateMachine;
         event: {
-          type: Exclude<Event['type'], 'xstate.update'>;
+          type: Exclude<Events['type'], 'xstate.update'>;
           payload?: Context | Partial<Context>;
         };
       };
@@ -70,7 +52,7 @@ const fetchPosts = async () => {
   return posts;
 };
 
-export const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
+export const postsMachine = createMachine<Pick<Context, 'posts'>, Events>({
   id: 'posts',
   predictableActionArguments: true,
   context: {
@@ -131,7 +113,7 @@ export const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
   },
 });
 
-export const countMachine = createMachine<Pick<Context, 'count'>, Event>({
+export const countMachine = createMachine<Pick<Context, 'count'>, Events>({
   id: 'count',
   predictableActionArguments: true,
   context: {
@@ -145,39 +127,6 @@ export const countMachine = createMachine<Pick<Context, 'count'>, Event>({
         }),
       ],
     },
-  },
-});
-
-export const homeMachine = createMachine<
-  Pick<Context, 'count' | 'posts'> & { actors: Actor[] },
-  Event
->({
-  id: '/',
-  type: 'parallel',
-  predictableActionArguments: true,
-  context: {
-    actors: [],
-    count: 0,
-    posts: [],
-  },
-  on: sync('count', 'posts'),
-  states: {
-    posts: spawnMachine(postsMachine),
-    count: spawnMachine(countMachine),
-  },
-});
-
-export const secondMachine = createMachine<Pick<Context, 'count'> & { actors: Actor[] }, Event>({
-  id: '/second',
-  type: 'parallel',
-  predictableActionArguments: true,
-  context: {
-    actors: [],
-    count: 0,
-  },
-  on: sync('count'),
-  states: {
-    count: spawnMachine(countMachine),
   },
 });
 

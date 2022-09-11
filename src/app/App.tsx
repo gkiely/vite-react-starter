@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import * as styles from './App.css';
 import { paths, Path } from './routes/paths';
-import { Context, renderers } from './routes/routes';
+import { RouteContext, renderers } from './routes/routes';
 import { assertType } from './utils';
 import { renderComponent, renderLayout, RouteConfig } from './utils/routing';
 import service from './machines/router.machine';
@@ -22,7 +22,7 @@ const Route = ({ path }: { path: Path }) => {
 
   const snapshot = service.getSnapshot();
   const routeSnapshot = routeService?.getSnapshot() ?? {};
-  assertType<{ context: Context }>(routeSnapshot);
+  assertType<{ context: RouteContext }>(routeSnapshot);
   const [route, setRoute] = useState<RouteConfig>(
     render(snapshot.context, snapshot, routeSnapshot.context)
   );
@@ -42,7 +42,7 @@ const Route = ({ path }: { path: Path }) => {
         const routeService = state.children[path];
         assertType<AnyInterpreter>(routeService);
         const routeSnapshot = routeService?.getSnapshot() ?? {};
-        assertType<Context>(routeSnapshot.context);
+        assertType<RouteContext>(routeSnapshot.context);
         setRoute(render(state.context, routeState, routeSnapshot.context));
       });
     });
