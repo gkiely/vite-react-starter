@@ -22,20 +22,29 @@ export const spawnMachine = <
 ) => {
   return {
     entry: [
-      // () => console.log('spawnMachine entry:', machine.config.id),
+      // () => console.log('spawnMachine entry:', machine.id),
       assign<{ actors: Actor[] }>({
         actors: (context) => {
           const keys = Object.keys(machine.context as Partial<Record<K, V>>);
           const data = pick(context as Record<K, V>, ...keys);
-          return [...context.actors, spawn(machine.withContext(data), { sync: true })] as Actor[];
+          return [
+            ...context.actors,
+            spawn(machine.withContext({ ...machine.context, ...data }), {
+              name: machine.id,
+              sync: true,
+            }),
+          ] as Actor[];
         },
       }),
     ],
     exit: [
       // () => console.log('spawnMachine exit:', machine.config.id),
       (context: { actors: Actor[] }) => {
-        context.actors.forEach((actor) => actor.stop?.() as unknown);
+        context.actors.find((o) => o.id !== machine.id)?.stop?.();
       },
+      assign<{ actors: Actor[] }>((context) => ({
+        actors: context.actors.filter((o) => o.id !== machine.id),
+      })),
     ],
   };
 };
@@ -47,33 +56,36 @@ export const sync = <C extends Record<string, unknown>, E extends EventObject>(
     actions: (context: { actors: Actor[] }, event: E) => {
       context.actors.forEach((actor) => {
         assertType<AnyInterpreter>(actor);
-        const { nextEvents } = actor.state;
+        const { nextEvents } = actor.getSnapshot();
         if (nextEvents.includes(event.type) || nextEvents.includes('*')) {
+          // console.log(event.type, actor.id, context, nextEvents);
           actor.send(event);
         }
       });
     },
   },
-  'xstate.update': {
-    actions: assign<C, E>((_, event) => {
-      assertType<UpdateObject>(event);
-      assertType<C>(event.state.context);
-      return pick<C, keyof C>(event.state.context, ...keys);
-    }),
-  },
+  ...(keys.length && {
+    'xstate.update': {
+      actions: assign<C, E>((context, event) => {
+        assertType<UpdateObject>(event);
+        assertType<C>(event.state.context);
+        return pick<C, keyof C>(event.state.context, ...keys);
+      }),
+    },
+  }),
 });
 
-export const matches = (state: string, service: AnyInterpreter): boolean => {
-  return Object.values(service.state.children).some((child) => {
+export const matches = (query: string, service: AnyInterpreter): boolean => {
+  return Object.values(service.getSnapshot().children).some((child) => {
     assertType<AnyInterpreter>(child);
-    if (typeof child.state === 'undefined') return false;
-    if (child.state.matches(state)) return true;
+    const snapshot = child.getSnapshot();
+    if (!snapshot) return false;
 
-    const prefix = state.replace(/\.[^.]+$/, '');
-    const postfix = state.replace(/^.+\./, '');
-    return Boolean(child.children?.size) && child.state.toStrings().includes(prefix)
-      ? matches(postfix, child)
-      : child.state.matches(state);
+    const prefix = query.replace(/\.[^.]+$/, '');
+    const postfix = query.replace(/^.+\./, '');
+    if (child.id === prefix && snapshot.matches(postfix)) return true;
+
+    return child.children?.size ? matches(query, child) : snapshot.matches(query);
   });
 };
 /* c8 ignore stop */

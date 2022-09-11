@@ -1,17 +1,12 @@
-import { createMachine, assign, interpret, DoneInvokeEvent, Actor, AnyStateMachine } from 'xstate';
+import { createMachine, assign, DoneInvokeEvent, AnyStateMachine } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
-import { CLIENT, DEV } from 'utils/constants';
+import { DEV } from 'utils/constants';
 import { delay } from 'utils';
-import { paths, Path } from '../routes/paths';
-import { spawnMachine, sync } from './machine-utils';
+import type { Path } from '../routes/paths';
+import type { Context } from './router.machine';
 
 /* c8 ignore start */
-export type Context = {
-  count: number;
-  posts: Post[];
-};
-
-export type Event =
+export type Events =
   | {
       type: 'count.update';
       payload: { count: number };
@@ -25,10 +20,6 @@ export type Event =
       payload: { id: string };
     }
   | {
-      type: 'update';
-      payload: Context;
-    }
-  | {
       type: 'route';
       payload: Path;
     }
@@ -38,7 +29,7 @@ export type Event =
         context: Context;
         machine: AnyStateMachine;
         event: {
-          type: Exclude<Event['type'], 'xstate.update'>;
+          type: Exclude<Events['type'], 'xstate.update'>;
           payload?: Context | Partial<Context>;
         };
       };
@@ -61,7 +52,7 @@ const fetchPosts = async () => {
   return posts;
 };
 
-const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
+export const postsMachine = createMachine<Pick<Context, 'posts'>, Events>({
   id: 'posts',
   predictableActionArguments: true,
   context: {
@@ -122,7 +113,7 @@ const postsMachine = createMachine<Pick<Context, 'posts'>, Event>({
   },
 });
 
-const countMachine = createMachine<Pick<Context, 'count'>, Event>({
+export const countMachine = createMachine<Pick<Context, 'count'>, Events>({
   id: 'count',
   predictableActionArguments: true,
   context: {
@@ -139,71 +130,4 @@ const countMachine = createMachine<Pick<Context, 'count'>, Event>({
   },
 });
 
-const homeMachine = createMachine<Context & { actors: Actor[] }, Event>({
-  id: 'home',
-  type: 'parallel',
-  predictableActionArguments: true,
-  context: {
-    actors: [],
-    count: 0,
-    posts: [],
-  },
-  on: sync('count', 'posts'),
-  states: {
-    posts: spawnMachine(postsMachine),
-    count: spawnMachine(countMachine),
-  },
-});
-
-const secondMachine = createMachine<Omit<Context, 'posts'> & { actors: Actor[] }, Event>({
-  id: 'second',
-  type: 'parallel',
-  predictableActionArguments: true,
-  context: {
-    actors: [],
-    count: 0,
-  },
-  on: sync('count'),
-  states: {
-    count: spawnMachine(countMachine),
-  },
-});
-
-const routerMachine = createMachine<Context & { actors: Actor[] }, Event>({
-  id: 'router',
-  initial: paths.includes(window.location.pathname as Path) ? window.location.pathname : '/404',
-  predictableActionArguments: true,
-  context: {
-    actors: [],
-    count: 0,
-    posts: [],
-  },
-  on: {
-    ...sync('count', 'posts'),
-    // Handle route state
-    // Listens for a call to route and moves to target provided by payload
-    route: paths.map((path) => ({
-      target: path,
-      cond: (_, event, parent) => {
-        if (path === event.payload && path === parent.state.value) return false;
-        return event.payload === path;
-      },
-    })),
-  },
-  states: {
-    '/': spawnMachine(homeMachine),
-    '/second': spawnMachine(secondMachine),
-    '/third': {},
-    '/404': {},
-  },
-});
-
-const service = interpret(routerMachine);
-
-if (CLIENT) {
-  // @ts-expect-error - debugging
-  window.service = service;
-}
-
-export default service;
 /* c8 ignore stop */

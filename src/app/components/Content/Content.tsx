@@ -1,17 +1,17 @@
 import { Link } from 'wouter';
-import * as styles from './Content.css';
 import { Button } from '@mui/material';
+import LinkComponent from 'elements/LinkComponent';
+import * as styles from './Content.css';
+import { LinkProps } from 'types';
 
 export type Props = {
   text: string;
-  link?: {
-    text: string;
-    to: string;
-  };
+  link?: LinkProps;
+  button?: LinkProps;
 };
 
 /* c8 ignore start */
-const Content = ({ text, link }: Props) => {
+const Content = ({ text, link, button }: Props) => {
   return (
     <div key="text" className={styles.content}>
       {text}
@@ -21,9 +21,9 @@ const Content = ({ text, link }: Props) => {
         </small>
       )}
       <br />
-      {link && (
-        <Button variant="contained" color="primary">
-          Hello world
+      {button && (
+        <Button LinkComponent={LinkComponent} href={button.to} variant="contained" color="primary">
+          {button.text}
         </Button>
       )}
     </div>

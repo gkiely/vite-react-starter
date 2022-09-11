@@ -1,19 +1,22 @@
 /* c8 ignore start */
 import { createElement, Dispatch, ReactNode, SetStateAction } from 'react';
-import service from '../machines/machine';
+import service, { routerMachine } from '../machines/router.machine';
 import * as Components from '../components';
 import * as Sections from '../sections';
 import { assertType } from 'utils';
 import { Intersect } from 'utils/types';
+import { InterpreterFrom } from 'xstate';
+import type { Events } from 'machines/router.machine';
 
 type C = typeof Components;
 type S = typeof Sections;
+type K = keyof C;
 
 type Props = {
   [K in keyof C]: { component: K; id: string } & Parameters<C[K]>[number];
 };
 
-export type ComponentConfig = Props[keyof C];
+export type ComponentConfig = Props[K];
 
 export type LayoutConfig = {
   id: string;
@@ -32,21 +35,39 @@ export type RouteConfig =
       components: Readonly<ComponentConfig[]>;
     };
 
-export const useSend = () => service.send;
+export const useSend = () => (event: Events) => service.send(event);
 
-export const createRenderer = <S>(fn: (store: S, state: typeof service.state) => RouteConfig) => fn;
+export const createRenderer = <C>(
+  fn: (
+    store: InterpreterFrom<typeof routerMachine>['state']['context'],
+    state: InterpreterFrom<typeof routerMachine>['state'],
+    context: C | undefined
+  ) => RouteConfig
+) => fn;
 
 export type SetState<S> = Dispatch<SetStateAction<S>>;
 
+// TODO: infer the correct type without using as const
 export const renderIf = <T>(flag: boolean, data: T): [T] | [] => {
   return flag ? [data] : [];
 };
 
+// TODO: ideally we don't return an empty component, we return undefined
+export const renderComponentIf = <T extends K>(flag: boolean, data: Props[T]): Props[T] => {
+  const emptyComponent = { component: '' };
+  assertType<Props[T]>(emptyComponent);
+  return flag ? data : emptyComponent;
+};
+
 export const expectType = <T>(data: T): T => data;
 
-export type ComponentProps = Props[keyof C];
+export type ComponentProps = Props[K];
 export const renderComponent = (props: ComponentProps) => {
   const Component = Components[props.component];
+
+  // Empty component used by renderComponentIf
+  if (!props.id && (props.component as string) === '') return undefined;
+
   if (props.id) {
     assertType<{ key: string }>(props);
     props.key = props.id;

@@ -1,10 +1,7 @@
-import { Store } from 'server/schemas';
 import { createRenderer, renderIf } from 'utils/routing';
-import { Props as HeaderProps } from 'components/Header/Header';
-type Button = Required<HeaderProps>['buttons'][number];
 
 /* c8 ignore start */
-export const render = createRenderer<Store>((store, state) => {
+export const render = createRenderer((store, state) => {
   return {
     title: 'Home route',
     components: [
@@ -34,26 +31,31 @@ export const render = createRenderer<Store>((store, state) => {
               payload: { count: -1 },
             },
           },
-          ...renderIf<Button>(state.matches('posts.idle'), {
+          ...renderIf(state.matches('posts.idle'), {
             id: 'Button-post-add',
             text: 'Add a post',
             action: {
               type: 'post.create',
               payload: { title: 'New post' },
             },
-          }),
-          ...renderIf<Button>(store.posts.length > 0, {
+          } as const),
+          ...renderIf(store.posts.length > 0, {
             id: 'Button-post-remove',
             text: 'remove',
             action: {
               type: 'post.delete',
               payload: { id: store.posts[store.posts.length - 1]?.id ?? '' },
             },
-          }),
+          } as const),
         ],
         links: [
           {
-            id: '/second',
+            id: 'pizza',
+            to: '/pizza',
+            text: 'Pizza route',
+          },
+          {
+            id: 'second',
             to: '/second',
             text: 'Second route',
           },

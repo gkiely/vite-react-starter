@@ -1,4 +1,77 @@
-- Build the modal exercise
+- Get onChange working or file a bug
+Pull this repo
+https://codesandbox.io/s/oj5lk0qk6y?module=/src/index.test.js&file=/src/index.test.js
+- Remove zod types
+- Types for state.matches
 
-- Remove store schema for routes, pull from machines
- 
+Then
+- See if there's a way to re-use machines with assigned actions
+- Move modal to use toggleMachine
+  - We might need a way to prefix -> modal.active, modal.inactive
+  - And then a way for the route to infer the prefixed event
+
+- Setup debug logging ?debug
+
+- I shouldn't have to set the machine.id to match the route
+  - Allow doing it via spawnMachine on router.machine
+
+spawnMachine should require a list of events that get passed to the child
+Either: 
+- Move sync to spawnMachine as a '*' listener via withConfig, then convert from '*' to list of keys provided, if that works
+Otherwise
+- When actor is saved to ref, store list of keys in it, then check for it in sync '*'
+
+Thread:
+https://github.com/testing-library/react-testing-library/issues/175
+
+
+- Build the modal exercise
+  - I want a way to just have route specific state
+    - In this case I want select all to be route specific, not in the store
+  - Move createListItem to pizza route machine
+  - Hash out simple machine, then extract to list and price if needed:
+    - Set up list machine and price machine
+
+https://www.youtube.com/watch?v=cO36bwdwAbE&t=41s
+
+Refactor structure
+- src/app/ui
+  - components
+  - elements
+  - groups
+  - sections
+
+- src/app/routes
+- src/app/machines
+
+- Implement abort fetch
+- Implement click out of modal
+
+- Fix renderIf for components
+  - Allow just returning undefined and filter, to avoid having to use spread?
+- Remove store schema for routes, pull from machines 
+- Fix import Event from '../../machine';
+- Change Event to something else
+
+- Test this out:
+https://github.com/preactjs/signals#react-integration
+
+AC with JTBD syntax
+- Able to open a modal
+- Able to select pizza toppings
+- As you select toppings, it updates the price
+- You can select all, unselect
+- When you confirm, the toppings show on the main page
+- When you cancel modal exits
+
+
+- Write tests for AC x
+- Make tests pass
+  - Make components
+    - Pizza
+      - Button
+      - List
+    - PizzaModal
+- Refactor
+
+

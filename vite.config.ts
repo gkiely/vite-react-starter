@@ -62,18 +62,39 @@ export default defineConfig(({ command }) => ({
       identifiers: command === 'serve' ? 'debug' : 'short',
     }),
     command === 'build' ? splitVendorChunkPlugin() : undefined,
-    // Remove act(() => ...) from code
     !TEST &&
       filterReplace([
         {
+          // Remove single line act(() => ...) from code
           filter: /src\/app\/App\.tsx$/,
           replace: {
-            // https://regex101.com/r/n2TIfm/1
-            from: /(act\S+\s=>\s)([^)]+)(\))/g,
+            // https://regex101.com/r/g6B3Lf/2
+            from: /(act\S+\s=>\s)([^){]+)(\))/g,
+            to: '$2',
+          },
+        },
+        {
+          // Remove multi-line act(() => {}) from code
+          filter: /src\/app\/App\.tsx$/,
+          replace: {
+            // https://regex101.com/r/bXL4Qa/3
+            from: /(act\(\(\)\s=>\s\{)(((?!(\}\);))[\s\S])*)(\}\);)/g,
             to: '$2',
           },
         },
       ]),
+    // beforeImport
+    // TEST &&
+    //   filterReplace([
+    //     {
+    //       filter: /src\/app\/tests\/pizza\.test\.tsx?$/,
+    //       replace: {
+    //         // eslint-disable-next-line regexp/no-super-linear-backtracking
+    //         from: /(beforeImport\(\(\)\s=>\s\{\s+)(((?!(\n\}\);))[\s\S])+)(\s+\}\);)/g,
+    //         to: '$2',
+    //       },
+    //     },
+    //   ]),
   ],
   // TODO
   // Submit fix to esbuild for 'linked': https://github.com/evanw/esbuild/blob/master/pkg/api/api_impl.go#L1458
@@ -93,6 +114,8 @@ export default defineConfig(({ command }) => ({
       store: path.resolve(__dirname, './src/app/store'),
       utils: path.resolve(__dirname, './src/app/utils'),
       common: path.resolve(__dirname, './src/app/common'),
+      machines: path.resolve(__dirname, './src/app/machines'),
+      types: path.resolve(__dirname, './src/app/types'),
       server: command === 'serve' ? './server' : path.resolve(__dirname, './server'),
     },
   },
@@ -103,6 +126,9 @@ export default defineConfig(({ command }) => ({
   },
   server: {
     port: 3000,
+    watch: {
+      ignored: ['/coverage'],
+    },
     proxy: {
       '/server': 'http://localhost:8080/',
       '/api': 'http://localhost:8080/',

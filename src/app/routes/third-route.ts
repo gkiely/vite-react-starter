@@ -1,8 +1,7 @@
 /* c8 ignore start */
-import { Store } from 'server/schemas';
 import { createRenderer } from 'utils/routing';
 
-export const render = createRenderer<Store>(() => {
+export const render = createRenderer(() => {
   return {
     title: 'Third Route',
     sections: [
@@ -35,6 +34,10 @@ export const render = createRenderer<Store>(() => {
         text: 'Content header',
         link: {
           text: 'Second route',
+          to: '/second',
+        },
+        button: {
+          text: 'Back to second route',
           to: '/second',
         },
       },

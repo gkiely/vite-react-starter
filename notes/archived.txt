@@ -457,3 +457,33 @@ https://github.com/cloudflare/wrangler2/issues/771
 //   return vi.spyOn(global, 'fetch').mockImplementationOnce((path) => app.request(requestPath));
 // };
 
+
+How to do TDD a component like a modal?
+- You either make a new route for that component, /component/MyModal
+- You make a story or export default props for the that component
+- You just test the route
+
+I will start with testing the route, and move to other solutions when needed
+
+
+
+- Build vitest-preview/test-preview
+  - Works with vitest initially
+  - Should be lightweight
+
+// console.log('matches', query);
+// // Testing matches
+// // eslint-disable-next-line no-console
+// console.log(
+//   '>',
+//   child.id,
+//   snapshot.value,
+//   query,
+//   { prefix, postfix },
+//   snapshot.matches(postfix),
+//   Array.from(child.children.keys())
+// );
+// if ((child.id === prefix && snapshot.matches(postfix)) || snapshot.matches(query)) {
+//   // eslint-disable-next-line no-console
+//   console.log('matched', query);
+// }

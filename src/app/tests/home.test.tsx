@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import service from './machines/machine';
+import service from '../machines/router.machine';
 import { Post } from 'server/schemas';
-import App from './App';
+import App from '../App';
 
 export const posts: Post[] = [
   { id: '1', title: 'Good Morning' },

@@ -1,18 +1,23 @@
 import { Fragment } from 'react';
 import { Link } from 'wouter';
-import logo from '../../../img/logo.svg';
+import logo from 'img/logo.svg';
 import * as styles from './Header.css';
 import Button from 'elements/Button/Button';
 import { useSend } from 'utils/routing';
 import { renderTags, Tags } from 'utils';
 import type { Path } from 'routes/paths';
-import type { Event } from '../../machines/machine';
+import type { Events } from 'machines/router.machine';
 
 export type Props = {
   title: string;
   body?: Tags;
-  buttons?: { id: string; action?: Event; text: string }[];
+  buttons?: {
+    id: string;
+    action?: Extract<Events, { type: 'count.update' | 'post.create' | 'post.delete' }>;
+    text: string;
+  }[];
   links?: { id: string; to: Path; text: string }[];
+  image?: boolean;
 };
 
 /* c8 ignore start */
