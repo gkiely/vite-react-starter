@@ -4,10 +4,6 @@ https://codesandbox.io/s/oj5lk0qk6y?module=/src/index.test.js&file=/src/index.te
 - Remove zod types
 - Types for state.matches
 
-- Write a test for:
-Open modal, select all, unselect cheese, cancel, open modal
-Check it against the 
-
 
 Then
 - See if there's a way to re-use machines with assigned actions
