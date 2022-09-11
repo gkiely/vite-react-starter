@@ -29,6 +29,7 @@ export type RouteContext = {
 };
 
 type Context = RouteContext & {
+  items: ListItem[];
   actors: Actor[];
 };
 
@@ -132,7 +133,7 @@ export const listMachine = createMachine<Omit<RouteContext, 'price'>, Events>(
   }
 );
 
-export const modalMachine = createMachine<Context & { items: ListItem[] }, Events>({
+export const modalMachine = createMachine<Context, Events>({
   id: 'modal',
   initial: 'closed',
   predictableActionArguments: true,
@@ -146,6 +147,11 @@ export const modalMachine = createMachine<Context & { items: ListItem[] }, Event
   on: sync('cartPrice', 'cartItems'),
   states: {
     closed: {
+      entry: [
+        assign(({ items, cartItems }) => ({
+          items: items.length ? items : cartItems,
+        })),
+      ],
       on: {
         'modal.open': 'open',
       },
@@ -186,7 +192,7 @@ const getCartItems = () => {
 };
 
 // pizza machine
-const pizzaRoute = createMachine<Context, Events>({
+const pizzaRoute = createMachine<Omit<Context, 'items'>, Events>({
   id: '/pizza',
   type: 'parallel',
   predictableActionArguments: true,
