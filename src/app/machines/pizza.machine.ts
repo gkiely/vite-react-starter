@@ -24,7 +24,6 @@ const createListItem = ({
 
 export type RouteContext = {
   cartItems: ListItem[];
-  items: ListItem[];
   price: number;
   cartPrice: number;
 };
@@ -57,7 +56,7 @@ export type Events =
       type: 'modal.confirm';
     };
 
-export const listMachine = createMachine<Omit<RouteContext, 'items' | 'price'>, Events>(
+export const listMachine = createMachine<Omit<RouteContext, 'price'>, Events>(
   {
     id: 'list',
     initial: 'unselected',
@@ -133,7 +132,7 @@ export const listMachine = createMachine<Omit<RouteContext, 'items' | 'price'>, 
   }
 );
 
-export const modalMachine = createMachine<Context, Events>({
+export const modalMachine = createMachine<Context & { items: ListItem[] }, Events>({
   id: 'modal',
   initial: 'closed',
   predictableActionArguments: true,
@@ -196,10 +195,9 @@ const pizzaRoute = createMachine<Context, Events>({
     price: 0,
     cartPrice: 0,
     cartItems: getCartItems(),
-    items: getCartItems(),
   },
   on: {
-    ...sync('price', 'items', 'cartPrice', 'cartItems'),
+    ...sync('price', 'cartPrice', 'cartItems'),
   },
   states: {
     modal: spawnMachine(modalMachine),

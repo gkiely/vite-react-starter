@@ -6,7 +6,6 @@ const initialContext: RouteContext = {
   cartItems: [],
   price: 0,
   cartPrice: 0,
-  items: [],
 };
 
 export const render = createRenderer<RouteContext>((_store, state, context = initialContext) => {
