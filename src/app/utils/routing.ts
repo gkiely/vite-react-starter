@@ -61,7 +61,7 @@ export const renderComponentIf = <T extends K>(flag: boolean, data: Props[T]): P
 
 export const expectType = <T>(data: T): T => data;
 
-export type ComponentProps = Props[keyof C];
+export type ComponentProps = Props[K];
 export const renderComponent = (props: ComponentProps) => {
   const Component = Components[props.component];
 
