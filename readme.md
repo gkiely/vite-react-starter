@@ -33,6 +33,13 @@
 ### Additional notes
 
 - ESLint configuration:
+
   - `.eslintrc.json`: VSCode and vite-checker-plugin
   - `.eslintrc.dev.json`: pre-commit hook (fast)
   - `.eslintrc.prod.json`: pre-push hook (slow)
+
+- useState and useReducer hooks are forbidden via [eslint-plugin-no-state-hooks](https://github.com/gkiely/eslint-plugin-no-state-hooks)
+  - Use [XState](https://xstate.js.org/docs/) machines instead
+  - Reasoning:
+    - Decouples business logic from UI
+    - Allows for time travel debugging
