@@ -39,7 +39,14 @@
   - `.eslintrc.prod.json`: pre-push hook (slow)
 
 - useState and useReducer hooks are forbidden via [eslint-plugin-no-state-hooks](https://github.com/gkiely/eslint-plugin-no-state-hooks)
+
   - Use [XState](https://xstate.js.org/docs/) machines instead
   - Reasoning:
     - Decouples business logic from UI
-    - Allows for time travel debugging
+    - Allows for correct time travel debugging
+
+- String literals in JSX are forbidden via [react/jsx-no-literals](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-no-literals.md)
+  - Use route to provide props
+  - Reasoning:
+    - Internationalization
+    - Component re-usability
