@@ -20,7 +20,8 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:no-await-in-promise/recommended",
-    "plugin:jsx-no-leaked-values/recommended"
+    "plugin:jsx-no-leaked-values/recommended",
+    "plugin:no-state-hooks/recommended"
   ],
   "rules": {
     "no-sequences": "off",
@@ -63,6 +64,7 @@
     "no-shadow-restricted-names": "error",
     "no-constant-binary-expression": "error",
     "fp/no-class": "error",
+    "fp/no-this": "error",
     "regexp/no-unused-capturing-group": "off",
     "testing-library/no-debugging-utils": "off",
     "testing-library/render-result-naming-convention": "off",

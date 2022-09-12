@@ -8,7 +8,7 @@ import { renderComponent, renderLayout, RouteConfig } from './utils/routing';
 import service from './machines/router.machine';
 import { matches } from './machines/machine-utils';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { AnyInterpreter } from 'xstate';
+import type { AnyInterpreter } from 'xstate';
 
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {

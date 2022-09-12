@@ -64,7 +64,7 @@ const wranglerPlugin = ({
       // It takes wrangler 300ms to restart
       // delay request until server is ready
       server.middlewares.use((req, _res, next) => {
-        if (hotUpdatePath.endsWith(path) && req.url.includes(path)) {
+        if (hotUpdatePath.endsWith(path) && req.url?.includes(path)) {
           const p = new Promise((resolve) => setTimeout(resolve, 300));
           p.then(next).catch(next);
           hotUpdatePath = '';
