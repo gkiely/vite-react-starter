@@ -8,7 +8,6 @@ import { renderComponent, renderLayout, RouteConfig } from './utils/routing';
 import service from './machines/router.machine';
 import { matches } from './machines/machine-utils';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { act } from 'utils/test-utils';
 import { AnyInterpreter } from 'xstate';
 
 /* c8 ignore start */
@@ -38,13 +37,12 @@ const Route = ({ path }: { path: Path }) => {
         ...state,
         matches: (state: string) => matches(state, service),
       } as typeof state;
-      act(() => {
-        const routeService = state.children[path];
-        assertType<AnyInterpreter>(routeService);
-        const routeSnapshot = routeService?.getSnapshot() ?? {};
-        assertType<RouteContext>(routeSnapshot.context);
-        setRoute(render(state.context, routeState, routeSnapshot.context));
-      });
+
+      const routeService = state.children[path];
+      assertType<AnyInterpreter>(routeService);
+      const routeSnapshot = routeService?.getSnapshot() ?? {};
+      assertType<RouteContext>(routeSnapshot.context);
+      setRoute(render(state.context, routeState, routeSnapshot.context));
     });
     return () => {
       sub.unsubscribe();

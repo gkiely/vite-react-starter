@@ -11,6 +11,8 @@ export type AtLeastOne<T> = {
   [K in keyof T]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<keyof T, K>>>;
 }[keyof T];
 
+// export type NonEmptyArray<T> = [T, ...T[]];
+
 // https://stackoverflow.com/a/56300887/1845423
 // export type Flatten<T> = T extends { type: 'Union'; items: unknown[] }
 //   ? { [P in keyof T]: P extends 'items' ? Flatten<T[P][number]> : never }[keyof T]

@@ -85,3 +85,13 @@ test('open, select all, cancel, open', () => {
   openModal();
   expect(screen.getByText('Cheese')).toBeInTheDocument();
 });
+
+test('select all checks all checkboxes', () => {
+  render(<App />);
+  openModal();
+  const checkbox = screen.getByLabelText(/select all/i);
+  fireEvent.click(checkbox);
+  const cheese = screen.getByLabelText(/cheese/i);
+  expect(cheese).toBeChecked();
+  expect(checkbox).toBeChecked();
+});
