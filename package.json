@@ -40,6 +40,8 @@
     "e2e": "cypress open --browser electron --component",
     "test:e2e": "cypress run -q --component --config video=false",
     "tsc": "tsc",
+    "tsc-diagnose": "tsc --extendedDiagnostics",
+    "tsc-list": "tsc --listFilesOnly",
     "tsw": "tsc --watch",
     "coverage": "vitest run; npm -s run view-coverage",
     "view-coverage": "osascript ./scripts/open-browser.scpt 'Code coverage report' 'coverage/index.html'",
