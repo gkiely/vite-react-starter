@@ -12,28 +12,24 @@ import type { AnyInterpreter } from 'xstate';
 
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
-  // Effects
   useEffect(() => {
     window.scrollTo(0, 0);
     service.send('route', { payload: path });
   }, [path]);
 
-  // Methods
   const subscribe = useCallback((fn: () => void) => {
     const sub = service.subscribe(fn);
     return () => sub.unsubscribe();
   }, []);
-  const getSnapshot = useCallback(() => service.getSnapshot(), []);
 
-  // App state
-  const state = useSyncExternalStore(subscribe, getSnapshot);
+  // State
+  const state = useSyncExternalStore(subscribe, () => service.getSnapshot());
   const routeState = {
     ...state,
     matches: (state: string) => matches(state, service),
   } as typeof state;
 
-  // Route state
-  const routeService = getSnapshot().children[path];
+  const routeService = service.getSnapshot().children[path];
   if (routeService) {
     assertType<AnyInterpreter>(routeService);
   }
