@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useSyncExternalStore } from 'react';
 import { useLocation } from 'wouter';
 import * as styles from './App.css';
 import { paths, Path } from './routes/paths';
 import { RouteContext, renderers } from './routes/routes';
 import { assertType } from './utils';
-import { renderComponent, renderLayout, RouteConfig } from './utils/routing';
+import { renderComponent, renderLayout } from './utils/routing';
 import service from './machines/router.machine';
 import { matches } from './machines/machine-utils';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
@@ -12,42 +12,37 @@ import type { AnyInterpreter } from 'xstate';
 
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
-  const render = renderers[path];
-
-  const routeService = service.getSnapshot().children[path];
-  if (routeService) {
-    assertType<AnyInterpreter>(routeService);
-  }
-
-  const snapshot = service.getSnapshot();
-  const routeSnapshot = routeService?.getSnapshot() ?? {};
-  assertType<{ context: RouteContext }>(routeSnapshot);
-  const [route, setRoute] = useState<RouteConfig>(
-    render(snapshot.context, snapshot, routeSnapshot.context)
-  );
-
+  // Effects
   useEffect(() => {
     window.scrollTo(0, 0);
     service.send('route', { payload: path });
   }, [path]);
 
-  useEffect(() => {
-    const sub = service.subscribe((state) => {
-      const routeState = {
-        ...state,
-        matches: (state: string) => matches(state, service),
-      } as typeof state;
+  // Methods
+  const subscribe = useCallback((fn: () => void) => {
+    const sub = service.subscribe(fn);
+    return () => sub.unsubscribe();
+  }, []);
+  const getSnapshot = useCallback(() => service.getSnapshot(), []);
 
-      const routeService = state.children[path];
-      assertType<AnyInterpreter>(routeService);
-      const routeSnapshot = routeService?.getSnapshot() ?? {};
-      assertType<RouteContext>(routeSnapshot.context);
-      setRoute(render(state.context, routeState, routeSnapshot.context));
-    });
-    return () => {
-      sub.unsubscribe();
-    };
-  }, [render, path]);
+  // App state
+  const state = useSyncExternalStore(subscribe, getSnapshot);
+  const routeState = {
+    ...state,
+    matches: (state: string) => matches(state, service),
+  } as typeof state;
+
+  // Route state
+  const routeService = getSnapshot().children[path];
+  if (routeService) {
+    assertType<AnyInterpreter>(routeService);
+  }
+  const routeSnapshot = routeService?.getSnapshot() ?? {};
+  assertType<{ context: RouteContext }>(routeSnapshot);
+
+  // Render
+  const render = renderers[path];
+  const route = render(state.context, routeState, routeSnapshot.context);
 
   return (
     <>
