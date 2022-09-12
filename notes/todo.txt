@@ -3,6 +3,7 @@
 - Remove zod types
 
 Then
+- Set up a route with a table containing 1000 rows of toppings, sortable by input
 - See if there's a way to re-use machines with assigned actions
 - Move modal to use toggleMachine
   - We might need a way to prefix -> modal.active, modal.inactive
