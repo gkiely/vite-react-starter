@@ -3,6 +3,11 @@
 - Remove zod types
 
 Then
+- Do a quick prototype of time travel debugging
+  - Should do rendering, and also perform effects
+  - Should match the timing
+  - Should be able to drag
+  - Should show screenshots of app
 - Set up a route with a table containing 1000 rows of toppings, sortable by input
 - Start working on a screen for ynaw
 
