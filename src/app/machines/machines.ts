@@ -2,7 +2,7 @@ import { createMachine, assign, DoneInvokeEvent } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { DEV } from 'utils/constants';
 import { delay } from 'utils';
-import type { Context } from './router.machine';
+import type { Store } from './router.machine';
 
 /* c8 ignore start */
 export type Events =
@@ -36,7 +36,7 @@ const fetchPosts = async () => {
   return posts;
 };
 
-export const postsMachine = createMachine<Pick<Context, 'posts'>, Events>({
+export const postsMachine = createMachine<Pick<Store, 'posts'>, Events>({
   id: 'posts',
   predictableActionArguments: true,
   context: {
@@ -97,7 +97,7 @@ export const postsMachine = createMachine<Pick<Context, 'posts'>, Events>({
   },
 });
 
-export const countMachine = createMachine<Pick<Context, 'count'>, Events>({
+export const countMachine = createMachine<Pick<Store, 'count'>, Events>({
   id: 'count',
   predictableActionArguments: true,
   context: {

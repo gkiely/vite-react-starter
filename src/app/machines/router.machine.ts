@@ -14,11 +14,13 @@ import homeMachine from './home.machine';
 import secondMachine from './second.machine';
 import { Post } from 'server/schemas';
 
-// Global store context
-export type Context = {
+// Global store
+export type Store = {
   count: number;
   posts: Post[];
 };
+
+type Context = Store & { actors: Actor[] };
 
 type RouteEvent = {
   type: 'route';
@@ -33,36 +35,26 @@ export type Events =
   | {
       type: 'xstate.update';
       state: {
-        context: Context;
+        context: Store;
         machine: AnyStateMachine;
         event: {
           type: Exclude<Events['type'], 'xstate.update'>;
-          payload?: Context | Partial<Context>;
+          payload?: Store | Partial<Store>;
         };
       };
     };
 
-// export type Store = {
-//   count: number;
-//   posts: Post[];
-// };
-
-// type RouteContext = {
-// }
-
 // Listens for a call to route and moves to target provided by payload
-const onRoute: TransitionConfigOrTarget<Context & { actors: Actor[] }, RouteEvent> = paths.map(
-  (path) => ({
-    target: path,
-    cond: (_, event, parent) => {
-      if (path === event.payload && path === parent.state.value) return false;
-      return event.payload === path;
-    },
-  })
-);
+const onRoute: TransitionConfigOrTarget<Context, RouteEvent> = paths.map((path) => ({
+  target: path,
+  cond: (_, event, parent) => {
+    if (path === event.payload && path === parent.state.value) return false;
+    return event.payload === path;
+  },
+}));
 
 /* c8 ignore start */
-export const routerMachine = createMachine<Context & { actors: Actor[] }, Events>({
+export const routerMachine = createMachine<Context, Events>({
   id: 'router',
   initial: paths.includes(window.location.pathname as Path) ? window.location.pathname : '/404',
   predictableActionArguments: true,

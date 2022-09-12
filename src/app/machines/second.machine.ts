@@ -1,10 +1,10 @@
 import { createMachine, Actor } from 'xstate';
 import { spawnMachine, sync } from './machine-utils';
 import { Events, countMachine } from './machines';
-import type { Context } from './router.machine';
+import type { Store } from './router.machine';
 
 /* c8 ignore start */
-export const secondMachine = createMachine<Pick<Context, 'count'> & { actors: Actor[] }, Events>({
+export const secondMachine = createMachine<Pick<Store, 'count'> & { actors: Actor[] }, Events>({
   id: '/second',
   type: 'parallel',
   predictableActionArguments: true,

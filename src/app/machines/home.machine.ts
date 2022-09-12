@@ -1,11 +1,11 @@
 import { createMachine, Actor } from 'xstate';
 import { spawnMachine, sync } from './machine-utils';
 import { Events, countMachine, postsMachine } from './machines';
-import type { Context } from './router.machine';
+import type { Store } from './router.machine';
 
 /* c8 ignore start */
 export const homeMachine = createMachine<
-  Pick<Context, 'count' | 'posts'> & { actors: Actor[] },
+  Pick<Store, 'count' | 'posts'> & { actors: Actor[] },
   Events
 >({
   id: '/',
