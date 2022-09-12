@@ -1,9 +1,6 @@
 - Get onChange working or file a bug
-Pull this repo
-https://codesandbox.io/s/oj5lk0qk6y?module=/src/index.test.js&file=/src/index.test.js
+  - Set it up in vue-react-ts
 - Remove zod types
-- Types for state.matches
-
 
 Then
 - See if there's a way to re-use machines with assigned actions

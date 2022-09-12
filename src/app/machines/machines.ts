@@ -1,8 +1,7 @@
-import { createMachine, assign, DoneInvokeEvent, AnyStateMachine } from 'xstate';
+import { createMachine, assign, DoneInvokeEvent } from 'xstate';
 import { Post, postsSchema } from 'server/schemas';
 import { DEV } from 'utils/constants';
 import { delay } from 'utils';
-import type { Path } from '../routes/paths';
 import type { Context } from './router.machine';
 
 /* c8 ignore start */
@@ -18,21 +17,6 @@ export type Events =
   | {
       type: 'post.delete';
       payload: { id: string };
-    }
-  | {
-      type: 'route';
-      payload: Path;
-    }
-  | {
-      type: 'xstate.update';
-      state: {
-        context: Context;
-        machine: AnyStateMachine;
-        event: {
-          type: Exclude<Events['type'], 'xstate.update'>;
-          payload?: Context | Partial<Context>;
-        };
-      };
     };
 
 const fetchPosts = async () => {

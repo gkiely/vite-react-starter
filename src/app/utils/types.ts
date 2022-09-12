@@ -1,5 +1,5 @@
 import _ from 'cypress/types/lodash';
-import type { AnyStateMachine, StateMachine } from 'xstate';
+// import type { AnyStateMachine, StateMachine } from 'xstate';
 
 export type Intersect<T> = (T extends unknown ? (x: T) => 0 : never) extends (x: infer R) => 0
   ? R
@@ -16,11 +16,11 @@ export type AtLeastOne<T> = {
 //   ? { [P in keyof T]: P extends 'items' ? Flatten<T[P][number]> : never }[keyof T]
 //   : T;
 
-// Get list of events from machines
-export type GetEvents<T extends AnyStateMachine> = T extends StateMachine<
-  infer _Context,
-  infer _,
-  infer Events
->
-  ? Events
-  : never;
+// // Get list of events from machines
+// export type GetEvents<T extends AnyStateMachine> = T extends StateMachine<
+//   infer _Context,
+//   infer _,
+//   infer Events
+// >
+//   ? Events
+//   : never;

@@ -4,8 +4,8 @@ import service, { routerMachine } from '../machines/router.machine';
 import * as Components from '../components';
 import * as Sections from '../sections';
 import { assertType } from 'utils';
-import { Intersect } from 'utils/types';
-import { InterpreterFrom } from 'xstate';
+import type { Intersect } from 'utils/types';
+import type { ContextFrom, StateFrom } from 'xstate';
 import type { Events } from 'machines/router.machine';
 
 type C = typeof Components;
@@ -39,8 +39,8 @@ export const useSend = () => (event: Events) => service.send(event);
 
 export const createRenderer = <C>(
   fn: (
-    store: InterpreterFrom<typeof routerMachine>['state']['context'],
-    state: InterpreterFrom<typeof routerMachine>['state'],
+    store: ContextFrom<typeof routerMachine>,
+    state: StateFrom<typeof routerMachine>,
     context: C | undefined
   ) => RouteConfig
 ) => fn;

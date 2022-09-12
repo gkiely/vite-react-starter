@@ -1,23 +1,65 @@
-import { createMachine, interpret, Actor } from 'xstate';
+import {
+  createMachine,
+  interpret,
+  Actor,
+  EventFrom,
+  AnyStateMachine,
+  TransitionConfigOrTarget,
+} from 'xstate';
 import { CLIENT } from 'utils/constants';
 import { paths, Path } from '../routes/paths';
 import { spawnMachine, sync } from './machine-utils';
 import pizzaMachine from './pizza.machine';
 import homeMachine from './home.machine';
 import secondMachine from './second.machine';
-import type { GetEvents } from 'utils/types';
 import { Post } from 'server/schemas';
-
-export type Events =
-  | GetEvents<typeof homeMachine>
-  | GetEvents<typeof secondMachine>
-  | GetEvents<typeof pizzaMachine>;
 
 // Global store context
 export type Context = {
   count: number;
   posts: Post[];
 };
+
+type RouteEvent = {
+  type: 'route';
+  payload: Path;
+};
+
+export type Events =
+  | EventFrom<typeof homeMachine>
+  | EventFrom<typeof secondMachine>
+  | EventFrom<typeof pizzaMachine>
+  | RouteEvent
+  | {
+      type: 'xstate.update';
+      state: {
+        context: Context;
+        machine: AnyStateMachine;
+        event: {
+          type: Exclude<Events['type'], 'xstate.update'>;
+          payload?: Context | Partial<Context>;
+        };
+      };
+    };
+
+// export type Store = {
+//   count: number;
+//   posts: Post[];
+// };
+
+// type RouteContext = {
+// }
+
+// Listens for a call to route and moves to target provided by payload
+const onRoute: TransitionConfigOrTarget<Context & { actors: Actor[] }, RouteEvent> = paths.map(
+  (path) => ({
+    target: path,
+    cond: (_, event, parent) => {
+      if (path === event.payload && path === parent.state.value) return false;
+      return event.payload === path;
+    },
+  })
+);
 
 /* c8 ignore start */
 export const routerMachine = createMachine<Context & { actors: Actor[] }, Events>({
@@ -31,15 +73,7 @@ export const routerMachine = createMachine<Context & { actors: Actor[] }, Events
   },
   on: {
     ...sync('count', 'posts'),
-    // Handle route state
-    // Listens for a call to route and moves to target provided by payload
-    route: paths.map((path) => ({
-      target: path,
-      cond: (_, event, parent) => {
-        if (path === event.payload && path === parent.state.value) return false;
-        return event.payload === path;
-      },
-    })),
+    route: onRoute,
   },
   states: {
     '/': spawnMachine(homeMachine),
