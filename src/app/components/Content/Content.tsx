@@ -13,7 +13,7 @@ export type Props = {
 /* c8 ignore start */
 const Content = ({ text, link, button }: Props) => {
   return (
-    <div key="text" className={styles.content}>
+    <div className={styles.content}>
       {text}
       {link && (
         <small>

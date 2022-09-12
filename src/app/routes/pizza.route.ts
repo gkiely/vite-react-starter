@@ -33,6 +33,7 @@ export const render = createRenderer<RouteContext>((_store, state, context = ini
       renderComponentIf(state.matches('modal.open'), {
         id: 'Modal',
         component: 'PizzaModal',
+        title: 'Pizza toppings',
         text: `There will be an upcharge of $${context.cartPrice}`,
         buttons: [
           {
@@ -58,12 +59,12 @@ export const render = createRenderer<RouteContext>((_store, state, context = ini
             id: 'SelectAll',
             text: 'Select all',
             checked: state.matches('list.selected'),
-            price: Number(
+            price:
+              '$' +
               context.cartItems
-                .map((o) => o.price)
+                .map((o) => Number(o.price))
                 .reduce((a, b) => a + b, 0)
-                .toFixed(2)
-            ),
+                .toFixed(2),
             action: {
               type: 'select',
             },
@@ -76,6 +77,7 @@ export const render = createRenderer<RouteContext>((_store, state, context = ini
                   type: 'change',
                   payload: item.id,
                 },
+                price: '$' + String(item.price),
               } as const)
           ),
         ],

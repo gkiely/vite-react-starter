@@ -27,6 +27,7 @@ export const render = createRenderer(() => {
       {
         id: 'sidebar',
         component: 'Sidebar',
+        title: 'Sidebar',
       },
       {
         id: 'content-header',

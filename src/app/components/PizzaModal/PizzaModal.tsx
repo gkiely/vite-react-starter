@@ -3,7 +3,13 @@ import { useSend } from 'utils/routing';
 import { Events, ListItem } from 'machines/pizza.machine';
 import { TEST } from 'utils/constants';
 
+type Topping = Omit<ListItem, 'price'> & {
+  price: string;
+  action?: Extract<Events, { type: 'change' | 'select' }>;
+};
+
 export type Props = {
+  title: string;
   text: string;
   buttons: {
     text: string;
@@ -12,20 +18,18 @@ export type Props = {
   actions: {
     close: Extract<Events, { type: 'modal.close' }>;
   };
-  items: (ListItem & {
-    action?: Extract<Events, { type: 'change' | 'select' }>;
-  })[];
+  items: Topping[];
 };
 
 /* c8 ignore start */
-const PizzaModal = ({ actions, text, buttons, items }: Props) => {
+const PizzaModal = ({ actions, title, text, buttons, items }: Props) => {
   const send = useSend();
   return (
     <>
       <div className={styles.background} />
       <div className={styles.modal} onClick={() => send(actions.close)}>
         <div className={styles.content} onClick={(e) => e.stopPropagation()}>
-          <h1>Pizza toppings</h1>
+          <h1>{title}</h1>
           <small>{text}</small>
           <br />
           <br />
@@ -46,7 +50,7 @@ const PizzaModal = ({ actions, text, buttons, items }: Props) => {
                   type="checkbox"
                 />
                 <label htmlFor={item.id}>{item.text}</label>
-                &nbsp;&nbsp;<small>${item.price}</small>
+                &nbsp;&nbsp;<small>{item.price}</small>
               </li>
             ))}
           </ul>

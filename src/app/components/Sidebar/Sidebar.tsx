@@ -1,10 +1,12 @@
 import * as styles from './Sidebar.css';
 
-export type Props = unknown;
+type Props = {
+  title: string;
+};
 
 /* c8 ignore start */
-const SideBar = (_props: Props) => {
-  return <div className={styles.sidebar}>Sidebar</div>;
+const SideBar = ({ title }: Props) => {
+  return <div className={styles.sidebar}>{title}</div>;
 };
 /* c8 ignore stop */
 
