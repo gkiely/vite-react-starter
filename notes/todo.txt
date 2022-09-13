@@ -5,6 +5,9 @@
   - Set it up in vue-react-ts
 - Remove zod types
 
+- Submit bug, it's possible to just not include context and have no type errors fire
+  - If dev passes a generic it should be a required field
+
 Then
 - Do a quick prototype of time travel debugging
   - Should do rendering, and also perform effects
