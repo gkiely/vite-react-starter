@@ -9,6 +9,7 @@ import service from './machines/router.machine';
 import { matches } from './machines/machine-utils';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import type { AnyInterpreter } from 'xstate';
+import { EmptyInterpreter } from 'types';
 
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
@@ -17,16 +18,18 @@ const Route = ({ path }: { path: Path }) => {
     service.send('route', { payload: path });
   }, [path]);
 
+  const emptySnapshot = {
+    context: undefined,
+    children: [],
+  };
+
   const subscribe = useCallback((fn: () => void) => {
     const sub = service.subscribe(fn);
     return () => sub.unsubscribe();
   }, []);
 
   // State
-  const state = useSyncExternalStore(subscribe, () => service.getSnapshot()) ?? {
-    context: undefined,
-    children: [],
-  };
+  const state = useSyncExternalStore(subscribe, () => service.getSnapshot()) ?? emptySnapshot;
   const routeState = {
     ...state,
     matches: (state: string) => matches(state, service),
@@ -35,9 +38,9 @@ const Route = ({ path }: { path: Path }) => {
   const snapshot = service.getSnapshot();
   const routeService = snapshot ? snapshot.children[path] : undefined;
   if (routeService) {
-    assertType<AnyInterpreter>(routeService);
+    assertType<AnyInterpreter | EmptyInterpreter>(routeService);
   }
-  const routeSnapshot = routeService?.getSnapshot() ?? { context: undefined, children: [] };
+  const routeSnapshot = routeService?.getSnapshot() ?? emptySnapshot;
   assertType<{ context: RouteContext }>(routeSnapshot);
 
   // Render
