@@ -7,6 +7,7 @@ import { assertType } from 'utils';
 import type { Intersect } from 'utils/types';
 import type { ContextFrom, StateFrom } from 'xstate';
 import type { Events } from 'machines/router.machine';
+import { StateIds } from 'machines/types';
 
 type C = typeof Components;
 type S = typeof Sections;
@@ -36,11 +37,12 @@ export type RouteConfig =
     };
 
 export const useSend = () => (event: Events) => service.send(event);
-
 export const createRenderer = <C>(
   fn: (
     store: ContextFrom<typeof routerMachine>,
-    state: StateFrom<typeof routerMachine>,
+    state: Omit<StateFrom<typeof routerMachine>, 'matches'> & {
+      matches: (query: StateIds) => boolean;
+    },
     context: C | undefined
   ) => RouteConfig
 ) => fn;

@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
 import wranglerPlugin from './scripts/vite-plugin-wrangler';
 import clearVitest from './scripts/vite-plugin-clear-vitest';
+// import generateTypes from './scripts/vite-plugin-generate-types';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import path from 'node:path';
 const TEST = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
@@ -21,7 +22,11 @@ export default defineConfig(({ command }) => ({
     environment: 'happy-dom',
     globals: true,
     setupFiles: ['./setup.vitest.ts'],
-    include: ['src/**/*.test.{ts,tsx}', 'server/**/*.test.{ts,tsx}'],
+    include: [
+      'src/**/*.test.{ts,tsx}',
+      'server/**/*.test.{ts,tsx}',
+      'src/app/utils/generate-types.tsx',
+    ],
     css: false,
     deps: {
       fallbackCJS: true,
@@ -44,6 +49,7 @@ export default defineConfig(({ command }) => ({
   },
   plugins: [
     react(),
+    // generateTypes(),
     process.argv.includes('--server') ? wranglerPlugin() : undefined,
     DEV &&
       checker({

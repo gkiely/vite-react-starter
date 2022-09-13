@@ -10,7 +10,7 @@
     "composite": true,
     "noEmit": false,
     "resolveJsonModule": true,
-    "types": ["@types/node", "@cloudflare/workers-types"]
+    "types": ["@types/node", "@cloudflare/workers-types"],
   },
   "include": ["vite.config.ts", "*.ts", "scripts", "package.json"]
 }

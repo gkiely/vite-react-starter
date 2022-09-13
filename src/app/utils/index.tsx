@@ -88,4 +88,10 @@ export const toEnum = <T extends string>(array: readonly T[]) => {
 
 export const unique = <T extends unknown>(arr: T[]) => [...new Set(arr)];
 
+// https://github.com/dmnd/dedent/blob/master/dedent.js
+// export const dedent = (s: string, ...values: Array<string>): string => {
+//   return s.replace(/\n/g, '').trim();
+//   return s;
+// };
+
 /* c8 ignore stop */

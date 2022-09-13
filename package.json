@@ -31,6 +31,7 @@
     "server": "wrangler dev --port 8080 --local server/worker.ts",
     "server:node": "nodemon --watch server -e ts --exec 'vite-node server/node.ts'",
     "fast-install": "npm i --prefer-offline --progress=false --no-audit --no-fund",
+    "generate-types": "vitest generate-types.ts --coverage false",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",

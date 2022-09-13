@@ -1,6 +1,5 @@
-- Type checking for state.matches
-  I shouldn't be able to typo state.matches('list.selected')
-  We know the possible states
+- Write a vite plugin that runs vitest in the background, and closes it on close
+  - Use wrangler
 - Get onChange working or file a bug
   - Set it up in vue-react-ts
 - Remove zod types

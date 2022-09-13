@@ -12,6 +12,8 @@ import {
 } from 'xstate';
 import { assertType, pick } from 'utils';
 
+export const ids = new Set<string>();
+
 /* c8 ignore start */
 export const spawnMachine = <
   Machine extends StateMachine<Machine['context'], StateSchema, EventFrom<Machine>>,
@@ -20,6 +22,12 @@ export const spawnMachine = <
 >(
   machine: Machine
 ) => {
+  // Save all spawned machine stateIds
+  // Used to generate types for state.matches()
+  if (import.meta.env.DEV) {
+    machine.stateIds.forEach((s) => ids.add(s));
+  }
+
   return {
     entry: [
       // () => console.log('spawnMachine entry:', machine.id),
