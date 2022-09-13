@@ -36,7 +36,10 @@ const fetchPosts = async () => {
   return posts;
 };
 
-export const postsMachine = createMachine<Pick<Store, 'posts'>, Events>({
+export const postsMachine = createMachine<
+  Pick<Store, 'posts'>,
+  Extract<Events, { type: 'post.create' | 'post.delete' }>
+>({
   id: 'posts',
   predictableActionArguments: true,
   context: {
@@ -97,7 +100,10 @@ export const postsMachine = createMachine<Pick<Store, 'posts'>, Events>({
   },
 });
 
-export const countMachine = createMachine<Pick<Store, 'count'>, Events>({
+export const countMachine = createMachine<
+  Pick<Store, 'count'>,
+  Extract<Events, { type: 'count.update' }>
+>({
   id: 'count',
   predictableActionArguments: true,
   context: {
