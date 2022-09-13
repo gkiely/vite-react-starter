@@ -83,8 +83,11 @@ export const sync = <C extends Record<string, unknown>, E extends EventObject>(
   }),
 });
 
-export const matches = (query: string, service: AnyInterpreter): boolean => {
-  return Object.values(service.getSnapshot().children).some((child) => {
+export const matches = (
+  query: string,
+  service: AnyInterpreter | { getSnapshot: () => { children: undefined } }
+): boolean => {
+  return Object.values(service.getSnapshot()?.children ?? []).some((child) => {
     assertType<AnyInterpreter>(child);
     const snapshot = child.getSnapshot();
     if (!snapshot) return false;

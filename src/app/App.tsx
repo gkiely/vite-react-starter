@@ -23,17 +23,21 @@ const Route = ({ path }: { path: Path }) => {
   }, []);
 
   // State
-  const state = useSyncExternalStore(subscribe, () => service.getSnapshot());
+  const state = useSyncExternalStore(subscribe, () => service.getSnapshot()) ?? {
+    context: undefined,
+    children: [],
+  };
   const routeState = {
     ...state,
     matches: (state: string) => matches(state, service),
   } as typeof state;
 
-  const routeService = service.getSnapshot().children[path];
+  const snapshot = service.getSnapshot();
+  const routeService = snapshot ? snapshot.children[path] : undefined;
   if (routeService) {
     assertType<AnyInterpreter>(routeService);
   }
-  const routeSnapshot = routeService?.getSnapshot() ?? {};
+  const routeSnapshot = routeService?.getSnapshot() ?? { context: undefined, children: [] };
   assertType<{ context: RouteContext }>(routeSnapshot);
 
   // Render
