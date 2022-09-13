@@ -87,7 +87,7 @@
     "@testing-library/cypress": "^8.0.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
-    "@types/react": "^18.0.19",
+    "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
@@ -98,7 +98,7 @@
     "@vitest/coverage-c8": "^0.23.2",
     "c8": "^7.12.0",
     "concurrently": "^7.4.0",
-    "cypress": "^10.7.0",
+    "cypress": "^10.8.0",
     "eslint": "^8.23.1",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-escompat": "^3.2.0",
@@ -111,7 +111,7 @@
     "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-regexp": "^1.9.0",
-    "eslint-plugin-testing-library": "^5.6.3",
+    "eslint-plugin-testing-library": "^5.6.4",
     "eslint-plugin-unicorn": "^43.0.2",
     "eslint-plugin-validate-jsx-nesting": "^0.1.0",
     "happy-dom": "^6.0.4",
@@ -125,6 +125,6 @@
     "vite-plugin-checker": "^0.5.1",
     "vite-plugin-filter-replace": "^0.1.9",
     "vitest": "^0.23.2",
-    "wrangler": "^2.1.0"
+    "wrangler": "^2.1.3"
   }
 }
