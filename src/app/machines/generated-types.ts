@@ -9,7 +9,6 @@ export type StateIds =
   | 'posts'
   | 'posts.initial'
   | 'posts.idle'
-  | 'posts.testing'
   | 'posts.loading'
   | 'posts.error'
   | 'count'
