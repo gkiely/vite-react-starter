@@ -31,7 +31,7 @@ export const render = createRenderer((store, state) => {
               payload: { count: -1 },
             },
           },
-          ...renderIf(state.matches('posts.error'), {
+          ...renderIf(state.matches('posts.idle'), {
             id: 'Button-post-add',
             text: 'Add a post',
             action: {

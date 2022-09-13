@@ -7,7 +7,9 @@ import fs from 'node:fs';
 import { idMap } from 'machines/machine-utils';
 import service from 'machines/router.machine';
 
-const ids = Object.values(idMap).flat();
+const ids = Object.values(idMap)
+  .flat()
+  .filter((o) => !o.startsWith('/'));
 
 // Generate stateIds
 const content = fs.readFileSync('./src/app/machines/types.generated.ts', {

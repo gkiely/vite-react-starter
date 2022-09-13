@@ -11,11 +11,4 @@ export type StateIds =
   | 'posts.idle'
   | 'posts.loading'
   | 'posts.error'
-  | 'count'
-  | '/'
-  | '/.posts'
-  | '/.count'
-  | '/second'
-  | '/second.count'
-  | '/pizza'
-  | '/pizza.modal';
+  | 'count';
