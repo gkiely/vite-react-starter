@@ -22,30 +22,35 @@ beforeEach(() => {
   } as Response);
 });
 
-describe('App', () => {
-  it('should render', () => {
-    render(<App />);
-    expect(screen.getByText('Loading posts...')).toBeInTheDocument();
-    expect(screen.getByText('Home route')).toBeInTheDocument();
-  });
+it('should render', () => {
+  render(<App />);
+  expect(screen.getByText('Loading posts...')).toBeInTheDocument();
+  expect(screen.getByText('Home route')).toBeInTheDocument();
+});
 
-  it('should count', () => {
-    render(<App />);
-    const button = screen.getByRole('button', { name: 'count is: 0' });
-    fireEvent.click(button);
-    expect(screen.getByText('count is: 1')).toBeInTheDocument();
-  });
+it('should count', () => {
+  render(<App />);
+  const button = screen.getByRole('button', { name: 'count is: 0' });
+  fireEvent.click(button);
+  expect(screen.getByText('count is: 1')).toBeInTheDocument();
+});
 
-  it('should render posts', async () => {
-    render(<App />);
-    await screen.findByText('Good Morning');
-    expect(screen.getByText('Good Morning')).toBeInTheDocument();
-  });
+it('should count down', () => {
+  render(<App />);
+  const button = screen.getByRole('button', { name: /subtract count/i });
+  fireEvent.click(button);
+  expect(screen.getByText('count is: -1')).toBeInTheDocument();
+});
 
-  it('should show an error if the network request fails', async () => {
-    vi.spyOn(global, 'fetch').mockRejectedValueOnce(new Error('Network error'));
-    render(<App />);
-    await screen.findByText('Error loading posts');
-    expect(screen.getByText('Error loading posts')).toBeInTheDocument();
-  });
+it('should render posts', async () => {
+  render(<App />);
+  await screen.findByText('Good Morning');
+  expect(screen.getByText('Good Morning')).toBeInTheDocument();
+});
+
+it('should show an error if the network request fails', async () => {
+  vi.spyOn(global, 'fetch').mockRejectedValueOnce(new Error('Network error'));
+  render(<App />);
+  await screen.findByText('Error loading posts');
+  expect(screen.getByText('Error loading posts')).toBeInTheDocument();
 });

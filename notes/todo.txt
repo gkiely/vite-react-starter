@@ -1,3 +1,6 @@
+- Type checking for state.matches
+  I shouldn't be able to typo state.matches('list.selected')
+  We know the possible states
 - Get onChange working or file a bug
   - Set it up in vue-react-ts
 - Remove zod types
@@ -12,9 +15,6 @@ Then
 - Start working on a screen for ynaw
 
 Then
-- Type checking for state.matches
-  I shouldn't be able to typo state.matches('list.selected')
-  We know the possible states
 - See if there's a way to re-use machines with assigned actions
 - Move modal to use toggleMachine
   - We might need a way to prefix -> modal.active, modal.inactive
