@@ -1,3 +1,4 @@
+Then
 - Remove generate-types commands from npm, just make it a vite plugin
 - It's possible to trigger a runtime error and not a ts error if you remove the emptySnapshots from App.tsx and comment out the closed state from pizza.machine.ts 
 - Move all test variables to constants
@@ -7,8 +8,6 @@
 
 - Submit bug, it's possible to just not include context and have no type errors fire
   - If dev passes a generic it should be a required field
-
-Then
 - Do a quick prototype of time travel debugging
   - Should do rendering, and also perform effects
   - Should match the timing

@@ -1,5 +1,5 @@
 import { splitVendorChunkPlugin } from 'vite';
-import { defineConfig } from 'vitest/config';
+import { defineConfig, UserConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
 import wranglerPlugin from './scripts/vite-plugin-wrangler';
@@ -11,12 +11,9 @@ const TEST = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
 const DEV = !TEST;
 const event = process.env.npm_lifecycle_event;
 const WATCH_TEST = TEST && event === 'test';
-const generateTypesCommand = event?.startsWith('generate-types') || event === 'dev';
 
-// https://vitejs.dev/config/
-export default defineConfig(({ command }) => ({
-  // When generating types, run in node environment
-  test: generateTypesCommand
+const generateTypesConfig: UserConfig['test'] =
+  event?.startsWith('generate-types') || event === 'dev'
     ? {
         environment: 'node',
         globals: true,
@@ -28,36 +25,41 @@ export default defineConfig(({ command }) => ({
           enabled: false,
         },
       }
-    : {
-        env: {
-          // "ExperimentalWarning: The Fetch API is an experimental feature."
-          // Remove when fetch is no longer experimental
-          NODE_NO_WARNINGS: '1',
-        },
-        environment: 'happy-dom',
-        globals: true,
-        setupFiles: ['./setup.vitest.ts'],
-        include: ['src/**/*.test.{ts,tsx}', 'server/**/*.test.{ts,tsx}'],
-        css: false,
-        deps: {
-          fallbackCJS: true,
-        },
-        // https://github.com/bcoe/c8#cli-options--configuration
-        coverage: {
-          enabled: true,
-          include: ['src/**/*.{ts,tsx}', 'server/**/*.{ts,tsx}'],
-          exclude: [
-            'src/**/*.test.{ts,tsx}',
-            'server/**/*.test.{ts,tsx}',
-            'src/**/*.css.ts',
-            'src/app/utils/constants.ts',
-            'src/app/utils/test-utils.ts',
-            'src/app/utils/runtime-error-overlay.ts',
-            'server/dev-server.tsx',
-          ],
-          '100': true, // 100% coverage
-        },
-      },
+    : undefined;
+
+// https://vitejs.dev/config/
+export default defineConfig(({ command }) => ({
+  // When generating types, run in node environment
+  test: generateTypesConfig ?? {
+    env: {
+      // "ExperimentalWarning: The Fetch API is an experimental feature."
+      // Remove when fetch is no longer experimental
+      NODE_NO_WARNINGS: '1',
+    },
+    environment: 'happy-dom',
+    globals: true,
+    setupFiles: ['./setup.vitest.ts'],
+    include: ['src/**/*.test.{ts,tsx}', 'server/**/*.test.{ts,tsx}'],
+    css: false,
+    deps: {
+      fallbackCJS: true,
+    },
+    // https://github.com/bcoe/c8#cli-options--configuration
+    coverage: {
+      enabled: true,
+      include: ['src/**/*.{ts,tsx}', 'server/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'server/**/*.test.{ts,tsx}',
+        'src/**/*.css.ts',
+        'src/app/utils/constants.ts',
+        'src/app/utils/test-utils.ts',
+        'src/app/utils/runtime-error-overlay.ts',
+        'server/dev-server.tsx',
+      ],
+      '100': true, // 100% coverage
+    },
+  },
   plugins: [
     react(),
     !TEST && generateTypes(command),
