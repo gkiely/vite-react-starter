@@ -1,6 +1,6 @@
 import fs from 'node:fs';
-import App from '../App';
 import { ids } from 'machines/machine-utils';
+import service from '../machines/router.machine';
 
 // Generate stateIds
 const content = fs.readFileSync('./src/app/machines/types.ts', {
@@ -14,4 +14,4 @@ if (content !== result) {
   fs.writeFile('./src/app/machines/types.ts', result, () => {});
 }
 
-test.todo('', () => expect(<App />).toBeDefined());
+test.todo('', () => expect(service).toBeDefined());

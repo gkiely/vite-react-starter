@@ -6,7 +6,7 @@ import {
   AnyStateMachine,
   TransitionConfigOrTarget,
 } from 'xstate';
-import { CLIENT } from 'utils/constants';
+import { CLIENT, TEST } from 'utils/constants';
 import { paths, Path } from '../routes/paths';
 import { spawnMachine, sync } from './machine-utils';
 import pizzaMachine from './pizza.machine';
@@ -53,10 +53,12 @@ const onRoute: TransitionConfigOrTarget<Context, RouteEvent> = paths.map((path) 
   },
 }));
 
+const path = typeof window !== 'undefined' ? window.location.pathname : '/';
+
 /* c8 ignore start */
 export const routerMachine = createMachine<Context, Events>({
   id: 'router',
-  initial: paths.includes(window.location.pathname as Path) ? window.location.pathname : '/404',
+  initial: paths.includes(path as Path) ? path : '/404',
   predictableActionArguments: true,
   context: {
     actors: [],
@@ -82,7 +84,7 @@ export const routerMachine = createMachine<Context, Events>({
 
 const service = interpret(routerMachine);
 
-if (CLIENT) {
+if (CLIENT && !TEST) {
   // @ts-expect-error - debugging
   window.service = service;
 }

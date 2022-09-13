@@ -80,6 +80,7 @@ export const postsMachine = createMachine<
         },
       },
     },
+    testing: {},
     loading: {
       invoke: {
         src: () => fetchPosts(),
