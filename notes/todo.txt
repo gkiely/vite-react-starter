@@ -1,5 +1,4 @@
-- Write a vite plugin that runs vitest in the background, and closes it on close
-  - Use wrangler
+- Generate types should run for tests as well
 - Get onChange working or file a bug
   - Set it up in vue-react-ts
 - Remove zod types

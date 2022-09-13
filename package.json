@@ -25,13 +25,12 @@
     "zod"
   ],
   "scripts": {
-    "start": "npm run fast-install && npm run dev",
+    "start": "npm run fast-install && vitest generate-types.ts > /dev/null 2>&1 & npm run dev",
     "dev": "vite -- --server ./server/worker.ts",
     "dev:node": "concurrently -r -g 'npm:server:node' 'vite'",
     "server": "wrangler dev --port 8080 --local server/worker.ts",
     "server:node": "nodemon --watch server -e ts --exec 'vite-node server/node.ts'",
     "fast-install": "npm i --prefer-offline --progress=false --no-audit --no-fund",
-    "generate-types": "vitest generate-types.ts --environment node --coverage false",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",

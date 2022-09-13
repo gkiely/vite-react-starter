@@ -14,6 +14,7 @@ import homeMachine from './home.machine';
 import secondMachine from './second.machine';
 import { Post } from 'server/schemas';
 
+/* c8 ignore start */
 // Global store
 export type Store = {
   count: number;
@@ -55,7 +56,6 @@ const onRoute: TransitionConfigOrTarget<Context, RouteEvent> = paths.map((path) 
 
 const path = typeof window !== 'undefined' ? window.location.pathname : '/';
 
-/* c8 ignore start */
 export const routerMachine = createMachine<Context, Events>({
   id: 'router',
   initial: paths.includes(path as Path) ? path : '/404',

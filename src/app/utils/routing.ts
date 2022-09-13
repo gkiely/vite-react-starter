@@ -7,7 +7,7 @@ import { assertType } from 'utils';
 import type { Intersect } from 'utils/types';
 import type { ContextFrom, StateFrom } from 'xstate';
 import type { Events } from 'machines/router.machine';
-import { StateIds } from 'machines/types';
+import { StateIds } from 'machines/generated-types';
 
 type C = typeof Components;
 type S = typeof Sections;

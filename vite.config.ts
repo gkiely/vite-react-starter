@@ -9,44 +9,53 @@ import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import path from 'node:path';
 const TEST = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
 const DEV = !TEST;
-const WATCH_TEST = TEST && process.env.npm_lifecycle_event === 'test';
+const event = process.env.npm_lifecycle_event;
+const WATCH_TEST = TEST && event === 'test';
+const generateTypes = event === 'start';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
-  test: {
-    env: {
-      // "ExperimentalWarning: The Fetch API is an experimental feature."
-      // Remove when fetch is no longer experimental
-      NODE_NO_WARNINGS: '1',
-    },
-    environment: 'happy-dom',
-    globals: true,
-    setupFiles: ['./setup.vitest.ts'],
-    include: [
-      'src/**/*.test.{ts,tsx}',
-      'server/**/*.test.{ts,tsx}',
-      'src/app/utils/generate-types.tsx',
-    ],
-    css: false,
-    deps: {
-      fallbackCJS: true,
-    },
-    // https://github.com/bcoe/c8#cli-options--configuration
-    coverage: {
-      enabled: true,
-      include: ['src/**/*.{ts,tsx}', 'server/**/*.{ts,tsx}'],
-      exclude: [
-        'src/**/*.test.{ts,tsx}',
-        'server/**/*.test.{ts,tsx}',
-        'src/**/*.css.ts',
-        'src/app/utils/constants.ts',
-        'src/app/utils/test-utils.ts',
-        'src/app/utils/runtime-error-overlay.ts',
-        'server/dev-server.tsx',
-      ],
-      '100': true, // 100% coverage
-    },
-  },
+  test: generateTypes
+    ? {
+        environment: 'node',
+        globals: true,
+        include: ['src/app/utils/generate-types.ts'],
+        css: false,
+        passWithNoTests: true,
+        coverage: {
+          enabled: false,
+        },
+      }
+    : {
+        env: {
+          // "ExperimentalWarning: The Fetch API is an experimental feature."
+          // Remove when fetch is no longer experimental
+          NODE_NO_WARNINGS: '1',
+        },
+        environment: 'happy-dom',
+        globals: true,
+        setupFiles: ['./setup.vitest.ts'],
+        include: ['src/**/*.test.{ts,tsx}', 'server/**/*.test.{ts,tsx}'],
+        css: false,
+        deps: {
+          fallbackCJS: true,
+        },
+        // https://github.com/bcoe/c8#cli-options--configuration
+        coverage: {
+          enabled: true,
+          include: ['src/**/*.{ts,tsx}', 'server/**/*.{ts,tsx}'],
+          exclude: [
+            'src/**/*.test.{ts,tsx}',
+            'server/**/*.test.{ts,tsx}',
+            'src/**/*.css.ts',
+            'src/app/utils/constants.ts',
+            'src/app/utils/test-utils.ts',
+            'src/app/utils/runtime-error-overlay.ts',
+            'server/dev-server.tsx',
+          ],
+          '100': true, // 100% coverage
+        },
+      },
   plugins: [
     react(),
     // generateTypes(),
