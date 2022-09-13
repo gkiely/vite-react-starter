@@ -15,7 +15,7 @@ const content = fs.readFileSync('./src/app/machines/types.generated.ts', {
 });
 
 const output = `// This file is auto-generated and will be overwritten
-export type StateIds = \n  | '${Array.from(ids).join("'\n  | '")}';\n`;
+export type StateIds =\n  | '${Array.from(ids).join("'\n  | '")}';\n`;
 
 if (content !== output) {
   fs.writeFileSync('./src/app/machines/types.generated.ts', output);
