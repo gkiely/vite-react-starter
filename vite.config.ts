@@ -11,7 +11,7 @@ const TEST = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
 const DEV = !TEST;
 const event = process.env.npm_lifecycle_event;
 const WATCH_TEST = TEST && event === 'test';
-const generateTypes = event === 'start';
+const generateTypes = event === 'generate-types';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
@@ -21,6 +21,7 @@ export default defineConfig(({ command }) => ({
         globals: true,
         include: ['src/app/utils/generate-types.ts'],
         css: false,
+        isolate: false,
         passWithNoTests: true,
         coverage: {
           enabled: false,
