@@ -4,14 +4,14 @@ import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
 import wranglerPlugin from './scripts/vite-plugin-wrangler';
 import clearVitest from './scripts/vite-plugin-clear-vitest';
-// import generateTypes from './scripts/vite-plugin-generate-types';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import path from 'node:path';
 const TEST = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
 const DEV = !TEST;
 const event = process.env.npm_lifecycle_event;
 const WATCH_TEST = TEST && event === 'test';
-const generateTypes = event === 'generate-types';
+const generateTypes = event?.startsWith('generate-types');
+const isolate = event === 'generate-types-watch';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
@@ -21,7 +21,7 @@ export default defineConfig(({ command }) => ({
         globals: true,
         include: ['src/app/utils/generate-types.ts'],
         css: false,
-        isolate: false,
+        isolate,
         passWithNoTests: true,
         coverage: {
           enabled: false,
