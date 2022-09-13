@@ -2,8 +2,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import service from '../machines/router.machine';
 import { Post } from 'server/schemas';
 import App from '../App';
-// import { ids } from 'machines/machine-utils';
-// import fs from 'node:fs';
 
 export const posts: Post[] = [
   { id: '1', title: 'Good Morning' },
@@ -11,30 +9,6 @@ export const posts: Post[] = [
   { id: '3', title: 'Good Evening' },
   { id: '4', title: 'Good Night' },
 ];
-
-// beforeAll(() => {
-//   console.log(ids);
-// });
-
-// Generate stateIds
-// beforeAll(() => {
-//   fs.readFile(
-//     './src/app/machines/types.ts',
-//     {
-//       encoding: 'utf-8',
-//     },
-//     (err, content) => {
-//       const result = `// This file is auto generated and will be overwritten
-// export type StateIds = '${Array.from(ids).join("'|'")}';`;
-
-//       console.log(content);
-//       if (content !== result) {
-//         console.log('write to file');
-//         fs.writeFile('./src/app/machines/types.ts', result, () => {});
-//       }
-//     }
-//   );
-// });
 
 afterEach(() => {
   if (service.initialized) {

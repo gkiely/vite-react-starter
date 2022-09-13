@@ -1,5 +1,5 @@
 // This file is auto-generated and will be overwritten
-export type StateIds =
+export type StateIds = 
   | 'list'
   | 'list.unselected'
   | 'list.selected'

@@ -12,7 +12,7 @@ import {
 } from 'xstate';
 import { assertType, pick } from 'utils';
 
-export const ids = new Set<string>();
+export const idMap: Record<string, string[]> = {};
 
 /* c8 ignore start */
 export const spawnMachine = <
@@ -25,7 +25,7 @@ export const spawnMachine = <
   // Save all spawned machine stateIds
   // Used to generate types for state.matches()
   if (import.meta.env.DEV) {
-    machine.stateIds.forEach((s) => ids.add(s));
+    idMap[machine.id] = machine.stateIds;
   }
 
   return {

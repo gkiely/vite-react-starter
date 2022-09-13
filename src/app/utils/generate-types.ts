@@ -4,19 +4,21 @@
   file output is in ./src/app/machines/types.ts
 */
 import fs from 'node:fs';
-import { ids } from 'machines/machine-utils';
+import { idMap } from 'machines/machine-utils';
 import service from 'machines/router.machine';
 
+const ids = Object.values(idMap).flat();
+
 // Generate stateIds
-const content = fs.readFileSync('./src/app/machines/generated-types.ts', {
+const content = fs.readFileSync('./src/app/machines/types.generated.ts', {
   encoding: 'utf-8',
 });
 
-const result = `// This file is auto-generated and will be overwritten
+const output = `// This file is auto-generated and will be overwritten
 export type StateIds = \n  | '${Array.from(ids).join("'\n  | '")}';\n`;
 
-if (content !== result) {
-  fs.writeFileSync('./src/app/machines/generated-types.ts', result);
+if (content !== output) {
+  fs.writeFileSync('./src/app/machines/types.generated.ts', output);
 }
 
-test('', () => expect(service).toBeDefined());
+test.todo('', () => expect(service).toBeDefined());
