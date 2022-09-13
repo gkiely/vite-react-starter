@@ -1,3 +1,5 @@
+- Remove generate-types commands from npm, just make it a vite plugin
+- Move all test variables to constants
 - Get onChange working or file a bug
   - Set it up in vue-react-ts
 - Remove zod types

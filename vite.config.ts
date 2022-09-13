@@ -5,16 +5,18 @@ import checker from 'vite-plugin-checker';
 import wranglerPlugin from './scripts/vite-plugin-wrangler';
 import clearVitest from './scripts/vite-plugin-clear-vitest';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
+import generateTypes from './scripts/vite-plugin-generate-types';
 import path from 'node:path';
 const TEST = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
 const DEV = !TEST;
 const event = process.env.npm_lifecycle_event;
 const WATCH_TEST = TEST && event === 'test';
-const generateTypes = event?.startsWith('generate-types');
+const generateTypesCommand = event?.startsWith('generate-types') || event === 'dev';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
-  test: generateTypes
+  // When generating types, run in node environment
+  test: generateTypesCommand
     ? {
         environment: 'node',
         globals: true,
@@ -58,7 +60,7 @@ export default defineConfig(({ command }) => ({
       },
   plugins: [
     react(),
-    // generateTypes(),
+    !TEST && generateTypes(command),
     process.argv.includes('--server') ? wranglerPlugin() : undefined,
     DEV &&
       checker({

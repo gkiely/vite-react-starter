@@ -6,7 +6,7 @@ import {
   AnyStateMachine,
   TransitionConfigOrTarget,
 } from 'xstate';
-import { CLIENT, TEST } from 'utils/constants';
+import { CLIENT } from 'utils/constants';
 import { paths, Path } from '../routes/paths';
 import { spawnMachine, sync } from './machine-utils';
 import pizzaMachine from './pizza.machine';
@@ -84,7 +84,7 @@ export const routerMachine = createMachine<Context, Events>({
 
 const service = interpret(routerMachine);
 
-if (CLIENT && !TEST) {
+if (CLIENT && !import.meta.env.TEST) {
   // @ts-expect-error - debugging
   window.service = service;
 }
