@@ -6,6 +6,11 @@ Then
   - Set it up in vue-react-ts
 - Remove zod types
 
+- Fix these 2 slow rules
+https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/src/rules/no-unsafe-assignment.ts
+@typescript-eslint/no-misused-promises
+
+
 - Submit bug, it's possible to just not include context and have no type errors fire
   - If dev passes a generic it should be a required field
 - Do a quick prototype of time travel debugging
