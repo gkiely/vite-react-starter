@@ -524,3 +524,12 @@ import { act } from 'utils/test-utils';
 //       },
 //     },
 //   ]),
+
+
+let lastRoute: Record<string, unknown>;
+
+  // @ts-ignore - testing
+  console.log(lastRoute, route);
+  console.log(isEqual(lastRoute, route));
+
+  lastRoute = route;

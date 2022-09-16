@@ -70,15 +70,17 @@ export const renderComponent = (props: ComponentProps) => {
   // Empty component used by renderComponentIf
   if (!props.id && (props.component as string) === '') return undefined;
 
-  if (props.id) {
-    assertType<{ key: string }>(props);
-    props.key = props.id;
-  }
+  const updatedProps = props.id
+    ? {
+        ...props,
+        key: props.id,
+      }
+    : props;
 
   // Convert union to intersection type for dynamic components
-  assertType<Intersect<typeof props>>(props);
+  assertType<Intersect<typeof props>>(updatedProps);
   assertType<Intersect<typeof Component>>(Component);
-  return createElement(Component, props);
+  return createElement(Component, updatedProps);
 };
 
 /*** Layout rendering */

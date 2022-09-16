@@ -32,5 +32,3 @@ declare interface ObjectConstructor extends Omit<ObjectConstructor, 'keys' | 'en
 }
 
 declare const Object: ObjectConstructor;
-
-// declare const beforeImport: (fn: () => void) => void;
