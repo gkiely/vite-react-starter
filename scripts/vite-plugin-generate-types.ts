@@ -2,6 +2,9 @@
 import type { Plugin } from 'vite';
 import { spawn, spawnSync } from 'node:child_process';
 
+export const generateTypesFilePath = 'src/app/utils/generate-types.ts';
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 let running = false;
 
 // Generate types for state.matches
@@ -12,18 +15,22 @@ const plugin = (command: 'build' | 'serve'): Plugin => ({
   name: 'generate-types',
   config() {
     if (command === 'build') {
-      spawnSync('npm', ['run', '--silent', 'generate-types'], {
+      spawnSync('vitest', ['run', generateTypesFilePath], {
         stdio: 'inherit',
       });
     }
   },
-  handleHotUpdate() {
-    if (running) return;
+  handleHotUpdate(e) {
+    console.log('hot update', running, e.file);
+    if (running || e.file.endsWith('states.generated.ts')) return;
     running = true;
-    const child = spawn('npm', ['run', '--silent', 'generate-types'], {
+    console.log('running');
+    const child = spawn('vitest', ['run', generateTypesFilePath], {
       stdio: 'inherit',
     });
-    child.on('close', () => {
+
+    child.once('close', () => {
+      console.log('closed');
       running = false;
     });
   },

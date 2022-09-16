@@ -156,6 +156,7 @@ export const modalMachine = createMachine<Context, Events>({
         'modal.open': 'open',
       },
     },
+    help: {},
     open: {
       ...spawnMachine(listMachine),
       on: {

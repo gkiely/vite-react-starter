@@ -13,10 +13,10 @@ const clear = () => {
 const plugin = (): Plugin => ({
   name: 'clear-vitest',
   config: () => clear(),
-  load: p => {
+  load: (p) => {
     if (canClear) {
       clear();
-      console.log(pc.black(pc.bgBlue(' RERUN ')), pc.gray(p.match(/(src|server)\/.+/)[0]), '\n');
+      console.log(pc.black(pc.bgBlue(' RERUN ')), pc.gray(p.match(/(src|server)\/.+/)?.[0]), '\n');
       return;
     }
     clearTimeout(timeout);

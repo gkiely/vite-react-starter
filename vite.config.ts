@@ -5,7 +5,7 @@ import checker from 'vite-plugin-checker';
 import wranglerPlugin from './scripts/vite-plugin-wrangler';
 import clearVitest from './scripts/vite-plugin-clear-vitest';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
-import generateTypes from './scripts/vite-plugin-generate-types';
+import generateTypes, { generateTypesFilePath } from './scripts/vite-plugin-generate-types';
 import path from 'node:path';
 const TEST = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
 const DEV = !TEST;
@@ -13,11 +13,11 @@ const event = process.env.npm_lifecycle_event;
 const WATCH_TEST = TEST && event === 'test';
 
 const generateTypesConfig: UserConfig['test'] =
-  event?.startsWith('generate-types') || event === 'dev'
+  event === 'dev' || event === 'build'
     ? {
         environment: 'node',
         globals: true,
-        include: ['src/app/utils/generate-types.ts'],
+        include: [generateTypesFilePath],
         css: false,
         isolate: false,
         passWithNoTests: true,

@@ -109,6 +109,9 @@ export const countMachine = createMachine<
   context: {
     count: 0,
   },
+  // states: {
+  //   help: {},
+  // },
   on: {
     'count.update': {
       actions: [
