@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useSyncExternalStore } from 'react';
 import { useLocation } from 'wouter';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+import type { AnyInterpreter } from 'xstate';
 import * as styles from './App.css';
 import { paths, Path } from './routes/paths';
 import { RouteContext, renderers } from './routes/routes';
@@ -7,9 +9,7 @@ import { assertType } from './utils';
 import { renderComponent, renderLayout } from './utils/routing';
 import service from './machines/router.machine';
 import { matches } from './machines/machine-utils';
-import { Helmet, HelmetProvider } from 'react-helmet-async';
-import type { AnyInterpreter } from 'xstate';
-import { EmptyInterpreter } from 'types';
+import type { EmptyInterpreter } from 'types';
 
 /* c8 ignore start */
 const Route = ({ path }: { path: Path }) => {
