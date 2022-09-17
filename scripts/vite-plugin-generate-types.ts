@@ -8,7 +8,7 @@ export const generateTypesFilePath = 'src/app/utils/generate-types.ts';
 // Runs on hot update and build
 // TODO: see if there is a way to do this with vite-node instead of vitest
 // https://www.npmjs.com/package/vite-node
-const blacklist = ['.generated.ts', 'tsconfig.tsbuildinfo'];
+const blacklist = ['.generated.ts', 'tsconfig.tsbuildinfo', '.eslintcache'];
 const plugin = (command: 'build' | 'serve'): Plugin => ({
   name: 'generate-types',
   config() {

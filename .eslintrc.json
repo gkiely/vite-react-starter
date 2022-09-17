@@ -3,6 +3,7 @@
     "shared-node-browser": true,
     "es2022": true
   },
+  "ignorePatterns": ["src/**/*.generated.ts"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "tsconfigRootDir": ".",

@@ -68,8 +68,7 @@ export default defineConfig(({ command }) => ({
       checker({
         typescript: true,
         eslint: {
-          lintCommand:
-            'eslint -c .eslintrc.json --cache --cache-location node_modules/.cache/.eslintcache --fix --ext ts,tsx src',
+          lintCommand: 'eslint -c .eslintrc.json --cache --fix --ext ts,tsx src',
           dev: {
             logLevel: ['error'],
           },
