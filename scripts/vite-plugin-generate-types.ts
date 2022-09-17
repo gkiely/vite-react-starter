@@ -13,9 +13,11 @@ const plugin = (command: 'build' | 'serve'): Plugin => ({
   name: 'generate-types',
   config() {
     if (command === 'build') {
-      spawnSync('vitest', ['run', generateTypesFilePath], {
-        stdio: 'inherit',
-      });
+      // Debugging
+      // spawnSync('vitest', ['run', generateTypesFilePath], {
+      //   stdio: 'inherit',
+      // });
+      spawnSync('vitest', ['run', generateTypesFilePath]);
     }
   },
   handleHotUpdate(e) {
