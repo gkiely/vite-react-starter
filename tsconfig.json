@@ -27,7 +27,7 @@
     "useDefineForClassFields": true,
     "useUnknownInCatchVariables": true,
     "noErrorTruncation": true,
-    "types": ["@types/node", "vitest/globals", "@testing-library/jest-dom", "@testing-library/cypress"],
+    "types": ["@types/node", "vitest/globals", "@testing-library/jest-dom"],
     "paths": {
       "components/*": ["./src/app/components/*"],
       "elements/*": ["./src/app/elements/*"],
