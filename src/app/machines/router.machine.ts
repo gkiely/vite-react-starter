@@ -84,7 +84,7 @@ export const routerMachine = createMachine<Context, Events>({
 
 const service = interpret(routerMachine);
 
-if (CLIENT && !import.meta.env.TEST) {
+if (CLIENT) {
   // @ts-expect-error - debugging
   window.service = service;
 }

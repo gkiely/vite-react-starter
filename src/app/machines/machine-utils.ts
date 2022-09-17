@@ -8,7 +8,6 @@ import {
   ContextFrom,
   EventFrom,
   EventObject,
-  UpdateObject,
 } from 'xstate';
 import { assertType, pick } from 'utils';
 import type { EmptyInterpreter } from 'types';
@@ -62,12 +61,11 @@ export const sync = <C extends Record<string, unknown>, E extends EventObject>(
   ...keys: (keyof C)[]
 ) => ({
   '*': {
-    actions: (context: { actors: Actor[] }, event: E) => {
+    actions: (context: C & { actors: Actor[] }, event: E) => {
       context.actors.forEach((actor) => {
         assertType<AnyInterpreter>(actor);
         const { nextEvents } = actor.getSnapshot();
         if (nextEvents.includes(event.type) || nextEvents.includes('*')) {
-          // console.log(event.type, actor.id, context, nextEvents);
           actor.send(event);
         }
       });
@@ -75,9 +73,7 @@ export const sync = <C extends Record<string, unknown>, E extends EventObject>(
   },
   ...(keys.length && {
     'xstate.update': {
-      actions: assign<C, E>((context, event) => {
-        assertType<UpdateObject>(event);
-        assertType<C>(event.state.context);
+      actions: assign<C, E & { state: { context: C } }>((_context, event) => {
         return pick<C, keyof C>(event.state.context, ...keys);
       }),
     },

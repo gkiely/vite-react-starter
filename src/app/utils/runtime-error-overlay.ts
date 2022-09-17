@@ -42,10 +42,10 @@ console.error = (...args: string[]) => {
   }
 };
 
-window.addEventListener('error', ({ error }) => {
+window.addEventListener('error', ({ error }: { error: string }) => {
   void showErrorOverlay(error);
 });
-window.addEventListener('unhandledrejection', ({ reason }) => {
+window.addEventListener('unhandledrejection', ({ reason }: { reason: string }) => {
   void showErrorOverlay(reason);
 });
 

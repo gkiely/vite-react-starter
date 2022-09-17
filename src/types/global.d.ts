@@ -32,3 +32,7 @@ declare interface ObjectConstructor extends Omit<ObjectConstructor, 'keys' | 'en
 }
 
 declare const Object: ObjectConstructor;
+
+declare interface ImportMetaEnv {
+  TEST: boolean;
+}
