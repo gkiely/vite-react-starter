@@ -2,8 +2,9 @@ import type { Path } from 'routes/paths';
 import { useSend } from 'utils/routing';
 import type { Events } from 'machines/pizza.machine';
 import * as styles from './PizzaHeader.css';
-import { Fragment } from 'react';
+import { Fragment, memo } from 'react';
 import { Link } from 'wouter';
+import { isEqual } from '@gkiely/utils';
 
 export type Props = {
   button: {
@@ -39,4 +40,5 @@ const Pizza = ({ button, links, text }: Props) => {
 };
 /* c8 ignore stop */
 
-export default Pizza;
+// Example memo component with deep compare
+export default memo(Pizza, isEqual);
