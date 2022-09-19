@@ -65,7 +65,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
-    "@gkiely/utils": "^0.1.9",
+    "@gkiely/utils": "^0.1.19",
     "@mui/material": "^5.10.5",
     "@xstate/react": "^3.0.1",
     "hono": "^2.1.4",

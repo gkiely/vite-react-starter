@@ -1,25 +1,14 @@
 import { bench, describe } from 'vitest';
+import { isEqual as _isEqual } from 'lodash';
+import nanoEqual from 'nano-equal';
+import fastEqual from 'fast-deep-equal';
+import { isEqual } from '@gkiely/utils';
 
 export function assertType<T>(_value: unknown): asserts _value is T {}
-
-const types = {
-  NaN: 'NaN',
-  object: 'object',
-  array: 'array',
-  number: 'number',
-} as const;
 
 type Obj = Record<string, unknown>;
 
 const getValueTypeOld = (value: unknown) => {
-  const t = typeof value;
-  if (t === types.object && Array.isArray(value)) return 'array';
-  if (t === types.object && value !== null) return 'object';
-  if (t === types.number && Number.isNaN(value)) return 'NaN';
-  return t;
-};
-
-const getValueType = (value: unknown) => {
   const t = typeof value;
   if (t === types.object && Array.isArray(value)) return 'array';
   if (t === types.object && value !== null) return 'object';
@@ -54,32 +43,75 @@ export const isEqualOld = (value: unknown, other: unknown): boolean => {
   return v.length === o.length && v.every((k) => isEqualOld(value[k], other[k]));
 };
 
-export const isEqual = (value: unknown, other: unknown): boolean => {
-  if (value === other) return true;
-  const valueType = getValueType(value);
-  const otherType = getValueType(other);
-  if (valueType !== otherType) return false;
-  if (valueType === types.NaN && otherType === types.NaN) return true;
+const types = {
+  NaN: 'NaN',
+  object: 'object',
+  array: 'array',
+  number: 'number',
+  date: 'date',
+  null: 'null',
+  function: 'function',
+  regexp: 'regexp',
+} as const;
 
-  const hasObject =
-    valueType === types.object ||
-    valueType === types.array ||
-    otherType === types.object ||
-    otherType === types.array;
+// const getValueType = (value: unknown) => {
+//   const t = typeof value;
+//   if (t === types.object && value !== null) {
+//     if (Array.isArray(value)) return types.array;
+//     if (value instanceof Date) return types.date;
+//     if (value instanceof RegExp) return types.regexp;
+//     return types.object;
+//   }
+//   if (t === types.number && Number.isNaN(value)) return types.NaN;
+//   if (value === null) return types.null;
+//   return t;
+// };
 
-  if (!hasObject) return value === other;
+// // Inspired by:
+// // https://github.com/smelukov/nano-equal
+// // https://stackoverflow.com/a/32922084/1845423
+// // This function is benchmarked using vitest bench
+// export const isEqual = (value: unknown, other: unknown): boolean => {
+//   if (value === other) return true;
+//   const valueType = getValueType(value);
+//   const otherType = getValueType(other);
+//   if (valueType !== otherType) return false;
+//   if (valueType === types.NaN && otherType === types.NaN) return true;
+//   if (valueType === types.date && otherType === types.date) {
+//     assertType<Date>(value);
+//     assertType<Date>(other);
+//     return value.getTime() === other.getTime();
+//   }
+//   if (valueType === types.function && otherType === types.function) {
+//     assertType<() => void>(value);
+//     assertType<() => void>(other);
+//     return value.toString() === other.toString();
+//   }
+//   if (valueType === types.regexp && otherType === types.regexp) {
+//     assertType<RegExp>(value);
+//     assertType<RegExp>(other);
+//     return value.source === other.source && value.flags === other.flags;
+//   }
 
-  assertType<Obj>(value);
-  assertType<Obj>(other);
+//   const isObject =
+//     valueType === types.object ||
+//     valueType === types.array ||
+//     otherType === types.object ||
+//     otherType === types.array;
 
-  const valueKeys = Object.keys(value);
-  const otherKeys = Object.keys(other);
-  if (valueKeys.length === 0 && otherKeys.length === 0) return true;
+//   if (!isObject) return value === other;
 
-  return (
-    valueKeys.length === otherKeys.length && !valueKeys.some((k) => !isEqual(value[k], other[k]))
-  );
-};
+//   assertType<Obj>(value);
+//   assertType<Obj>(other);
+
+//   const valueKeys = Object.keys(value);
+//   const otherKeys = Object.keys(other);
+
+//   return (
+//     valueKeys.length === otherKeys.length &&
+//     !valueKeys.some((k) => (k in other ? !isEqual(value[k], other[k]) : true))
+//   );
+// };
 
 const tests = [
   [{}, {}],
@@ -138,13 +170,32 @@ const tests = [
 ] as const;
 
 describe('sort', () => {
-  bench('normal', () => {
+  bench('lodash', () => {
     tests.forEach((test) => {
-      isEqualOld(test[0], test[1]);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      _isEqual(test[0], test[1]);
+    });
+  });
+  bench('nanoEqual', () => {
+    tests.forEach((test) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      nanoEqual(test[0], test[1]);
     });
   });
 
-  bench('updated', () => {
+  bench('fast-deep-equal', () => {
+    tests.forEach((test) => {
+      fastEqual(test[0], test[1]);
+    });
+  });
+
+  // bench('isEqualOld', () => {
+  //   tests.forEach((test) => {
+  //     isEqualOld(test[0], test[1]);
+  //   });
+  // });
+
+  bench('@gkiely/utils.isEqual', () => {
     tests.forEach((test) => {
       isEqual(test[0], test[1]);
     });
