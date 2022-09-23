@@ -1,4 +1,5 @@
 Then
+- Add satisfies to routes.tsx when it is ready
 - Remove generate-types commands from npm, just make it a vite plugin
 - It's possible to trigger a runtime error and not a ts error if you remove the emptySnapshots from App.tsx and comment out the closed state from pizza.machine.ts 
 - Move all test variables to constants
