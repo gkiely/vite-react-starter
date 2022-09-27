@@ -120,6 +120,9 @@ export default defineConfig(({ command }) => ({
     },
     open: true,
   },
+  preview: {
+    port: 3001,
+  },
   json: {
     stringify: true,
   },

@@ -24,7 +24,9 @@
 
 `test`: Test in watch mode
 
-`test-all`: Run all tests
+`test-all`: Run all unit and component tests
+
+`test-e2e`: Run all end-to-end tests
 
 `install-latest`: Updates all dependencies
 

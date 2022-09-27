@@ -39,6 +39,8 @@
     "test-browser": "vitest --browser",
     "test-all": "vitest run",
     "test-update": "vitest run -u",
+    "test-e2e": "npx playwright test --project=chromium",
+    "test-e2e-debug": "npx playwright test --project=chromium --debug",
     "tsc": "tsc",
     "tsc-diagnose": "tsc --extendedDiagnostics",
     "tsc-list": "tsc --listFilesOnly",
@@ -86,6 +88,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.16.0",
+    "@playwright/test": "^1.26.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.21",
