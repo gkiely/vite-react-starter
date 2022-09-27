@@ -1,4 +1,3 @@
-import _ from 'cypress/types/lodash';
 // import type { AnyStateMachine, StateMachine } from 'xstate';
 
 export type Intersect<T> = (T extends unknown ? (x: T) => 0 : never) extends (x: infer R) => 0

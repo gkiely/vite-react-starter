@@ -7,7 +7,7 @@
 - [ESLint](https://github.com/eslint/eslint) and [Prettier](https://github.com/prettier/prettier)
 - [Vitest](https://vitest.dev)
 - [React testing library](https://github.com/testing-library/react-testing-library)
-- [Cypress](https://github.com/cypress-io/cypress)
+- [Playwright](https://playwright.dev)
 - [Hono](https://github.com/honojs/hono)
 - [Wrangler](https://github.com/cloudflare/wrangler2) or [Node](https://nodejs.dev)
 - [pre-commit and pre-push](https://github.com/toplenboren/simple-git-hooks) hooks
@@ -25,8 +25,6 @@
 `test`: Test in watch mode
 
 `test-all`: Run all tests
-
-`test:e2e`: Runs all Cypress component tests
 
 `install-latest`: Updates all dependencies
 

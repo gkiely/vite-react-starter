@@ -1,6 +1,5 @@
 {
   "search.exclude": {
-    "cypress/**": true,
     "node_modules/**": true
   },
   "typescript.preferences.autoImportFileExcludePatterns": [

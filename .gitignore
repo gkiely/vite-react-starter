@@ -33,4 +33,4 @@ coverage-ts
 *.sw?
 
 # E2E
-cypress/videos
+

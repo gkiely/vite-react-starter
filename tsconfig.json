@@ -47,6 +47,6 @@
     }
   },
   "typeRoots": ["./node_modules/@types", "./src/types"],
-  "include": ["src", "server", "cypress/support/cypress.d.ts"],
+  "include": ["src", "server"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
