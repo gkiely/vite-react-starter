@@ -1,3 +1,5 @@
+Test cypress vs. playwright and replace cypress
+
 Then
 - Add satisfies to routes.tsx when it is ready
 - Remove generate-types commands from npm, just make it a vite plugin
