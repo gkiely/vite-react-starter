@@ -102,7 +102,7 @@ const config: PlaywrightTestConfig = {
   webServer: {
     reuseExistingServer: true,
     // command: 'curl -s -o /dev/null http://localhost:3000 || npm start',
-    command: 'npm start',
+    command: 'vite',
     port: 3000,
   },
 };
